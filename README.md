@@ -1,28 +1,79 @@
-# pkg-placeholder
+# nuxt-explicit-imports
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![bundle][bundle-src]][bundle-href]
-[![JSDocs][jsdocs-src]][jsdocs-href]
 [![License][license-src]][license-href]
 
-_description_
+Move a Nuxt 4 app from auto-imports to explicit imports, step by step and without breaking it. The module is made to be run by a coding agent. It ships an agent skill, a codemod and a warn mode.
 
-## Note for Developers
+- **Warn mode**: auto-imports keep working, and every implicit use is reported in the console and in a JSON report.
+- **Codemod**: `migrate` writes the missing imports, using the same unimport contexts that Nuxt uses.
+- **Strict mode**: turns auto-imports off and fails the build on any implicit use left.
+- **Per category**: composables and utils (`imports`), template components (`components`) and server code (`server`) migrate on their own schedule.
 
-This starter recommands using [npm Trusted Publisher](https://github.com/e18e/ecosystem-issues/issues/201), where the release is done on CI to ensure the security of the packages.
+Inspired by [nuxt-eslint-auto-explicit-import](https://github.com/antfu/nuxt-eslint-auto-explicit-import).
 
-To do so, you need to run `pnpm publish` manually for the very first time to create the package on npm, and then go to `https://www.npmjs.com/package/<your-package-name>/access` to set the connection to your GitHub repo.
+## With an agent
 
-Then for the future releases, you can run `pnpm run release` to do the release and the GitHub Actions will take care of the release process.
+Install the module and the skill, then ask your agent to migrate:
 
-## Sponsors
+```bash
+npx nuxi module add nuxt-explicit-imports
+npx skills add antfu/nuxt-explicit-imports
+```
 
-<p align="center">
-  <a href="https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg">
-    <img src="https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg" alt="Sponsors"/>
-  </a>
-</p>
+> Migrate this app to explicit imports with the nuxt-explicit-imports skill.
+
+The skill takes the agent through the steps: record a baseline of your gates, migrate one category and one directory at a time, verify each chunk, then switch the category to strict and prove the build still passes.
+
+## By hand
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ['nuxt-explicit-imports'],
+  explicitImports: {
+    // 'off' | 'warn' | 'strict', or one mode per category
+    mode: { imports: 'warn', components: 'warn', server: 'warn' },
+  },
+})
+```
+
+```bash
+npx nuxt-explicit-imports check              # list implicit auto-imports, exit 1 if any
+npx nuxt-explicit-imports migrate app/pages  # add the imports for one directory
+npx nuxt-explicit-imports check --category components --json
+```
+
+`check` writes `.nuxt/explicit-imports-report.json`. In warn mode, `nuxi dev` and `nuxi build` update the same file.
+
+A migrated file looks like this:
+
+```diff
+ <script setup lang="ts">
++import { computed } from 'vue'
++import { useRoute } from '#app'
++import { useCounter } from '~/composables/useCounter'
++import MyButton from '~/components/MyButton.vue'
++import { NuxtLink } from '#components'
++
+ const route = useRoute()
+ const { count } = useCounter()
+ const double = computed(() => count.value * 2)
+ </script>
+```
+
+## Options
+
+| Option    | Default  | Description                                                                         |
+| --------- | -------- | ----------------------------------------------------------------------------------- |
+| `mode`    | `'warn'` | `'off'`, `'warn'` or `'strict'`, or an object with `imports`, `components`, `server` |
+| `exclude` | `[]`     | Extra globs, relative to the root dir, that are never checked or migrated            |
+| `report`  | `true`   | Write `.nuxt/explicit-imports-report.json` during dev and build                      |
+
+Strict mode sets `imports.autoImport: false` for `imports` and `nitro.imports.autoImport: false` for `server`. For `components`, it keeps Nuxt's component registry, so `#components` still exports `.client`, `.server` and island components, and fails the build on implicit template use.
+
+Config files, tests, `.d.ts` files and generated output are skipped.
 
 ## License
 
@@ -30,13 +81,9 @@ Then for the future releases, you can run `pnpm run release` to do the release a
 
 <!-- Badges -->
 
-[npm-version-src]: https://img.shields.io/npm/v/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669
-[npm-version-href]: https://npmx.dev/package/pkg-placeholder
-[npm-downloads-src]: https://img.shields.io/npm/dm/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669
-[npm-downloads-href]: https://npmx.dev/package/pkg-placeholder
-[bundle-src]: https://img.shields.io/bundlephobia/minzip/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669&label=minzip
-[bundle-href]: https://bundlephobia.com/result?p=pkg-placeholder
-[license-src]: https://img.shields.io/github/license/antfu/pkg-placeholder.svg?style=flat&colorA=080f12&colorB=1fa669
-[license-href]: https://github.com/antfu/pkg-placeholder/blob/main/LICENSE
-[jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-080f12?style=flat&colorA=080f12&colorB=1fa669
-[jsdocs-href]: https://www.jsdocs.io/package/pkg-placeholder
+[npm-version-src]: https://img.shields.io/npm/v/nuxt-explicit-imports?style=flat&colorA=080f12&colorB=1fa669
+[npm-version-href]: https://npmx.dev/package/nuxt-explicit-imports
+[npm-downloads-src]: https://img.shields.io/npm/dm/nuxt-explicit-imports?style=flat&colorA=080f12&colorB=1fa669
+[npm-downloads-href]: https://npmx.dev/package/nuxt-explicit-imports
+[license-src]: https://img.shields.io/github/license/antfu/nuxt-explicit-imports.svg?style=flat&colorA=080f12&colorB=1fa669
+[license-href]: https://github.com/antfu/nuxt-explicit-imports/blob/main/LICENSE
