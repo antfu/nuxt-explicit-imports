@@ -3,6 +3,7 @@ import type { Project } from './project'
 import type { Finding, ModuleOptions } from './types'
 import { readFile } from 'node:fs/promises'
 import { addVitePlugin, defineNuxtModule, useLogger } from '@nuxt/kit'
+import { normalize } from 'pathe'
 import { analyzeFile, toFindings } from './analyze'
 import { resolveModes } from './options'
 import { collectContexts, createProject } from './project'
@@ -73,7 +74,8 @@ export default defineNuxtModule<ModuleOptions>({
      * for strict categories, if any.
      */
     async function inspect(id: string): Promise<string | undefined> {
-      const file = id.replace(QUERY_RE, '')
+      // Nitro (rollup) ids use backslashes on Windows.
+      const file = normalize(id.replace(QUERY_RE, ''))
       const p = await getProject()
       if (!p.isTarget(file))
         return
