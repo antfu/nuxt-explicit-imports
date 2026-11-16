@@ -1,0 +1,35 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`basic fixture > check reports every implicit auto-import 1`] = `
+[
+  "app/app.vue:2:4 [components] NuxtLayout -> import { NuxtLayout } from '#components'",
+  "app/app.vue:3:6 [components] NuxtPage -> import { NuxtPage } from '#components'",
+  "app/components/ClientWidget.client.vue:2:17 [imports] ref -> import { ref } from 'vue'",
+  "app/components/MyButton.vue:3:17 [imports] computed -> import { computed } from 'vue'",
+  "app/composables/useCounter.ts:2:17 [imports] useState -> import { useState } from '#app'",
+  "app/middleware/auth.ts:1:16 [imports] defineNuxtRouteMiddleware -> import { defineNuxtRouteMiddleware } from '#app'",
+  "app/middleware/auth.ts:3:12 [imports] navigateTo -> import { navigateTo } from '#app'",
+  "app/pages/about.vue:2:16 [imports] defineNuxtComponent -> import { defineNuxtComponent } from '#app'",
+  "app/pages/about.vue:12:6 [components] my-button -> import MyButton from '~/components/MyButton.vue'",
+  "app/pages/index.vue:2:15 [imports] useRoute -> import { useRoute } from '#app'",
+  "app/pages/index.vue:3:30 [imports] useCounter -> import { useCounter } from '~/composables/useCounter'",
+  "app/pages/index.vue:4:16 [imports] computed -> import { computed } from 'vue'",
+  "app/pages/index.vue:5:12 [imports] Ref -> import type { Ref } from 'vue'",
+  "app/pages/index.vue:5:24 [imports] ref -> import { ref } from 'vue'",
+  "app/pages/index.vue:6:14 [imports] useBase -> import { useBase } from '#layers/base/app/composables/useBase'",
+  "app/pages/index.vue:11:52 [imports] sum -> import { sum } from '#shared/utils/sum'",
+  "app/pages/index.vue:12:11 [imports] formatDate -> import { formatDate } from '~/utils/format'",
+  "app/pages/index.vue:13:6 [components] MyButton -> import MyButton from '~/components/MyButton.vue'",
+  "app/pages/index.vue:16:6 [components] LazyHeavyChart -> import { defineAsyncComponent } from 'vue' | const LazyHeavyChart = defineAsyncComponent(() => import('~/components/HeavyChart.vue'))",
+  "app/pages/index.vue:17:6 [components] LazyFancyCard -> import { defineLazyHydrationComponent } from '#app/composables/lazy-hydration' | const LazyFancyCard = defineLazyHydrationComponent('visible', () => import('~/components/FancyCard.vue'))",
+  "app/pages/index.vue:18:6 [components] ClientWidget -> import { ClientWidget } from '#components'",
+  "app/pages/index.vue:19:6 [components] NuxtLink -> import { NuxtLink } from '#components'",
+  "app/plugins/hello.ts:1:16 [imports] defineNuxtPlugin -> import { defineNuxtPlugin } from '#app'",
+  "app/plugins/hello.ts:2:18 [imports] useRuntimeConfig -> import { useRuntimeConfig } from '#app'",
+  "layers/base/app/composables/useBase.ts:2:10 [imports] useState -> import { useState } from '#app'",
+  "server/api/hello.get.ts:1:16 [server] defineEventHandler -> import { defineEventHandler } from 'h3'",
+  "server/api/hello.get.ts:2:17 [server] getQuery -> import { getQuery } from 'h3'",
+  "server/api/hello.get.ts:3:21 [server] useGreeting -> import { useGreeting } from '#server/utils/greeting'",
+  "server/api/hello.get.ts:3:72 [server] sum -> import { sum } from '#shared/utils/sum'",
+]
+`;
