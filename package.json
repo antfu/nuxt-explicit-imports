@@ -44,7 +44,7 @@
     "test": "pnpm run build && vitest",
     "typecheck": "tsc",
     "ci": "pnpm run lint && pnpm run typecheck && pnpm run knip && pnpm run test --run",
-    "prepare": "git config core.hooksPath .githooks && simple-git-hooks && skills sync -y"
+    "prepare": "git config core.hooksPath .githooks && simple-git-hooks && skills sync -y --no-frozen-lockfile"
   },
   "peerDependencies": {
     "nuxt": "^4.0.0"
