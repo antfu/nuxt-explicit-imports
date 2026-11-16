@@ -12,3 +12,6 @@ node_modules
 temp
 .eslintcache
 .agents/skills
+test/.tmp
+.nuxt
+.output

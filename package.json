@@ -1,27 +1,38 @@
 {
-  "name": "pkg-placeholder",
+  "name": "nuxt-explicit-imports",
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@12.18.0",
-  "description": "_description_",
+  "description": "Migrate a Nuxt app away from auto-imports, step by step, with agent skills, a codemod and a warn mode",
   "author": "Anthony Fu <anthonyfu117@hotmail.com>",
   "license": "MIT",
   "funding": "https://github.com/sponsors/antfu",
-  "homepage": "https://github.com/antfu/pkg-placeholder#readme",
+  "homepage": "https://github.com/antfu/nuxt-explicit-imports#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antfu/pkg-placeholder.git"
+    "url": "git+https://github.com/antfu/nuxt-explicit-imports.git"
   },
-  "bugs": "https://github.com/antfu/pkg-placeholder/issues",
-  "keywords": [],
+  "bugs": "https://github.com/antfu/nuxt-explicit-imports/issues",
+  "keywords": [
+    "nuxt",
+    "nuxt-module",
+    "auto-imports",
+    "codemod",
+    "unimport",
+    "agent-skills"
+  ],
   "sideEffects": false,
   "exports": {
-    ".": "./dist/index.mjs",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    ".": "./dist/module.mjs"
   },
-  "types": "./dist/index.d.mts",
+  "types": "./dist/module.d.mts",
+  "bin": {
+    "nuxt-explicit-imports": "./dist/cli.mjs"
+  },
   "files": [
-    "dist"
+    "dist",
+    "skills"
   ],
   "scripts": {
     "build": "tsdown",
@@ -30,11 +41,27 @@
     "lint": "eslint --cache",
     "prepack": "nr build",
     "release": "bumpp",
-    "start": "tsx src/index.ts",
     "test": "pnpm run build && vitest",
     "typecheck": "tsc",
     "ci": "pnpm run lint && pnpm run typecheck && pnpm run knip && pnpm run test --run",
     "prepare": "git config core.hooksPath .githooks && simple-git-hooks && skills sync -y"
+  },
+  "peerDependencies": {
+    "nuxt": "^4.0.0"
+  },
+  "dependencies": {
+    "@nuxt/kit": "catalog:prod",
+    "@vue/compiler-sfc": "catalog:prod",
+    "cac": "catalog:prod",
+    "consola": "catalog:prod",
+    "magic-string": "catalog:prod",
+    "mlly": "catalog:prod",
+    "oxc-parser": "catalog:prod",
+    "oxc-walker": "catalog:prod",
+    "pathe": "catalog:prod",
+    "picomatch": "catalog:prod",
+    "tinyglobby": "catalog:prod",
+    "unimport": "catalog:prod"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:cli",
@@ -42,12 +69,14 @@
     "@antfu/skills": "catalog:agentic",
     "@antfu/utils": "catalog:inlined",
     "@types/node": "catalog:types",
+    "@types/picomatch": "catalog:types",
     "bumpp": "catalog:cli",
     "eslint": "catalog:cli",
     "eslint-plugin-slop": "catalog:cli",
     "eslint-plugin-sonarjs": "catalog:cli",
     "knip": "catalog:cli",
     "nano-staged": "catalog:cli",
+    "nuxt": "catalog:frontend",
     "publint": "catalog:cli",
     "simple-git-hooks": "catalog:cli",
     "skills": "catalog:agentic",

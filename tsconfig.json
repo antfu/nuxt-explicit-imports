@@ -3,6 +3,7 @@
     "target": "ESNext",
     "lib": ["ESNext"],
     "module": "Preserve",
+    "resolveJsonModule": true,
     "strict": true,
     "strictNullChecks": true,
     "noEmit": true,
@@ -10,5 +11,6 @@
     "verbatimModuleSyntax": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
-  }
+  },
+  "include": ["src", "test/*.ts", "*.ts", "*.js"]
 }
