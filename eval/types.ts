@@ -48,17 +48,29 @@ export interface GateResult {
   ms: number
 }
 
+/** What a tool call was for. `explore`: read or search. `edit`: change files. `verify`: run typecheck, build or tests. */
+export type ToolKind = 'explore' | 'edit' | 'verify' | 'other'
+
 export interface AgentMetrics {
   /** Why the agent stopped: `success`, `error_max_turns`, `timeout`, ... */
   stop: string
   turns: number
+  /** Tool calls by tool name. */
   toolCalls: Record<string, number>
+  /** Tool calls by purpose. Bash calls are sorted by their command. */
+  toolKinds: Record<ToolKind, number>
+  /** Uncached input tokens. */
   inputTokens: number
   outputTokens: number
   cacheReadTokens: number
   cacheWriteTokens: number
+  /** Characters of tool output sent back to the model: how much the agent had to read. */
+  toolOutputChars: number
   costUsd: number
+  /** Wall time of the agent session. */
   ms: number
+  /** Time spent waiting on the model API. */
+  apiMs: number
   /** Text of every tool result, used for the error taxonomy. */
   toolOutputs: string[]
 }

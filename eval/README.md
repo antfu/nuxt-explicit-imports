@@ -10,7 +10,7 @@ pnpm eval --tasks bugfix-multihop --trials 1 --model claude-haiku-5-5
 
 The agent uses `ANTHROPIC_API_KEY`, or your local Claude Code login when the key is not set. Results go to `eval/results/<date>/`:
 
-- `summary.md`: pass rate, cost and error counts per arm and per task
+- `summary.md`: pass rate, efficiency per arm and per task, tool usage and error counts
 - `results.json`: every run, with assertions and agent metrics
 - `diffs/`: what the agent changed in each run
 - `gates/`: typecheck and build logs of the runs where a gate failed
@@ -53,6 +53,23 @@ Bug-fix tasks seed the bug before the agent starts. A seed can be limited to one
 3. Score with hidden gates the agent never sees: `nuxt typecheck`, `nuxt build`, then the task's check against the built server (SSR HTML and API JSON).
 
 A run passes when typecheck, build and every assertion pass. What the agent says about its own work does not count.
+
+## Efficiency
+
+Every agent run records, and `summary.md` compares per arm (median, mean, and the change from `auto` to `explicit`):
+
+| Metric                       | Source                                                                    |
+| ---------------------------- | ------------------------------------------------------------------------- |
+| Turns                        | `num_turns` of the SDK result                                             |
+| Tool calls, per tool         | `tool_use` blocks                                                         |
+| Tool calls, per purpose      | `explore` (Read, Grep, Glob, read-only Bash), `edit`, `verify` (typecheck, build, tests), `other`. Bash calls are sorted by their command |
+| Input tokens                 | uncached, cache read and cache write, from `modelUsage`                   |
+| Output tokens, total tokens  | `modelUsage`                                                              |
+| Tool output read             | characters of tool results sent back to the model                         |
+| Agent time, API time         | wall time of the session, `duration_api_ms`                               |
+| Cost                         | `total_cost_usd`, an SDK estimate                                         |
+
+When some runs fail, the summary repeats the table for passing runs only, since failed runs often stop early or hit the turn limit. Overall medians mix tasks of different sizes; the per-task table compares like with like.
 
 ## Error taxonomy
 
