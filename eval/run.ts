@@ -14,7 +14,7 @@ import { fingerprint, readRun, saveRun } from './store'
 import { TASKS } from './tasks'
 import { classify, mergeTaxonomy } from './taxonomy'
 import { ARMS } from './types'
-import { createWorkspace, workspaceDiff } from './workspace'
+import { checkToolchain, createWorkspace, workspaceDiff } from './workspace'
 
 interface Flags {
   configs?: string
@@ -117,6 +117,7 @@ async function runJob(job: Job, root: string, limits: Limits, keep: boolean): Pr
   }
   const files: RunFiles = { result }
   try {
+    checkToolchain()
     await createWorkspace(job.task, job.arm, dir)
     if (job.config) {
       consola.start(`${name}: agent`)
