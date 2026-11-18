@@ -14,16 +14,15 @@ index bb15a42..586976a 100644
  
  <template>
 diff --git a/app/components/cart/Item.vue b/app/components/cart/Item.vue
-index a0ad0a8..5581b45 100644
+index 7f67f76..9b113af 100644
 --- a/app/components/cart/Item.vue
 +++ b/app/components/cart/Item.vue
-@@ -2,12 +2,12 @@
- import type { CartLine } from '#shared/types/cart'
+@@ -3,11 +3,11 @@ import type { CartLine } from '#shared/types/cart'
  import type { Product } from '#shared/types/product'
+ import { computed } from 'vue'
  import UiButton from '#layers/ui/app/components/UiButton.vue'
 -import { useCart } from '~/composables/useCart'
 +import { useShoppingCart } from '~/composables/useShoppingCart'
- import { computed } from 'vue'
  import { formatMoney } from '~/utils/money'
  
  const props = defineProps<{ line: CartLine, product?: Product }>()
@@ -33,17 +32,17 @@ index a0ad0a8..5581b45 100644
  </script>
  
 diff --git a/app/composables/useCartTotal.ts b/app/composables/useCartTotal.ts
-index ea9cd74..8edcd84 100644
+index f2c3423..492d47a 100644
 --- a/app/composables/useCartTotal.ts
 +++ b/app/composables/useCartTotal.ts
-@@ -1,5 +1,5 @@
- import type { Product } from '#shared/types/product'
+@@ -2,13 +2,13 @@ import type { Product } from '#shared/types/product'
+ import { computed } from 'vue'
+ import { useNuxtData } from '#imports'
+ import { sumBy } from '#shared/utils/math'
 -import { useCart } from '~/composables/useCart'
 +import { useShoppingCart } from '~/composables/useShoppingCart'
  import { useDiscount } from '~/composables/useDiscount'
- import { useNuxtData } from '#app'
- import { computed } from 'vue'
-@@ -8,7 +8,7 @@ import { applyDiscount } from '~/utils/discount'
+ import { applyDiscount } from '~/utils/discount'
  
  /** Cart totals in cents, as shown to the customer. */
  export function useCartTotal() {
@@ -53,27 +52,29 @@ index ea9cd74..8edcd84 100644
    const { data: products } = useNuxtData<Product[]>('products')
    const subtotal = computed(() => sumBy(lines.value, (line) => {
 diff --git a/app/composables/useCart.ts b/app/composables/useShoppingCart.ts
-similarity index 95%
+similarity index 85%
 rename from app/composables/useCart.ts
 rename to app/composables/useShoppingCart.ts
-index 52acf46..900fa4d 100644
+index e188789..ab79b8f 100644
 --- a/app/composables/useCart.ts
 +++ b/app/composables/useShoppingCart.ts
-@@ -4,7 +4,7 @@ import { computed } from 'vue'
+@@ -3,8 +3,8 @@ import { computed } from 'vue'
+ import { useCookie } from '#imports'
  import { sumBy } from '#shared/utils/math'
  
- /** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */
+-/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */
 -export function useCart() {
++/** The cart, persisted in the `cart` cookie. */
 +export function useShoppingCart() {
    const lines = useCookie<CartLine[]>('cart', { default: () => [] })
    const count = computed(() => sumBy(lines.value, line => line.qty))
    function add(slug: string, qty = 1) {
 diff --git a/app/middleware/cart-not-empty.ts b/app/middleware/cart-not-empty.ts
-index fa26a49..9f69e97 100644
+index 316ee13..68e367c 100644
 --- a/app/middleware/cart-not-empty.ts
 +++ b/app/middleware/cart-not-empty.ts
 @@ -1,8 +1,8 @@
- import { defineNuxtRouteMiddleware, navigateTo } from '#app'
+ import { defineNuxtRouteMiddleware, navigateTo } from '#imports'
 -import { useCart } from '~/composables/useCart'
 +import { useShoppingCart } from '~/composables/useShoppingCart'
  
@@ -84,16 +85,16 @@ index fa26a49..9f69e97 100644
      return navigateTo('/cart')
  })
 diff --git a/app/pages/cart.vue b/app/pages/cart.vue
-index bf378cb..9ee7b2d 100644
+index 2e2864b..054e78b 100644
 --- a/app/pages/cart.vue
 +++ b/app/pages/cart.vue
 @@ -2,11 +2,11 @@
+ import { NuxtLink } from '#components'
  import CartItem from '~/components/cart/Item.vue'
  import CartSummary from '~/components/cart/Summary.vue'
- import { useProducts } from '~/composables/useProducts'
 -import { useCart } from '~/composables/useCart'
 +import { useShoppingCart } from '~/composables/useShoppingCart'
- import { NuxtLink } from '#components'
+ import { useProducts } from '~/composables/useProducts'
  
  const { data: products } = await useProducts()
 -const { lines } = useCart()
@@ -102,16 +103,15 @@ index bf378cb..9ee7b2d 100644
  
  <template>
 diff --git a/app/pages/products/[slug].vue b/app/pages/products/[slug].vue
-index cb8815d..d0fb138 100644
+index e736df9..554bdd9 100644
 --- a/app/pages/products/[slug].vue
 +++ b/app/pages/products/[slug].vue
-@@ -5,12 +5,12 @@ import UiBadge from '#layers/ui/app/components/UiBadge.vue'
+@@ -6,11 +6,11 @@ import UiBadge from '#layers/ui/app/components/UiBadge.vue'
  import UiButton from '#layers/ui/app/components/UiButton.vue'
  import UiCard from '#layers/ui/app/components/UiCard.vue'
- import { useRoute, useFetch } from '#app'
+ import ProductPrice from '~/components/product/Price.vue'
 -import { useCart } from '~/composables/useCart'
 +import { useShoppingCart } from '~/composables/useShoppingCart'
- import { useNotify } from '#layers/base/app/composables/useNotify'
  
  const route = useRoute()
  const { data: product } = await useFetch<Product & { price: string }>(`/api/products/${route.params.slug}`)

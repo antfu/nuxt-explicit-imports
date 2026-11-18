@@ -1,7 +1,7 @@
 {
   "config": "claude-code/claude-sonnet-5-5",
-  "fingerprint": "c6575201a7adaefc",
-  "date": "2026-11-18T07:17:38.042Z",
+  "fingerprint": "d3f541703e830602",
+  "date": "2026-11-18T22:13:19.848Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "refactor-extract-cart-layer",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 5596
+    "ms": 1579
   },
   "build": {
     "ok": true,
-    "ms": 6060
+    "ms": 3394
   },
   "assertions": [
     {
@@ -60,10 +60,7 @@
       "ok": true
     }
   ],
-  "errorsDuringRun": {
-    "bad-module-path": 13,
-    "other-ts": 2
-  },
+  "errorsDuringRun": {},
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
@@ -73,17 +70,17 @@
     },
     "toolKinds": {
       "explore": 4,
-      "edit": 2,
-      "verify": 2,
+      "edit": 1,
+      "verify": 1,
       "other": 0
     },
     "inputTokens": 1379,
-    "outputTokens": 2068,
-    "cacheReadTokens": 103855,
-    "cacheWriteTokens": 11649,
-    "toolOutputChars": 14745,
-    "costUsd": 0.062946,
-    "ms": 44819,
-    "apiMs": 22212
+    "outputTokens": 1687,
+    "cacheReadTokens": 99688,
+    "cacheWriteTokens": 9238,
+    "toolOutputChars": 10283,
+    "costUsd": 0.05269180000000001,
+    "ms": 21323,
+    "apiMs": 16741
   }
 }

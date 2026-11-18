@@ -1,7 +1,7 @@
 {
   "config": "pi/gemini-3.5-flash",
-  "fingerprint": "87d6cf3f13881ab7",
-  "date": "2026-11-18T11:28:26.242Z",
+  "fingerprint": "ca1a67192beb4e80",
+  "date": "2026-11-18T23:20:19.008Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "bugfix-multihop",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 1536
+    "ms": 1427
   },
   "build": {
     "ok": true,
-    "ms": 4008
+    "ms": 2955
   },
   "assertions": [
     {
@@ -40,25 +40,25 @@
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 19,
+    "turns": 15,
     "toolCalls": {
-      "bash": 7,
-      "read": 10,
+      "bash": 6,
+      "read": 7,
       "edit": 1
     },
     "toolKinds": {
-      "explore": 14,
+      "explore": 9,
       "edit": 1,
-      "verify": 2,
-      "other": 1
+      "verify": 4,
+      "other": 0
     },
-    "inputTokens": 89693,
-    "outputTokens": 2926,
-    "cacheReadTokens": 7683,
+    "inputTokens": 55646,
+    "outputTokens": 3014,
+    "cacheReadTokens": 31098,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 18709,
-    "costUsd": 0.16202595,
-    "ms": 46932,
-    "apiMs": 38095
+    "toolOutputChars": 24596,
+    "costUsd": 0.11525970000000002,
+    "ms": 43383,
+    "apiMs": 34072
   }
 }

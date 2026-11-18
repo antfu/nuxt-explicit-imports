@@ -1,7 +1,7 @@
 {
   "config": "pi/gemini-3.5-flash",
-  "fingerprint": "4ad2dadf089c8627",
-  "date": "2026-11-18T11:17:49.646Z",
+  "fingerprint": "37d4d8c7cddfcb39",
+  "date": "2026-11-18T23:12:21.551Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "feature-order-flow",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 1556
+    "ms": 1438
   },
   "build": {
     "ok": true,
-    "ms": 3491
+    "ms": 3082
   },
   "assertions": [
     {
@@ -52,29 +52,32 @@
       "ok": true
     }
   ],
-  "errorsDuringRun": {},
+  "errorsDuringRun": {
+    "other-ts": 1
+  },
   "errorsAtEnd": {},
   "agent": {
-    "stop": "error_max_turns",
-    "turns": 41,
+    "stop": "success",
+    "turns": 35,
     "toolCalls": {
-      "bash": 11,
-      "read": 25,
-      "write": 4
+      "bash": 9,
+      "read": 19,
+      "write": 4,
+      "edit": 2
     },
     "toolKinds": {
-      "explore": 34,
-      "edit": 4,
-      "verify": 2,
+      "explore": 23,
+      "edit": 6,
+      "verify": 5,
       "other": 0
     },
-    "inputTokens": 182083,
-    "outputTokens": 12816,
-    "cacheReadTokens": 286629,
+    "inputTokens": 150165,
+    "outputTokens": 17278,
+    "cacheReadTokens": 209018,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 38678,
-    "costUsd": 0.43146284999999995,
-    "ms": 121470,
-    "apiMs": 114594
+    "toolOutputChars": 32823,
+    "costUsd": 0.4121022000000001,
+    "ms": 111038,
+    "apiMs": 98530
   }
 }

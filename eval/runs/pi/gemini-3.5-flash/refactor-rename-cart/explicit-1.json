@@ -1,7 +1,7 @@
 {
   "config": "pi/gemini-3.5-flash",
-  "fingerprint": "4c31107eb27ebd20",
-  "date": "2026-11-18T11:07:36.732Z",
+  "fingerprint": "2429e90a59cb15d0",
+  "date": "2026-11-18T23:03:46.582Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "refactor-rename-cart",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 4298
+    "ms": 1439
   },
   "build": {
     "ok": true,
-    "ms": 8015
+    "ms": 2936
   },
   "assertions": [
     {
@@ -62,8 +62,8 @@
     "stop": "success",
     "turns": 24,
     "toolCalls": {
-      "bash": 8,
-      "read": 8,
+      "bash": 9,
+      "read": 7,
       "write": 1,
       "edit": 6
     },
@@ -73,13 +73,13 @@
       "verify": 2,
       "other": 0
     },
-    "inputTokens": 120416,
-    "outputTokens": 2470,
-    "cacheReadTokens": 7558,
+    "inputTokens": 70575,
+    "outputTokens": 4014,
+    "cacheReadTokens": 84708,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 21565,
-    "costUsd": 0.20398770000000002,
-    "ms": 65902,
-    "apiMs": 52350
+    "toolOutputChars": 21083,
+    "costUsd": 0.1546947,
+    "ms": 57254,
+    "apiMs": 52345
   }
 }

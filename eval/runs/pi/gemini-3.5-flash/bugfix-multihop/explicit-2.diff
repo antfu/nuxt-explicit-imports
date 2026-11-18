@@ -1,5 +1,5 @@
 diff --git a/shared/utils/math.ts b/shared/utils/math.ts
-index f7fb3d1..05133b4 100644
+index f7fb3d1..1552b8e 100644
 --- a/shared/utils/math.ts
 +++ b/shared/utils/math.ts
 @@ -3,5 +3,5 @@ export function sumBy<T>(list: T[], fn: (item: T) => number): number {
@@ -7,5 +7,5 @@ index f7fb3d1..05133b4 100644
  
  export function clamp(value: number, min: number, max: number): number {
 -  return Math.max(Math.min(value, min), max)
-+  return Math.min(Math.max(value, min), max)
++  return Math.max(min, Math.min(value, max))
  }

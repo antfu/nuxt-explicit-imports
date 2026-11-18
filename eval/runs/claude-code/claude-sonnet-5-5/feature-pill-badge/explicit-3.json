@@ -1,7 +1,7 @@
 {
   "config": "claude-code/claude-sonnet-5-5",
-  "fingerprint": "8f63c069f80692df",
-  "date": "2026-11-18T07:17:38.042Z",
+  "fingerprint": "f3e9e8f3afb603c1",
+  "date": "2026-11-18T22:11:35.967Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "feature-pill-badge",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 3690
+    "ms": 1568
   },
   "build": {
     "ok": true,
-    "ms": 8434
+    "ms": 3108
   },
   "assertions": [
     {
@@ -59,12 +59,12 @@
       "other": 0
     },
     "inputTokens": 1283,
-    "outputTokens": 899,
-    "cacheReadTokens": 94637,
-    "cacheWriteTokens": 5770,
-    "toolOutputChars": 4134,
-    "costUsd": 0.0354447,
-    "ms": 24776,
-    "apiMs": 12525
+    "outputTokens": 816,
+    "cacheReadTokens": 95094,
+    "cacheWriteTokens": 5626,
+    "toolOutputChars": 3359,
+    "costUsd": 0.0343004,
+    "ms": 16232,
+    "apiMs": 11591
   }
 }

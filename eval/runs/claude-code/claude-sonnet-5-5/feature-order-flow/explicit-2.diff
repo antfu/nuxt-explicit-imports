@@ -1,48 +1,50 @@
 diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
 new file mode 100644
-index 0000000..43618a6
+index 0000000..436fd5b
 --- /dev/null
 +++ b/app/pages/orders/[id].vue
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,30 @@
 +<script setup lang="ts">
-+import { useFetch, useRoute } from '#app'
++import type { Order } from '#server/utils/orders'
++import { computed } from 'vue'
++import { useFetch, useRoute } from '#imports'
++import { useProducts } from '~/composables/useProducts'
 +import { formatMoney } from '~/utils/money'
 +
-+interface OrderView {
-+  id: string
-+  subtotal: string
-+  discount: string
-+  total: string
-+  totalCents: number
-+  lines: { slug: string, qty: number, name: string }[]
++const route = useRoute()
++const { data: order } = await useFetch<Order>(`/api/orders/${route.params.id}`)
++const { data: products } = await useProducts()
++
++function nameOf(slug: string) {
++  return products.value.find(p => p.slug === slug)?.name ?? slug
 +}
 +
-+const route = useRoute()
-+const { data: order } = await useFetch<OrderView>(`/api/orders/${route.params.id}`)
++// Server amounts look like `19.99 USD`; show them in the UI money format.
++const total = computed(() => formatMoney(Math.round(Number.parseFloat(order.value?.total ?? '0') * 100)))
 +</script>
 +
 +<template>
 +  <div v-if="order">
-+    <h1>Order {{ order.id }}</h1>
++    <h1>Order</h1>
 +    <ul>
 +      <li v-for="line in order.lines" :key="line.slug" class="order-line">
-+        {{ line.name }} × {{ line.qty }}
++        {{ nameOf(line.slug) }} x{{ line.qty }}
 +      </li>
 +    </ul>
-+    <p>Total: <span id="order-total">{{ formatMoney(order.totalCents) }}</span></p>
++    <p>Total: <span id="order-total">{{ total }}</span></p>
 +  </div>
 +</template>
 diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
 new file mode 100644
-index 0000000..ff90045
+index 0000000..630cc96
 --- /dev/null
 +++ b/server/api/orders/[id].get.ts
 @@ -0,0 +1,9 @@
 +import { createError, defineEventHandler, getRouterParam } from 'h3'
-+import { getOrder } from '#server/utils/orders'
++import { findOrder } from '#server/utils/orders'
 +
 +export default defineEventHandler((event) => {
-+  const order = getOrder(getRouterParam(event, 'id') ?? '')
++  const order = findOrder(getRouterParam(event, 'id') ?? '')
 +  if (!order)
 +    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
 +  return order
@@ -63,76 +65,31 @@ index 0000000..3ff7e88
 +})
 diff --git a/server/utils/orders.ts b/server/utils/orders.ts
 new file mode 100644
-index 0000000..5780921
+index 0000000..bedab48
 --- /dev/null
 +++ b/server/utils/orders.ts
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,24 @@
 +import type { CartLine } from '#shared/types/cart'
-+import { computeQuoteCents, formatQuote } from '#server/utils/quote'
 +import type { Quote } from '#server/utils/quote'
-+import { findProduct } from '#server/utils/db'
++import { computeQuote } from '#server/utils/quote'
 +
-+interface StoredOrder {
++export interface Order extends Quote {
 +  id: string
 +  lines: CartLine[]
-+  totalCents: number
-+  quote: Quote
 +}
 +
-+const orders = new Map<string, StoredOrder>()
-+let counter = 0
++const orders = new Map<string, Order>()
 +
-+export function createOrder(lines: CartLine[], code?: string): Quote & { id: string } {
-+  const cents = computeQuoteCents(lines, code)
-+  const id = String(++counter)
-+  const quote = formatQuote(cents)
-+  orders.set(id, { id, lines: lines.map(l => ({ slug: l.slug, qty: l.qty })), totalCents: cents.total, quote })
-+  return { id, ...quote }
-+}
-+
-+export function getOrder(id: string) {
-+  const order = orders.get(id)
-+  if (!order)
-+    return undefined
-+  return {
-+    id: order.id,
-+    ...order.quote,
-+    totalCents: order.totalCents,
-+    lines: order.lines.map(l => ({ ...l, name: findProduct(l.slug)?.name ?? l.slug })),
++export function createOrder(lines: CartLine[], code?: string): Order {
++  const order: Order = {
++    id: crypto.randomUUID(),
++    lines: lines.map(l => ({ slug: l.slug, qty: l.qty })),
++    ...computeQuote(lines, code),
 +  }
-+}
-diff --git a/server/utils/quote.ts b/server/utils/quote.ts
-index 94eaddb..22bc51b 100644
---- a/server/utils/quote.ts
-+++ b/server/utils/quote.ts
-@@ -11,12 +11,26 @@ export interface Quote {
-   total: string
- }
- 
--export function computeQuote(lines: CartLine[], code?: string): Quote {
-+export interface QuoteCents {
-+  subtotal: number
-+  discount: number
-+  total: number
++  orders.set(order.id, order)
++  return order
 +}
 +
-+export function computeQuoteCents(lines: CartLine[], code?: string): QuoteCents {
-   const subtotal = sumBy(lines, line => (findProduct(line.slug)?.priceCents ?? 0) * line.qty)
-   const discount = computeDiscount(subtotal, discountPercent(code))
-+  return { subtotal, discount, total: subtotal - discount }
-+}
-+
-+export function formatQuote(cents: QuoteCents): Quote {
-   return {
--    subtotal: formatMoney(subtotal),
--    discount: formatMoney(discount),
--    total: formatMoney(subtotal - discount),
-+    subtotal: formatMoney(cents.subtotal),
-+    discount: formatMoney(cents.discount),
-+    total: formatMoney(cents.total),
-   }
- }
-+
-+export function computeQuote(lines: CartLine[], code?: string): Quote {
-+  return formatQuote(computeQuoteCents(lines, code))
++export function findOrder(id: string): Order | undefined {
++  return orders.get(id)
 +}

@@ -1,7 +1,7 @@
 {
   "config": "claude-code/claude-haiku-5-5",
-  "fingerprint": "87d6cf3f13881ab7",
-  "date": "2026-11-18T10:25:24.143Z",
+  "fingerprint": "ca1a67192beb4e80",
+  "date": "2026-11-18T22:35:16.006Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "bugfix-multihop",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 6493
+    "ms": 1538
   },
   "build": {
     "ok": true,
-    "ms": 15916
+    "ms": 3026
   },
   "assertions": [
     {
@@ -40,25 +40,25 @@
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 16,
+    "turns": 19,
     "toolCalls": {
-      "Bash": 7,
-      "Read": 7,
+      "Bash": 6,
+      "Read": 11,
       "Edit": 1
     },
     "toolKinds": {
-      "explore": 12,
-      "edit": 3,
-      "verify": 3,
-      "other": 0
+      "explore": 14,
+      "edit": 1,
+      "verify": 2,
+      "other": 1
     },
     "inputTokens": 1269,
-    "outputTokens": 5243,
-    "cacheReadTokens": 186799,
-    "cacheWriteTokens": 13309,
-    "toolOutputChars": 8918,
-    "costUsd": 0.006280015,
-    "ms": 73683,
-    "apiMs": 28468
+    "outputTokens": 5046,
+    "cacheReadTokens": 186936,
+    "cacheWriteTokens": 13515,
+    "toolOutputChars": 8637,
+    "costUsd": 0.006208635,
+    "ms": 32140,
+    "apiMs": 26452
   }
 }

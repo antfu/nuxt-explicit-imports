@@ -1,9 +1,9 @@
 diff --git a/app/composables/useTheme.ts b/app/composables/useTheme.ts
-index 6c81a2a..567f097 100644
+index 1bd6493..8dda755 100644
 --- a/app/composables/useTheme.ts
 +++ b/app/composables/useTheme.ts
 @@ -1,6 +1,6 @@
- import { useState } from '#app'
+ import { useState } from '#imports'
  
  /** The shop is dark. Overrides the base layer's `useTheme`. */
 -export function useColorScheme() {
@@ -11,13 +11,13 @@ index 6c81a2a..567f097 100644
    return useState('theme', () => 'dark')
  }
 diff --git a/app/layouts/default.vue b/app/layouts/default.vue
-index 9505ba6..471bb9c 100644
+index 16aeb90..3fb6f8f 100644
 --- a/app/layouts/default.vue
 +++ b/app/layouts/default.vue
 @@ -1,7 +1,7 @@
  <script setup lang="ts">
- import AppHeader from '~/components/AppHeader.vue'
  import AppFooter from '~/components/AppFooter.vue'
+ import AppHeader from '~/components/AppHeader.vue'
 -import { useTheme } from '#layers/base/app/composables/useTheme'
 +import { useTheme } from '~/composables/useTheme'
  

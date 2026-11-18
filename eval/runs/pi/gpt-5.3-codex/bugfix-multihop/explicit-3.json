@@ -1,7 +1,7 @@
 {
   "config": "pi/gpt-5.3-codex",
-  "fingerprint": "87d6cf3f13881ab7",
-  "date": "2026-11-18T10:53:40.238Z",
+  "fingerprint": "ca1a67192beb4e80",
+  "date": "2026-11-18T22:53:56.997Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "bugfix-multihop",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 3848
+    "ms": 1407
   },
   "build": {
     "ok": true,
-    "ms": 9433
+    "ms": 2944
   },
   "assertions": [
     {
@@ -40,25 +40,25 @@
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 17,
+    "turns": 12,
     "toolCalls": {
-      "bash": 9,
-      "read": 32,
+      "bash": 5,
+      "read": 19,
       "edit": 1
     },
     "toolKinds": {
-      "explore": 37,
+      "explore": 22,
       "edit": 1,
-      "verify": 4,
+      "verify": 2,
       "other": 0
     },
-    "inputTokens": 27222,
-    "outputTokens": 3958,
-    "cacheReadTokens": 129152,
+    "inputTokens": 11082,
+    "outputTokens": 1405,
+    "cacheReadTokens": 55552,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 43676,
-    "costUsd": 0.12565210000000002,
-    "ms": 111721,
-    "apiMs": 92700
+    "toolOutputChars": 26207,
+    "costUsd": 0.0487851,
+    "ms": 32326,
+    "apiMs": 27503
   }
 }

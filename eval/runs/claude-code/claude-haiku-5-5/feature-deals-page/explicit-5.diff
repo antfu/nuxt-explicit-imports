@@ -1,23 +1,23 @@
 diff --git a/app/pages/deals.vue b/app/pages/deals.vue
 new file mode 100644
-index 0000000..c576ba1
+index 0000000..8d380a2
 --- /dev/null
 +++ b/app/pages/deals.vue
 @@ -0,0 +1,29 @@
 +<script setup lang="ts">
 +import { computed } from 'vue'
-+import ProductCard from '~/components/product/Card.vue'
-+import UiBadge from '#layers/ui/app/components/UiBadge.vue'
-+import { useProducts } from '~/composables/useProducts'
-+import { useDiscount } from '~/composables/useDiscount'
 +import { formatPercent } from '#layers/base/app/utils/percent'
++import UiBadge from '#layers/ui/app/components/UiBadge.vue'
++import ProductCard from '~/components/product/Card.vue'
++import { useDiscount } from '~/composables/useDiscount'
++import { useProducts } from '~/composables/useProducts'
 +
-+/** Products priced strictly under $5.00, in cents. */
-+const DEAL_PRICE_CENTS = 500
++/** Products priced under $5.00. */
++const DEAL_MAX_CENTS = 500
 +
 +const { data: products } = await useProducts()
++const deals = computed(() => products.value.filter(p => p.priceCents < DEAL_MAX_CENTS))
 +const { percent } = useDiscount()
-+const deals = computed(() => products.value.filter(p => p.priceCents < DEAL_PRICE_CENTS))
 +</script>
 +
 +<template>

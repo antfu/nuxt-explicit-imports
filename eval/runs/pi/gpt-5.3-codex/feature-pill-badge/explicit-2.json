@@ -1,7 +1,7 @@
 {
   "config": "pi/gpt-5.3-codex",
-  "fingerprint": "8f63c069f80692df",
-  "date": "2026-11-18T10:44:51.866Z",
+  "fingerprint": "f3e9e8f3afb603c1",
+  "date": "2026-11-18T22:48:33.811Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "feature-pill-badge",
@@ -9,14 +9,14 @@
   "fixture": "shop",
   "arm": "explicit",
   "trial": 2,
-  "pass": false,
+  "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 3063
+    "ms": 1427
   },
   "build": {
     "ok": true,
-    "ms": 6602
+    "ms": 2925
   },
   "assertions": [
     {
@@ -29,18 +29,15 @@
     },
     {
       "name": "/: every badge is a pill",
-      "ok": false,
-      "detail": "0/1 pills"
+      "ok": true
     },
     {
       "name": "/products/notebook: every badge is a pill",
-      "ok": false,
-      "detail": "0/2 pills"
+      "ok": true
     },
     {
       "name": "/checkout: every badge is a pill",
-      "ok": false,
-      "detail": "0/2 pills"
+      "ok": true
     },
     {
       "name": "header badge still shows 3",
@@ -51,25 +48,26 @@
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 8,
+    "turns": 10,
     "toolCalls": {
-      "bash": 5,
-      "read": 1,
-      "write": 1
+      "bash": 7,
+      "read": 5,
+      "write": 1,
+      "edit": 3
     },
     "toolKinds": {
-      "explore": 4,
-      "edit": 1,
+      "explore": 10,
+      "edit": 4,
       "verify": 2,
       "other": 0
     },
-    "inputTokens": 6920,
-    "outputTokens": 493,
-    "cacheReadTokens": 13312,
+    "inputTokens": 10570,
+    "outputTokens": 1444,
+    "cacheReadTokens": 49408,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 12535,
-    "costUsd": 0.0213416,
-    "ms": 31410,
-    "apiMs": 18413
+    "toolOutputChars": 20753,
+    "costUsd": 0.0473599,
+    "ms": 31452,
+    "apiMs": 26461
   }
 }

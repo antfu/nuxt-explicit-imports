@@ -1,7 +1,7 @@
 {
   "config": "claude-code/claude-haiku-5-5",
-  "fingerprint": "4c31107eb27ebd20",
-  "date": "2026-11-18T09:59:16.055Z",
+  "fingerprint": "2429e90a59cb15d0",
+  "date": "2026-11-18T22:20:06.099Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "refactor-rename-cart",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 4068
+    "ms": 1437
   },
   "build": {
     "ok": true,
-    "ms": 5305
+    "ms": 2938
   },
   "assertions": [
     {
@@ -60,24 +60,25 @@
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 9,
+    "turns": 21,
     "toolCalls": {
       "Bash": 7,
-      "Edit": 1
+      "Read": 6,
+      "Edit": 7
     },
     "toolKinds": {
-      "explore": 6,
-      "edit": 3,
+      "explore": 12,
+      "edit": 8,
       "verify": 2,
       "other": 0
     },
-    "inputTokens": 1272,
-    "outputTokens": 4434,
-    "cacheReadTokens": 194855,
-    "cacheWriteTokens": 16261,
-    "toolOutputChars": 16498,
-    "costUsd": 0.006325375,
-    "ms": 63646,
-    "apiMs": 26818
+    "inputTokens": 1274,
+    "outputTokens": 7130,
+    "cacheReadTokens": 231213,
+    "cacheWriteTokens": 18007,
+    "toolOutputChars": 14316,
+    "costUsd": 0.008255405,
+    "ms": 40045,
+    "apiMs": 33615
   }
 }

@@ -21,46 +21,28 @@ index bb15a42..1f28416 100644
  
  const { count } = useCart()
 diff --git a/app/pages/checkout.vue b/app/pages/checkout.vue
-index cf14bdf..41af5ac 100644
+index 5075987..bf7974e 100644
 --- a/app/pages/checkout.vue
 +++ b/app/pages/checkout.vue
-@@ -1,7 +1,7 @@
- <script setup lang="ts">
- import FormInput from '#layers/ui/app/components/form/Input.vue'
- import CartSummary from '~/components/cart/Summary.vue'
+@@ -2,7 +2,7 @@
+ import { ref } from 'vue'
+ import { definePageMeta } from '#imports'
+ import { useNotify } from '#layers/base/app/composables/useNotify'
 -import UiBadge from '#layers/ui/app/components/UiBadge.vue'
 +import UiBadge from '~/components/UiBadge.vue'
  import UiButton from '#layers/ui/app/components/UiButton.vue'
- import { definePageMeta } from '#app/composables/pages'
- import { useProducts } from '~/composables/useProducts'
+ import FormInput from '#layers/ui/app/components/form/Input.vue'
+ import CartSummary from '~/components/cart/Summary.vue'
 diff --git a/app/pages/products/[slug].vue b/app/pages/products/[slug].vue
-index cb8815d..334033d 100644
+index e736df9..f86210d 100644
 --- a/app/pages/products/[slug].vue
 +++ b/app/pages/products/[slug].vue
-@@ -1,7 +1,7 @@
- <script setup lang="ts">
+@@ -2,7 +2,7 @@
  import type { Product } from '#shared/types/product'
- import ProductPrice from '~/components/product/Price.vue'
+ import { useFetch, useRoute } from '#imports'
+ import { useNotify } from '#layers/base/app/composables/useNotify'
 -import UiBadge from '#layers/ui/app/components/UiBadge.vue'
 +import UiBadge from '~/components/UiBadge.vue'
  import UiButton from '#layers/ui/app/components/UiButton.vue'
  import UiCard from '#layers/ui/app/components/UiCard.vue'
- import { useRoute, useFetch } from '#app'
-diff --git a/nuxt.config.ts b/nuxt.config.ts
-index 45b50fb..8cba1ec 100644
---- a/nuxt.config.ts
-+++ b/nuxt.config.ts
-@@ -1,3 +1,5 @@
-+import { fileURLToPath } from 'node:url'
-+
- export default defineNuxtConfig({
-   compatibilityDate: '2026-01-01',
-   devtools: { enabled: false },
-@@ -6,4 +8,7 @@ export default defineNuxtConfig({
-   imports: { autoImport: false },
-   components: { dirs: [] },
-   nitro: { imports: { autoImport: false } },
-+  alias: {
-+    '#layers/ui/app/components/UiBadge.vue': fileURLToPath(new URL('./app/components/UiBadge.vue', import.meta.url))
-+  }
- })
+ import ProductPrice from '~/components/product/Price.vue'

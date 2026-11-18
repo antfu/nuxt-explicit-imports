@@ -1,35 +1,40 @@
 diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
 new file mode 100644
-index 0000000..af0201f
+index 0000000..32c2d32
 --- /dev/null
 +++ b/app/pages/orders/[id].vue
-@@ -0,0 +1,40 @@
+@@ -0,0 +1,47 @@
 +<script setup lang="ts">
++import type { CartLine } from '#shared/types/cart'
 +import { computed } from 'vue'
-+import { createError, useFetch, useRoute } from '#app'
++import { createError, useFetch, useRoute } from '#imports'
++import { useProducts } from '~/composables/useProducts'
 +import { formatMoney } from '~/utils/money'
-+
-+interface OrderLine {
-+  slug: string
-+  name: string
-+  qty: number
-+}
 +
 +interface Order {
 +  id: string
 +  subtotal: string
 +  discount: string
 +  total: string
-+  lines: OrderLine[]
++  lines: CartLine[]
 +}
 +
 +const route = useRoute()
-+const { data: order } = await useFetch<Order>(`/api/orders/${route.params.id}`)
-+if (!order.value)
-+  throw createError({ statusCode: 404, statusMessage: 'Order not found', fatal: true })
++const { data: order, error } = await useFetch<Order>(`/api/orders/${route.params.id}`)
++if (error.value)
++  throw createError({ statusCode: 404, statusMessage: 'Order not found' })
 +
-+/** The API formats amounts as `19.99 USD`; the UI shows them as `$19.99`. */
-+const total = computed(() => formatMoney(Math.round(Number.parseFloat(order.value?.total ?? '0') * 100)))
++const { data: products } = await useProducts()
++const names = computed(() => new Map(products.value.map(p => [p.slug, p.name])))
++
++/** The server formats amounts as `19.99 USD`; the UI shows them as `$19.99`. */
++function toUiMoney(serverAmount: string | undefined): string {
++  return formatMoney(Math.round(Number.parseFloat(serverAmount ?? '0') * 100))
++}
++
++const subtotal = computed(() => toUiMoney(order.value?.subtotal))
++const discount = computed(() => toUiMoney(order.value?.discount))
++const total = computed(() => toUiMoney(order.value?.total))
 +</script>
 +
 +<template>
@@ -37,85 +42,73 @@ index 0000000..af0201f
 +    <h1>Order</h1>
 +    <ul>
 +      <li v-for="line in order.lines" :key="line.slug" class="order-line">
-+        <span class="name">{{ line.name }}</span>
++        <span class="name">{{ names.get(line.slug) ?? line.slug }}</span>
 +        <span class="qty">x{{ line.qty }}</span>
 +      </li>
 +    </ul>
++    <p>Subtotal: <span id="order-subtotal">{{ subtotal }}</span></p>
++    <p>Discount: <span id="order-discount">{{ discount }}</span></p>
 +    <p>Total: <span id="order-total">{{ total }}</span></p>
 +  </div>
 +</template>
 diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
 new file mode 100644
-index 0000000..7a59d59
+index 0000000..630cc96
 --- /dev/null
 +++ b/server/api/orders/[id].get.ts
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,9 @@
 +import { createError, defineEventHandler, getRouterParam } from 'h3'
-+import { findProduct } from '#server/utils/db'
-+import { getOrder } from '#server/utils/orders'
++import { findOrder } from '#server/utils/orders'
 +
 +export default defineEventHandler((event) => {
-+  const order = getOrder(getRouterParam(event, 'id') ?? '')
++  const order = findOrder(getRouterParam(event, 'id') ?? '')
 +  if (!order)
 +    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
-+  return {
-+    id: order.id,
-+    subtotal: order.subtotal,
-+    discount: order.discount,
-+    total: order.total,
-+    lines: order.lines.map(line => ({ slug: line.slug, name: findProduct(line.slug)?.name ?? line.slug, qty: line.qty })),
-+  }
++  return order
 +})
 diff --git a/server/api/orders/index.post.ts b/server/api/orders/index.post.ts
 new file mode 100644
-index 0000000..981514a
+index 0000000..d9408e6
 --- /dev/null
 +++ b/server/api/orders/index.post.ts
-@@ -0,0 +1,19 @@
+@@ -0,0 +1,14 @@
 +import type { CartLine } from '#shared/types/cart'
++import { randomUUID } from 'node:crypto'
 +import { createError, defineEventHandler, readBody } from 'h3'
-+import { findProduct } from '#server/utils/db'
-+import { createOrder } from '#server/utils/orders'
++import { computeQuote } from '#server/utils/quote'
++import { saveOrder } from '#server/utils/orders'
 +
 +export default defineEventHandler(async (event) => {
 +  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)
-+  const lines = body?.lines
-+  if (!Array.isArray(lines) || lines.length === 0)
-+    throw createError({ statusCode: 400, statusMessage: 'lines must be a non-empty array' })
-+  for (const line of lines) {
-+    if (!findProduct(line?.slug))
-+      throw createError({ statusCode: 400, statusMessage: `Unknown product: ${line?.slug}` })
-+    if (!Number.isInteger(line.qty) || line.qty < 1)
-+      throw createError({ statusCode: 400, statusMessage: 'qty must be a positive integer' })
-+  }
-+  const { id, subtotal, discount, total } = createOrder(lines, body?.code)
-+  return { id, subtotal, discount, total }
++  if (!Array.isArray(body?.lines))
++    throw createError({ statusCode: 400, statusMessage: 'lines must be an array' })
++  const quote = computeQuote(body.lines, body.code)
++  const order = saveOrder(randomUUID(), body.lines, quote)
++  return { id: order.id, subtotal: order.subtotal, discount: order.discount, total: order.total }
 +})
 diff --git a/server/utils/orders.ts b/server/utils/orders.ts
 new file mode 100644
-index 0000000..32047a8
+index 0000000..dff97a8
 --- /dev/null
 +++ b/server/utils/orders.ts
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,20 @@
 +import type { CartLine } from '#shared/types/cart'
-+import { randomUUID } from 'node:crypto'
-+import { computeQuote, type Quote } from '#server/utils/quote'
++import type { Quote } from '#server/utils/quote'
 +
-+export interface StoredOrder extends Quote {
++export interface Order extends Quote {
 +  id: string
 +  lines: CartLine[]
 +}
 +
-+/** Orders live in server memory only; they are lost when the server restarts. */
-+const orders = new Map<string, StoredOrder>()
++/** Orders kept in server memory, keyed by id. They are lost on restart. */
++const orders = new Map<string, Order>()
 +
-+/** Quotes the lines server-side and stores the order with the amounts charged. */
-+export function createOrder(lines: CartLine[], code?: string): StoredOrder {
-+  const order: StoredOrder = { id: randomUUID(), lines, ...computeQuote(lines, code) }
-+  orders.set(order.id, order)
++export function saveOrder(id: string, lines: CartLine[], quote: Quote): Order {
++  const order: Order = { id, lines: lines.map(line => ({ ...line })), ...quote }
++  orders.set(id, order)
 +  return order
 +}
 +
-+export function getOrder(id: string): StoredOrder | undefined {
++export function findOrder(id: string): Order | undefined {
 +  return orders.get(id)
 +}

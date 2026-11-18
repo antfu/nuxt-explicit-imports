@@ -1,7 +1,7 @@
 {
   "config": "claude-code/claude-sonnet-5-5",
-  "fingerprint": "c698d22a4418e95b",
-  "date": "2026-11-18T07:17:38.042Z",
+  "fingerprint": "5f53e9913278a47b",
+  "date": "2026-11-18T22:09:06.294Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "refactor-move-cart-components",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 2764
+    "ms": 1453
   },
   "build": {
     "ok": true,
-    "ms": 9264
+    "ms": 2947
   },
   "assertions": [
     {
@@ -63,12 +63,12 @@
       "other": 0
     },
     "inputTokens": 1247,
-    "outputTokens": 742,
-    "cacheReadTokens": 73593,
-    "cacheWriteTokens": 5635,
-    "toolOutputChars": 4373,
-    "costUsd": 0.0313608,
-    "ms": 28379,
-    "apiMs": 10116
+    "outputTokens": 630,
+    "cacheReadTokens": 74455,
+    "cacheWriteTokens": 5866,
+    "toolOutputChars": 4386,
+    "costUsd": 0.0309045,
+    "ms": 14387,
+    "apiMs": 9179
   }
 }

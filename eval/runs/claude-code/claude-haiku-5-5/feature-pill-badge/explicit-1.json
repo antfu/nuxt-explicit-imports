@@ -1,7 +1,7 @@
 {
   "config": "claude-code/claude-haiku-5-5",
-  "fingerprint": "8f63c069f80692df",
-  "date": "2026-11-18T10:13:28.070Z",
+  "fingerprint": "f3e9e8f3afb603c1",
+  "date": "2026-11-18T22:26:21.230Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "feature-pill-badge",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 4938
+    "ms": 1450
   },
   "build": {
     "ok": true,
-    "ms": 7729
+    "ms": 3101
   },
   "assertions": [
     {
@@ -48,25 +48,25 @@
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 14,
+    "turns": 10,
     "toolCalls": {
-      "Bash": 9,
+      "Bash": 5,
       "Write": 1,
       "Edit": 3
     },
     "toolKinds": {
-      "explore": 7,
+      "explore": 4,
       "edit": 4,
       "verify": 2,
       "other": 0
     },
-    "inputTokens": 1291,
-    "outputTokens": 5511,
-    "cacheReadTokens": 224169,
-    "cacheWriteTokens": 17067,
-    "toolOutputChars": 15585,
-    "costUsd": 0.007259664999999999,
-    "ms": 62346,
-    "apiMs": 30891
+    "inputTokens": 1287,
+    "outputTokens": 3590,
+    "cacheReadTokens": 151487,
+    "cacheWriteTokens": 12253,
+    "toolOutputChars": 8615,
+    "costUsd": 0.004970195,
+    "ms": 29905,
+    "apiMs": 20968
   }
 }

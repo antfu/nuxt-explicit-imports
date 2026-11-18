@@ -1,7 +1,7 @@
 {
   "config": "pi/gpt-5.3-codex",
-  "fingerprint": "c6575201a7adaefc",
-  "date": "2026-11-18T10:49:23.942Z",
+  "fingerprint": "d3f541703e830602",
+  "date": "2026-11-18T22:50:14.921Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "refactor-extract-cart-layer",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 2806
+    "ms": 1394
   },
   "build": {
     "ok": true,
-    "ms": 6295
+    "ms": 2932
   },
   "assertions": [
     {
@@ -67,26 +67,26 @@
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 25,
+    "turns": 18,
     "toolCalls": {
-      "bash": 11,
-      "read": 23,
+      "bash": 9,
+      "read": 27,
       "write": 1,
-      "edit": 16
+      "edit": 14
     },
     "toolKinds": {
-      "explore": 28,
-      "edit": 18,
-      "verify": 5,
+      "explore": 32,
+      "edit": 16,
+      "verify": 3,
       "other": 0
     },
-    "inputTokens": 44047,
-    "outputTokens": 6590,
-    "cacheReadTokens": 178176,
+    "inputTokens": 17055,
+    "outputTokens": 5517,
+    "cacheReadTokens": 136576,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 39143,
-    "costUsd": 0.20052304999999998,
-    "ms": 165422,
-    "apiMs": 144509
+    "toolOutputChars": 31066,
+    "costUsd": 0.13098505,
+    "ms": 84694,
+    "apiMs": 78292
   }
 }

@@ -1,7 +1,7 @@
 {
   "config": "pi/gemini-3.5-flash",
-  "fingerprint": "e3485ed8b309819d",
-  "date": "2026-11-18T11:04:50.113Z",
+  "fingerprint": "8267fe529e11cc26",
+  "date": "2026-11-18T23:01:42.106Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "feature-product-discount",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 3847
+    "ms": 2655
   },
   "build": {
     "ok": true,
-    "ms": 3763
+    "ms": 5475
   },
   "assertions": [
     {
@@ -40,25 +40,25 @@
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 24,
+    "turns": 22,
     "toolCalls": {
       "bash": 9,
-      "read": 13,
+      "read": 11,
       "edit": 1
     },
     "toolKinds": {
-      "explore": 17,
+      "explore": 16,
       "edit": 1,
-      "verify": 5,
+      "verify": 4,
       "other": 0
     },
-    "inputTokens": 116605,
-    "outputTokens": 6501,
-    "cacheReadTokens": 78108,
+    "inputTokens": 104592,
+    "outputTokens": 5592,
+    "cacheReadTokens": 38913,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 32428,
-    "costUsd": 0.2451327,
-    "ms": 96352,
-    "apiMs": 70274
+    "toolOutputChars": 29146,
+    "costUsd": 0.21305295,
+    "ms": 78561,
+    "apiMs": 59908
   }
 }

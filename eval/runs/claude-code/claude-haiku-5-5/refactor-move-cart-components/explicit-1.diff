@@ -1,14 +1,24 @@
 diff --git a/app/components/AppHeader.vue b/app/components/AppHeader.vue
-index b8e6755..cefe185 100644
+index 2aca959..630ae06 100644
 --- a/app/components/AppHeader.vue
 +++ b/app/components/AppHeader.vue
-@@ -1,5 +1,5 @@
+@@ -1,6 +1,6 @@
  <script setup lang="ts">
--import CartBadge from '~/components/cart/Badge.vue'
-+import CartBadge from '~/components/checkout/Badge.vue'
  import { NuxtLink } from '#components'
+-import CartBadge from '~/components/cart/Badge.vue'
++import CheckoutBadge from '~/components/checkout/Badge.vue'
  </script>
  
+ <template>
+@@ -9,7 +9,7 @@ import CartBadge from '~/components/cart/Badge.vue'
+       Shop
+     </NuxtLink>
+     <NuxtLink to="/cart">
+-      Cart <CartBadge />
++      Cart <CheckoutBadge />
+     </NuxtLink>
+   </header>
+ </template>
 diff --git a/app/components/cart/Badge.vue b/app/components/checkout/Badge.vue
 similarity index 100%
 rename from app/components/cart/Badge.vue
@@ -22,27 +32,56 @@ similarity index 100%
 rename from app/components/cart/Summary.vue
 rename to app/components/checkout/Summary.vue
 diff --git a/app/pages/cart.vue b/app/pages/cart.vue
-index bf378cb..a83db7c 100644
+index 2e2864b..7d041ff 100644
 --- a/app/pages/cart.vue
 +++ b/app/pages/cart.vue
-@@ -1,6 +1,6 @@
+@@ -1,7 +1,7 @@
  <script setup lang="ts">
+ import { NuxtLink } from '#components'
 -import CartItem from '~/components/cart/Item.vue'
 -import CartSummary from '~/components/cart/Summary.vue'
-+import CartItem from '~/components/checkout/Item.vue'
-+import CartSummary from '~/components/checkout/Summary.vue'
- import { useProducts } from '~/composables/useProducts'
++import CheckoutItem from '~/components/checkout/Item.vue'
++import CheckoutSummary from '~/components/checkout/Summary.vue'
  import { useCart } from '~/composables/useCart'
- import { NuxtLink } from '#components'
+ import { useProducts } from '~/composables/useProducts'
+ 
+@@ -13,7 +13,7 @@ const { lines } = useCart()
+   <div>
+     <h1>Cart</h1>
+     <ul v-if="lines.length">
+-      <CartItem
++      <CheckoutItem
+         v-for="line in lines"
+         :key="line.slug"
+         :line="line"
+@@ -23,7 +23,7 @@ const { lines } = useCart()
+     <p v-else id="cart-empty">
+       Your cart is empty.
+     </p>
+-    <CartSummary />
++    <CheckoutSummary />
+     <NuxtLink to="/checkout">
+       Checkout
+     </NuxtLink>
 diff --git a/app/pages/checkout.vue b/app/pages/checkout.vue
-index cf14bdf..690a191 100644
+index 5075987..c8f7005 100644
 --- a/app/pages/checkout.vue
 +++ b/app/pages/checkout.vue
-@@ -1,6 +1,6 @@
- <script setup lang="ts">
- import FormInput from '#layers/ui/app/components/form/Input.vue'
--import CartSummary from '~/components/cart/Summary.vue'
-+import CartSummary from '~/components/checkout/Summary.vue'
+@@ -5,7 +5,7 @@ import { useNotify } from '#layers/base/app/composables/useNotify'
  import UiBadge from '#layers/ui/app/components/UiBadge.vue'
  import UiButton from '#layers/ui/app/components/UiButton.vue'
- import { definePageMeta } from '#app/composables/pages'
+ import FormInput from '#layers/ui/app/components/form/Input.vue'
+-import CartSummary from '~/components/cart/Summary.vue'
++import CheckoutSummary from '~/components/checkout/Summary.vue'
+ import { useProducts } from '~/composables/useProducts'
+ 
+ definePageMeta({ middleware: 'cart-not-empty' })
+@@ -22,7 +22,7 @@ const { notify } = useNotify()
+       Secure checkout
+     </UiBadge>
+     <FormInput v-model="email" label="Email" />
+-    <CartSummary />
++    <CheckoutSummary />
+     <UiButton id="place-order" @click="notify(`Order placed for ${email}`)">
+       Place order
+     </UiButton>

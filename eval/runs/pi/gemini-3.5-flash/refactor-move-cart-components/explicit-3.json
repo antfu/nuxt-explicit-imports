@@ -1,7 +1,7 @@
 {
   "config": "pi/gemini-3.5-flash",
-  "fingerprint": "c698d22a4418e95b",
-  "date": "2026-11-18T11:12:01.812Z",
+  "fingerprint": "5f53e9913278a47b",
+  "date": "2026-11-18T23:07:06.113Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "refactor-move-cart-components",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 2998
+    "ms": 1441
   },
   "build": {
     "ok": true,
-    "ms": 4172
+    "ms": 2935
   },
   "assertions": [
     {
@@ -52,26 +52,26 @@
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 26,
+    "turns": 20,
     "toolCalls": {
-      "bash": 8,
-      "read": 11,
+      "bash": 7,
+      "read": 6,
       "write": 3,
       "edit": 3
     },
     "toolKinds": {
-      "explore": 16,
+      "explore": 9,
       "edit": 7,
-      "verify": 2,
+      "verify": 3,
       "other": 0
     },
-    "inputTokens": 108142,
-    "outputTokens": 4002,
-    "cacheReadTokens": 44777,
+    "inputTokens": 90611,
+    "outputTokens": 2880,
+    "cacheReadTokens": 7625,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 21794,
-    "costUsd": 0.20494754999999998,
-    "ms": 62664,
-    "apiMs": 52149
+    "toolOutputChars": 16505,
+    "costUsd": 0.16298025,
+    "ms": 48468,
+    "apiMs": 42938
   }
 }

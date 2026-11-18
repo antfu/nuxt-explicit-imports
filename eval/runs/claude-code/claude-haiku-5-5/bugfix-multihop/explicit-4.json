@@ -1,7 +1,7 @@
 {
   "config": "claude-code/claude-haiku-5-5",
-  "fingerprint": "87d6cf3f13881ab7",
-  "date": "2026-11-18T10:24:35.636Z",
+  "fingerprint": "ca1a67192beb4e80",
+  "date": "2026-11-18T22:34:38.866Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "bugfix-multihop",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 6649
+    "ms": 1426
   },
   "build": {
     "ok": true,
-    "ms": 10242
+    "ms": 2922
   },
   "assertions": [
     {
@@ -40,24 +40,24 @@
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 8,
+    "turns": 9,
     "toolCalls": {
-      "Bash": 6,
+      "Bash": 7,
       "Edit": 1
     },
     "toolKinds": {
       "explore": 6,
       "edit": 1,
-      "verify": 1,
+      "verify": 2,
       "other": 0
     },
-    "inputTokens": 1263,
-    "outputTokens": 3500,
-    "cacheReadTokens": 106156,
-    "cacheWriteTokens": 17394,
-    "toolOutputChars": 22111,
-    "costUsd": 0.00511211,
-    "ms": 36723,
-    "apiMs": 20088
+    "inputTokens": 1265,
+    "outputTokens": 3564,
+    "cacheReadTokens": 132391,
+    "cacheWriteTokens": 12247,
+    "toolOutputChars": 10721,
+    "costUsd": 0.004763285,
+    "ms": 25680,
+    "apiMs": 20263
   }
 }

@@ -1,0 +1,114 @@
+diff --git a/app/components/AppHeader.vue b/app/components/AppHeader.vue
+index 2aca959..543c1bb 100644
+--- a/app/components/AppHeader.vue
++++ b/app/components/AppHeader.vue
+@@ -1,6 +1,6 @@
+ <script setup lang="ts">
+ import { NuxtLink } from '#components'
+-import CartBadge from '~/components/cart/Badge.vue'
++import CartBadge from '#layers/cart/app/components/cart/Badge.vue'
+ </script>
+ 
+ <template>
+diff --git a/app/components/cart/Badge.vue b/layers/cart/app/components/cart/Badge.vue
+similarity index 80%
+rename from app/components/cart/Badge.vue
+rename to layers/cart/app/components/cart/Badge.vue
+index bb15a42..8ebb826 100644
+--- a/app/components/cart/Badge.vue
++++ b/layers/cart/app/components/cart/Badge.vue
+@@ -1,6 +1,6 @@
+ <script setup lang="ts">
+ import UiBadge from '#layers/ui/app/components/UiBadge.vue'
+-import { useCart } from '~/composables/useCart'
++import { useCart } from '../../composables/useCart'
+ 
+ const { count } = useCart()
+ </script>
+diff --git a/app/components/cart/Item.vue b/layers/cart/app/components/cart/Item.vue
+similarity index 93%
+rename from app/components/cart/Item.vue
+rename to layers/cart/app/components/cart/Item.vue
+index 7f67f76..7487bab 100644
+--- a/app/components/cart/Item.vue
++++ b/layers/cart/app/components/cart/Item.vue
+@@ -3,7 +3,7 @@ import type { CartLine } from '#shared/types/cart'
+ import type { Product } from '#shared/types/product'
+ import { computed } from 'vue'
+ import UiButton from '#layers/ui/app/components/UiButton.vue'
+-import { useCart } from '~/composables/useCart'
++import { useCart } from '../../composables/useCart'
+ import { formatMoney } from '~/utils/money'
+ 
+ const props = defineProps<{ line: CartLine, product?: Product }>()
+diff --git a/app/components/cart/Summary.vue b/layers/cart/app/components/cart/Summary.vue
+similarity index 79%
+rename from app/components/cart/Summary.vue
+rename to layers/cart/app/components/cart/Summary.vue
+index 1a258f7..39ce664 100644
+--- a/app/components/cart/Summary.vue
++++ b/layers/cart/app/components/cart/Summary.vue
+@@ -1,6 +1,6 @@
+ <script setup lang="ts">
+-import { useCartTotal } from '~/composables/useCartTotal'
+-import { formatDiscount } from '~/utils/discount'
++import { useCartTotal } from '../../composables/useCartTotal'
++import { formatDiscount } from '../../utils/discount'
+ import { formatMoney } from '~/utils/money'
+ 
+ const { subtotal, total, percent } = useCartTotal()
+diff --git a/app/composables/useCart.ts b/layers/cart/app/composables/useCart.ts
+similarity index 100%
+rename from app/composables/useCart.ts
+rename to layers/cart/app/composables/useCart.ts
+diff --git a/app/composables/useCartTotal.ts b/layers/cart/app/composables/useCartTotal.ts
+similarity index 81%
+rename from app/composables/useCartTotal.ts
+rename to layers/cart/app/composables/useCartTotal.ts
+index f2c3423..8258362 100644
+--- a/app/composables/useCartTotal.ts
++++ b/layers/cart/app/composables/useCartTotal.ts
+@@ -2,9 +2,9 @@ import type { Product } from '#shared/types/product'
+ import { computed } from 'vue'
+ import { useNuxtData } from '#imports'
+ import { sumBy } from '#shared/utils/math'
+-import { useCart } from '~/composables/useCart'
+-import { useDiscount } from '~/composables/useDiscount'
+-import { applyDiscount } from '~/utils/discount'
++import { useCart } from './useCart'
++import { useDiscount } from './useDiscount'
++import { applyDiscount } from '../utils/discount'
+ 
+ /** Cart totals in cents, as shown to the customer. */
+ export function useCartTotal() {
+diff --git a/app/composables/useDiscount.ts b/layers/cart/app/composables/useDiscount.ts
+similarity index 100%
+rename from app/composables/useDiscount.ts
+rename to layers/cart/app/composables/useDiscount.ts
+diff --git a/app/middleware/cart-not-empty.ts b/layers/cart/app/middleware/cart-not-empty.ts
+similarity index 80%
+rename from app/middleware/cart-not-empty.ts
+rename to layers/cart/app/middleware/cart-not-empty.ts
+index 316ee13..70ecd9c 100644
+--- a/app/middleware/cart-not-empty.ts
++++ b/layers/cart/app/middleware/cart-not-empty.ts
+@@ -1,5 +1,5 @@
+ import { defineNuxtRouteMiddleware, navigateTo } from '#imports'
+-import { useCart } from '~/composables/useCart'
++import { useCart } from '../composables/useCart'
+ 
+ export default defineNuxtRouteMiddleware(() => {
+   const { count } = useCart()
+diff --git a/app/utils/discount.ts b/layers/cart/app/utils/discount.ts
+similarity index 100%
+rename from app/utils/discount.ts
+rename to layers/cart/app/utils/discount.ts
+diff --git a/layers/cart/nuxt.config.ts b/layers/cart/nuxt.config.ts
+new file mode 100644
+index 0000000..4c0ad4a
+--- /dev/null
++++ b/layers/cart/nuxt.config.ts
+@@ -0,0 +1,3 @@
++export default defineNuxtConfig({
++  components: { dirs: [] },
++})

@@ -1,41 +1,31 @@
 diff --git a/app/pages/products/[slug].vue b/app/pages/products/[slug].vue
-index cb8815d..d4d68e4 100644
+index e736df9..d21c250 100644
 --- a/app/pages/products/[slug].vue
 +++ b/app/pages/products/[slug].vue
-@@ -4,14 +4,26 @@ import ProductPrice from '~/components/product/Price.vue'
- import UiBadge from '#layers/ui/app/components/UiBadge.vue'
- import UiButton from '#layers/ui/app/components/UiButton.vue'
+@@ -7,11 +7,14 @@ import UiButton from '#layers/ui/app/components/UiButton.vue'
  import UiCard from '#layers/ui/app/components/UiCard.vue'
-+import { computed } from 'vue'
- import { useRoute, useFetch } from '#app'
+ import ProductPrice from '~/components/product/Price.vue'
  import { useCart } from '~/composables/useCart'
 +import { useDiscount } from '~/composables/useDiscount'
- import { useNotify } from '#layers/base/app/composables/useNotify'
 +import { applyDiscount } from '~/utils/discount'
-+import { formatMoney } from '~/utils/money'
  
  const route = useRoute()
  const { data: product } = await useFetch<Product & { price: string }>(`/api/products/${route.params.slug}`)
  const { add } = useCart()
  const { notify } = useNotify()
 +const { percent } = useDiscount()
-+
-+/** Price after the active discount code, computed exactly like the cart total. */
-+const discountedPrice = computed(() => {
-+  if (!product.value)
-+    return ''
-+  return formatMoney(applyDiscount(product.value.priceCents, percent.value))
-+})
  
  function addToCart() {
    if (!product.value)
-@@ -25,6 +37,9 @@ function addToCart() {
+@@ -25,6 +28,11 @@ function addToCart() {
    <UiCard v-if="product">
      <h1>{{ product.name }}</h1>
      <ProductPrice id="price" :cents="product.priceCents" />
-+    <p v-if="percent" id="discounted">
-+      {{ discountedPrice }}
-+    </p>
++    <ProductPrice
++      v-if="percent"
++      id="discounted"
++      :cents="applyDiscount(product.priceCents, percent)"
++    />
      <UiBadge class="stock">
        In stock
      </UiBadge>

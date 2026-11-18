@@ -1,15 +1,12 @@
 diff --git a/app/pages/products/[slug].vue b/app/pages/products/[slug].vue
-index cb8815d..88e00b9 100644
+index e736df9..81b052f 100644
 --- a/app/pages/products/[slug].vue
 +++ b/app/pages/products/[slug].vue
-@@ -5,13 +5,20 @@ import UiBadge from '#layers/ui/app/components/UiBadge.vue'
- import UiButton from '#layers/ui/app/components/UiButton.vue'
+@@ -7,11 +7,15 @@ import UiButton from '#layers/ui/app/components/UiButton.vue'
  import UiCard from '#layers/ui/app/components/UiCard.vue'
- import { useRoute, useFetch } from '#app'
-+import { computed } from 'vue'
+ import ProductPrice from '~/components/product/Price.vue'
  import { useCart } from '~/composables/useCart'
 +import { useDiscount } from '~/composables/useDiscount'
- import { useNotify } from '#layers/base/app/composables/useNotify'
 +import { applyDiscount } from '~/utils/discount'
 +import { formatMoney } from '~/utils/money'
  
@@ -18,17 +15,15 @@ index cb8815d..88e00b9 100644
  const { add } = useCart()
  const { notify } = useNotify()
 +const { percent } = useDiscount()
-+// Same computation as the cart total (`useCartTotal`), for a single unit.
-+const discountedCents = computed(() => applyDiscount(product.value?.priceCents ?? 0, percent.value))
  
  function addToCart() {
    if (!product.value)
-@@ -25,6 +32,9 @@ function addToCart() {
+@@ -25,6 +29,9 @@ function addToCart() {
    <UiCard v-if="product">
      <h1>{{ product.name }}</h1>
      <ProductPrice id="price" :cents="product.priceCents" />
 +    <p v-if="percent" id="discounted">
-+      {{ formatMoney(discountedCents) }}
++      {{ formatMoney(applyDiscount(product.priceCents, percent)) }}
 +    </p>
      <UiBadge class="stock">
        In stock

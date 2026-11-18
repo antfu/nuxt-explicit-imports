@@ -1,12 +1,18 @@
 diff --git a/app/pages/products/[slug].vue b/app/pages/products/[slug].vue
-index cb8815d..14ab666 100644
+index e736df9..049e0ba 100644
 --- a/app/pages/products/[slug].vue
 +++ b/app/pages/products/[slug].vue
-@@ -7,11 +7,22 @@ import UiCard from '#layers/ui/app/components/UiCard.vue'
- import { useRoute, useFetch } from '#app'
- import { useCart } from '~/composables/useCart'
- import { useNotify } from '#layers/base/app/composables/useNotify'
+@@ -1,5 +1,6 @@
+ <script setup lang="ts">
+ import type { Product } from '#shared/types/product'
 +import { computed } from 'vue'
+ import { useFetch, useRoute } from '#imports'
+ import { useNotify } from '#layers/base/app/composables/useNotify'
+ import UiBadge from '#layers/ui/app/components/UiBadge.vue'
+@@ -7,11 +8,21 @@ import UiButton from '#layers/ui/app/components/UiButton.vue'
+ import UiCard from '#layers/ui/app/components/UiCard.vue'
+ import ProductPrice from '~/components/product/Price.vue'
+ import { useCart } from '~/composables/useCart'
 +import { useDiscount } from '~/composables/useDiscount'
 +import { applyDiscount } from '~/utils/discount'
 +import { formatMoney } from '~/utils/money'

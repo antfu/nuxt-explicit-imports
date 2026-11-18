@@ -1,7 +1,7 @@
 {
   "config": "claude-code/claude-haiku-5-5",
-  "fingerprint": "3c9d6b17e40f4188",
-  "date": "2026-11-18T09:54:11.754Z",
+  "fingerprint": "df5787276284ea47",
+  "date": "2026-11-18T22:17:11.376Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "feature-deals-page",
@@ -9,14 +9,14 @@
   "fixture": "shop",
   "arm": "explicit",
   "trial": 3,
-  "pass": false,
+  "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 3596
+    "ms": 1440
   },
   "build": {
     "ok": true,
-    "ms": 8646
+    "ms": 2961
   },
   "assertions": [
     {
@@ -37,8 +37,7 @@
     },
     {
       "name": "3 \"Deal\" badges",
-      "ok": false,
-      "detail": "0 found"
+      "ok": true
     },
     {
       "name": "#deal-discount shows 10%",
@@ -53,24 +52,24 @@
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 13,
+    "turns": 9,
     "toolCalls": {
-      "Bash": 11,
+      "Bash": 7,
       "Write": 1
     },
     "toolKinds": {
-      "explore": 8,
-      "edit": 3,
+      "explore": 3,
+      "edit": 2,
       "verify": 3,
       "other": 0
     },
-    "inputTokens": 1331,
-    "outputTokens": 8180,
-    "cacheReadTokens": 365334,
-    "cacheWriteTokens": 21241,
-    "toolOutputChars": 20456,
-    "costUsd": 0.010531565,
-    "ms": 81504,
-    "apiMs": 53067
+    "inputTokens": 1323,
+    "outputTokens": 6237,
+    "cacheReadTokens": 227488,
+    "cacheWriteTokens": 17905,
+    "toolOutputChars": 16896,
+    "costUsd": 0.007763805,
+    "ms": 44515,
+    "apiMs": 34915
   }
 }

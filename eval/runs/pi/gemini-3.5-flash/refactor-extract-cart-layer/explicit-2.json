@@ -1,7 +1,7 @@
 {
   "config": "pi/gemini-3.5-flash",
-  "fingerprint": "c6575201a7adaefc",
-  "date": "2026-11-18T11:25:27.899Z",
+  "fingerprint": "d3f541703e830602",
+  "date": "2026-11-18T23:17:43.321Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "refactor-extract-cart-layer",
@@ -11,18 +11,18 @@
   "trial": 2,
   "pass": false,
   "typecheck": {
-    "ok": true,
-    "ms": 3748
+    "ok": false,
+    "ms": 1442
   },
   "build": {
     "ok": true,
-    "ms": 7957
+    "ms": 2939
   },
   "assertions": [
     {
       "name": "every cart file is in layers/cart/app/",
       "ok": false,
-      "detail": "composables/useCart.ts, composables/useCartTotal.ts, composables/useDiscount.ts, components/cart/Badge.vue, components/cart/Item.vue, components/cart/Summary.vue, utils/discount.ts, middleware/cart-not-empty.ts"
+      "detail": "components/cart/Badge.vue, components/cart/Item.vue, components/cart/Summary.vue, utils/discount.ts, middleware/cart-not-empty.ts"
     },
     {
       "name": "no cart file left in app/",
@@ -63,28 +63,30 @@
     }
   ],
   "errorsDuringRun": {},
-  "errorsAtEnd": {},
+  "errorsAtEnd": {
+    "bad-module-path": 1
+  },
   "agent": {
     "stop": "error_max_turns",
     "turns": 41,
     "toolCalls": {
-      "bash": 17,
+      "bash": 14,
       "read": 22,
-      "write": 1
+      "write": 4
     },
     "toolKinds": {
-      "explore": 37,
-      "edit": 1,
+      "explore": 33,
+      "edit": 4,
       "verify": 2,
-      "other": 0
+      "other": 1
     },
-    "inputTokens": 185053,
-    "outputTokens": 8124,
-    "cacheReadTokens": 302606,
+    "inputTokens": 149730,
+    "outputTokens": 7620,
+    "cacheReadTokens": 356855,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 59967,
-    "costUsd": 0.39608639999999984,
-    "ms": 102460,
-    "apiMs": 93451
+    "toolOutputChars": 33489,
+    "costUsd": 0.3467032500000001,
+    "ms": 85798,
+    "apiMs": 80251
   }
 }

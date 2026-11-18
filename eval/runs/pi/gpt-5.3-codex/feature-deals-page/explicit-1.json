@@ -1,7 +1,7 @@
 {
   "config": "pi/gpt-5.3-codex",
-  "fingerprint": "3c9d6b17e40f4188",
-  "date": "2026-11-18T10:30:29.556Z",
+  "fingerprint": "df5787276284ea47",
+  "date": "2026-11-18T22:38:25.687Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "feature-deals-page",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 3599
+    "ms": 1555
   },
   "build": {
     "ok": true,
-    "ms": 7063
+    "ms": 3126
   },
   "assertions": [
     {
@@ -52,25 +52,25 @@
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 12,
+    "turns": 10,
     "toolCalls": {
-      "bash": 6,
-      "read": 20,
+      "bash": 5,
+      "read": 9,
       "write": 1
     },
     "toolKinds": {
-      "explore": 24,
+      "explore": 12,
       "edit": 1,
       "verify": 2,
       "other": 0
     },
-    "inputTokens": 14390,
-    "outputTokens": 1860,
-    "cacheReadTokens": 35840,
+    "inputTokens": 9879,
+    "outputTokens": 1584,
+    "cacheReadTokens": 27136,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 22452,
-    "costUsd": 0.057494500000000004,
-    "ms": 60217,
-    "apiMs": 45624
+    "toolOutputChars": 17142,
+    "costUsd": 0.04421304999999999,
+    "ms": 31467,
+    "apiMs": 26633
   }
 }

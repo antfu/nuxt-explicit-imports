@@ -1,7 +1,7 @@
 {
   "config": "claude-code/claude-haiku-5-5",
-  "fingerprint": "c698d22a4418e95b",
-  "date": "2026-11-18T10:06:52.460Z",
+  "fingerprint": "5f53e9913278a47b",
+  "date": "2026-11-18T22:23:19.366Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "refactor-move-cart-components",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 1712
+    "ms": 1432
   },
   "build": {
     "ok": true,
-    "ms": 6887
+    "ms": 2957
   },
   "assertions": [
     {
@@ -52,24 +52,23 @@
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 16,
+    "turns": 9,
     "toolCalls": {
-      "Bash": 8,
-      "Edit": 7
+      "Bash": 8
     },
     "toolKinds": {
-      "explore": 7,
-      "edit": 8,
-      "verify": 3,
+      "explore": 5,
+      "edit": 4,
+      "verify": 2,
       "other": 0
     },
-    "inputTokens": 1255,
-    "outputTokens": 6167,
-    "cacheReadTokens": 195946,
-    "cacheWriteTokens": 17723,
-    "toolOutputChars": 16235,
-    "costUsd": 0.007383835000000001,
-    "ms": 77867,
-    "apiMs": 33247
+    "inputTokens": 1257,
+    "outputTokens": 5133,
+    "cacheReadTokens": 215415,
+    "cacheWriteTokens": 22100,
+    "toolOutputChars": 28260,
+    "costUsd": 0.00760885,
+    "ms": 45402,
+    "apiMs": 31980
   }
 }

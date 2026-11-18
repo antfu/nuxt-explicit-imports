@@ -1,7 +1,7 @@
 {
   "config": "pi/gemini-3.5-flash",
-  "fingerprint": "3c9d6b17e40f4188",
-  "date": "2026-11-18T11:00:37.425Z",
+  "fingerprint": "df5787276284ea47",
+  "date": "2026-11-18T22:58:23.841Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "feature-deals-page",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 4414
+    "ms": 1457
   },
   "build": {
     "ok": true,
-    "ms": 10329
+    "ms": 3009
   },
   "assertions": [
     {
@@ -51,26 +51,26 @@
   "errorsDuringRun": {},
   "errorsAtEnd": {},
   "agent": {
-    "stop": "error_max_turns",
-    "turns": 41,
+    "stop": "success",
+    "turns": 28,
     "toolCalls": {
-      "bash": 16,
-      "read": 23,
+      "bash": 9,
+      "read": 17,
       "write": 1
     },
     "toolKinds": {
-      "explore": 34,
+      "explore": 23,
       "edit": 1,
-      "verify": 5,
+      "verify": 3,
       "other": 0
     },
-    "inputTokens": 205220,
-    "outputTokens": 7764,
-    "cacheReadTokens": 224349,
+    "inputTokens": 124459,
+    "outputTokens": 7050,
+    "cacheReadTokens": 76657,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 36726,
-    "costUsd": 0.41135834999999993,
-    "ms": 112965,
-    "apiMs": 90710
+    "toolOutputChars": 26214,
+    "costUsd": 0.26163705,
+    "ms": 67693,
+    "apiMs": 61080
   }
 }

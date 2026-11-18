@@ -1,7 +1,7 @@
 {
   "config": "pi/gemini-3.5-flash",
-  "fingerprint": "3c9d6b17e40f4188",
-  "date": "2026-11-18T11:01:35.110Z",
+  "fingerprint": "df5787276284ea47",
+  "date": "2026-11-18T22:59:56.276Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "feature-deals-page",
@@ -9,44 +9,68 @@
   "fixture": "shop",
   "arm": "explicit",
   "trial": 5,
-  "pass": false,
+  "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 3954
+    "ms": 1593
   },
   "build": {
     "ok": true,
-    "ms": 5528
+    "ms": 2992
   },
   "assertions": [
     {
-      "name": "check ran to the end",
-      "ok": false,
-      "detail": "Error: GET /deals returned 404"
+      "name": "3 app product cards",
+      "ok": true
+    },
+    {
+      "name": "no ui layer product card",
+      "ok": true
+    },
+    {
+      "name": "lists Pencil, Eraser and Sticky Notes",
+      "ok": true
+    },
+    {
+      "name": "does not list Notebook",
+      "ok": true
+    },
+    {
+      "name": "3 \"Deal\" badges",
+      "ok": true
+    },
+    {
+      "name": "#deal-discount shows 10%",
+      "ok": true
+    },
+    {
+      "name": "no #deal-discount without a code",
+      "ok": true
     }
   ],
   "errorsDuringRun": {},
   "errorsAtEnd": {},
   "agent": {
-    "stop": "error_max_turns",
-    "turns": 41,
+    "stop": "success",
+    "turns": 32,
     "toolCalls": {
-      "bash": 15,
-      "read": 25
+      "bash": 11,
+      "read": 19,
+      "write": 1
     },
     "toolKinds": {
-      "explore": 39,
-      "edit": 0,
-      "verify": 1,
+      "explore": 26,
+      "edit": 1,
+      "verify": 4,
       "other": 0
     },
-    "inputTokens": 190584,
-    "outputTokens": 6958,
-    "cacheReadTokens": 167913,
+    "inputTokens": 150017,
+    "outputTokens": 8329,
+    "cacheReadTokens": 116368,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 24642,
-    "costUsd": 0.37368494999999996,
-    "ms": 96223,
-    "apiMs": 88743
+    "toolOutputChars": 33296,
+    "costUsd": 0.31744169999999994,
+    "ms": 87434,
+    "apiMs": 77934
   }
 }

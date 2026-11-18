@@ -1,7 +1,7 @@
 {
   "config": "pi/gemini-3.5-flash",
-  "fingerprint": "8f63c069f80692df",
-  "date": "2026-11-18T11:21:27.795Z",
+  "fingerprint": "f3e9e8f3afb603c1",
+  "date": "2026-11-18T23:15:16.359Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "feature-pill-badge",
@@ -9,14 +9,14 @@
   "fixture": "shop",
   "arm": "explicit",
   "trial": 3,
-  "pass": false,
+  "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 1614
+    "ms": 1420
   },
   "build": {
     "ok": true,
-    "ms": 4573
+    "ms": 2923
   },
   "assertions": [
     {
@@ -33,13 +33,11 @@
     },
     {
       "name": "/products/notebook: every badge is a pill",
-      "ok": false,
-      "detail": "1/2 pills"
+      "ok": true
     },
     {
       "name": "/checkout: every badge is a pill",
-      "ok": false,
-      "detail": "1/2 pills"
+      "ok": true
     },
     {
       "name": "header badge still shows 3",
@@ -49,27 +47,27 @@
   "errorsDuringRun": {},
   "errorsAtEnd": {},
   "agent": {
-    "stop": "error_max_turns",
-    "turns": 41,
+    "stop": "success",
+    "turns": 25,
     "toolCalls": {
-      "bash": 28,
+      "bash": 10,
       "read": 10,
       "write": 1,
-      "edit": 1
+      "edit": 3
     },
     "toolKinds": {
-      "explore": 29,
-      "edit": 3,
-      "verify": 5,
-      "other": 3
+      "explore": 17,
+      "edit": 4,
+      "verify": 3,
+      "other": 0
     },
-    "inputTokens": 190844,
-    "outputTokens": 7134,
-    "cacheReadTokens": 295698,
+    "inputTokens": 97133,
+    "outputTokens": 5194,
+    "cacheReadTokens": 60633,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 79636,
-    "costUsd": 0.39482670000000014,
-    "ms": 107651,
-    "apiMs": 91739
+    "toolOutputChars": 18800,
+    "costUsd": 0.20154045,
+    "ms": 54164,
+    "apiMs": 47727
   }
 }

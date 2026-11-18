@@ -1,7 +1,7 @@
 {
   "config": "claude-code/claude-sonnet-5-5",
-  "fingerprint": "4c31107eb27ebd20",
-  "date": "2026-11-18T07:17:38.042Z",
+  "fingerprint": "2429e90a59cb15d0",
+  "date": "2026-11-18T22:09:00.531Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "refactor-rename-cart",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 4257
+    "ms": 1550
   },
   "build": {
     "ok": true,
-    "ms": 8118
+    "ms": 3154
   },
   "assertions": [
     {
@@ -57,8 +57,8 @@
     }
   ],
   "errorsDuringRun": {
-    "bad-module-path": 6,
-    "other-ts": 2
+    "other-ts": 2,
+    "bad-module-path": 3
   },
   "errorsAtEnd": {},
   "agent": {
@@ -74,12 +74,12 @@
       "other": 0
     },
     "inputTokens": 1264,
-    "outputTokens": 896,
-    "cacheReadTokens": 76152,
-    "cacheWriteTokens": 6694,
-    "toolOutputChars": 6108,
-    "costUsd": 0.0358382,
-    "ms": 39297,
-    "apiMs": 11660
+    "outputTokens": 1006,
+    "cacheReadTokens": 75514,
+    "cacheWriteTokens": 6166,
+    "toolOutputChars": 4405,
+    "costUsd": 0.0355544,
+    "ms": 21631,
+    "apiMs": 15002
   }
 }

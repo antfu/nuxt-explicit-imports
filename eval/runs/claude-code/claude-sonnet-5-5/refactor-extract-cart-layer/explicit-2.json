@@ -1,7 +1,7 @@
 {
   "config": "claude-code/claude-sonnet-5-5",
-  "fingerprint": "c6575201a7adaefc",
-  "date": "2026-11-18T07:17:38.042Z",
+  "fingerprint": "d3f541703e830602",
+  "date": "2026-11-18T22:12:33.688Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "refactor-extract-cart-layer",
@@ -9,19 +9,20 @@
   "fixture": "shop",
   "arm": "explicit",
   "trial": 2,
-  "pass": true,
+  "pass": false,
   "typecheck": {
     "ok": true,
-    "ms": 3092
+    "ms": 1446
   },
   "build": {
     "ok": true,
-    "ms": 10762
+    "ms": 2987
   },
   "assertions": [
     {
       "name": "every cart file is in layers/cart/app/",
-      "ok": true
+      "ok": false,
+      "detail": "components/cart/Badge.vue, components/cart/Item.vue, components/cart/Summary.vue"
     },
     {
       "name": "no cart file left in app/",
@@ -61,29 +62,29 @@
     }
   ],
   "errorsDuringRun": {
-    "bad-module-path": 13,
-    "other-ts": 2
+    "bad-module-path": 26,
+    "other-ts": 4
   },
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 9,
+    "turns": 6,
     "toolCalls": {
-      "Bash": 8
+      "Bash": 5
     },
     "toolKinds": {
-      "explore": 7,
-      "edit": 2,
-      "verify": 2,
+      "explore": 4,
+      "edit": 3,
+      "verify": 3,
       "other": 0
     },
-    "inputTokens": 1387,
-    "outputTokens": 2581,
-    "cacheReadTokens": 205634,
-    "cacheWriteTokens": 12832,
-    "toolOutputChars": 16188,
-    "costUsd": 0.0812274,
-    "ms": 48015,
-    "apiMs": 31096
+    "inputTokens": 1381,
+    "outputTokens": 2254,
+    "cacheReadTokens": 131328,
+    "cacheWriteTokens": 13395,
+    "toolOutputChars": 18042,
+    "costUsd": 0.0719223,
+    "ms": 32046,
+    "apiMs": 22432
   }
 }

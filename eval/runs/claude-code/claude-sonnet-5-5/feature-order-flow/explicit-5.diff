@@ -1,22 +1,27 @@
 diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
 new file mode 100644
-index 0000000..59b4c1c
+index 0000000..ddaf146
 --- /dev/null
 +++ b/app/pages/orders/[id].vue
-@@ -0,0 +1,26 @@
+@@ -0,0 +1,31 @@
 +<script setup lang="ts">
-+import { useRoute, useFetch } from '#app'
-+
-+interface OrderView {
-+  id: string
-+  subtotal: string
-+  discount: string
-+  total: string
-+  lines: Array<{ slug: string, qty: number, name: string }>
-+}
++import type { Order } from '#server/utils/orders'
++import { useFetch, useRoute } from '#imports'
++import { useProducts } from '~/composables/useProducts'
++import { formatMoney } from '~/utils/money'
 +
 +const route = useRoute()
-+const { data: order } = await useFetch<OrderView>(`/api/orders/${route.params.id}`)
++const { data: order } = await useFetch<Order>(`/api/orders/${route.params.id}`)
++const { data: products } = await useProducts()
++
++function nameOf(slug: string) {
++  return products.value.find(p => p.slug === slug)?.name ?? slug
++}
++
++/** Server amounts look like `19.99 USD`; show them in the UI money format. */
++function show(amount: string) {
++  return formatMoney(Math.round(Number.parseFloat(amount) * 100))
++}
 +</script>
 +
 +<template>
@@ -24,19 +29,19 @@ index 0000000..59b4c1c
 +    <h1>Order {{ order.id }}</h1>
 +    <ul>
 +      <li v-for="line in order.lines" :key="line.slug" class="order-line">
-+        {{ line.name }} × {{ line.qty }}
++        {{ nameOf(line.slug) }} × {{ line.qty }}
 +      </li>
 +    </ul>
-+    <p>Total: <span id="order-total">{{ order.total }}</span></p>
++    <p>Total: <span id="order-total">{{ show(order.total) }}</span></p>
 +  </div>
 +</template>
 diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
 new file mode 100644
-index 0000000..47ae93a
+index 0000000..630cc96
 --- /dev/null
 +++ b/server/api/orders/[id].get.ts
 @@ -0,0 +1,9 @@
-+import { defineEventHandler, getRouterParam, createError } from 'h3'
++import { createError, defineEventHandler, getRouterParam } from 'h3'
 +import { findOrder } from '#server/utils/orders'
 +
 +export default defineEventHandler((event) => {
@@ -47,44 +52,37 @@ index 0000000..47ae93a
 +})
 diff --git a/server/api/orders/index.post.ts b/server/api/orders/index.post.ts
 new file mode 100644
-index 0000000..f6abb46
+index 0000000..3ff7e88
 --- /dev/null
 +++ b/server/api/orders/index.post.ts
-@@ -0,0 +1,9 @@
+@@ -0,0 +1,8 @@
 +import type { CartLine } from '#shared/types/cart'
 +import { defineEventHandler, readBody } from 'h3'
 +import { createOrder } from '#server/utils/orders'
 +
 +export default defineEventHandler(async (event) => {
 +  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)
-+  const { id, subtotal, discount, total } = createOrder(body?.lines ?? [], body?.code)
-+  return { id, subtotal, discount, total }
++  return createOrder(body?.lines ?? [], body?.code)
 +})
 diff --git a/server/utils/orders.ts b/server/utils/orders.ts
 new file mode 100644
-index 0000000..72f7142
+index 0000000..ef3f156
 --- /dev/null
 +++ b/server/utils/orders.ts
-@@ -0,0 +1,26 @@
+@@ -0,0 +1,20 @@
 +import type { CartLine } from '#shared/types/cart'
-+import { computeQuote } from '#server/utils/quote'
 +import type { Quote } from '#server/utils/quote'
-+import { findProduct } from '#server/utils/db'
++import { computeQuote } from '#server/utils/quote'
 +
 +export interface Order extends Quote {
 +  id: string
-+  lines: Array<CartLine & { name: string }>
++  lines: CartLine[]
 +}
 +
 +const orders = new Map<string, Order>()
 +
 +export function createOrder(lines: CartLine[], code?: string): Order {
-+  const quote = computeQuote(lines, code)
-+  const order: Order = {
-+    id: String(orders.size + 1),
-+    ...quote,
-+    lines: lines.map(l => ({ ...l, name: findProduct(l.slug)?.name ?? l.slug })),
-+  }
++  const order: Order = { id: crypto.randomUUID(), lines, ...computeQuote(lines, code) }
 +  orders.set(order.id, order)
 +  return order
 +}
