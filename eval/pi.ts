@@ -6,6 +6,7 @@ import process from 'node:process'
 import { createInterface } from 'node:readline'
 import { join } from 'pathe'
 import { APPEND, emptyMetrics, recordCall, recordOutput, toolResultText } from './metrics'
+import { withoutSecrets } from './secrets'
 import { repoRoot } from './workspace'
 
 const CLI = join(repoRoot, 'node_modules/@earendil-works/pi-coding-agent/dist/bundle/cli.js')
@@ -107,11 +108,15 @@ export async function runPi(prompt: string, cwd: string, options: AgentOptions):
     options.model,
     '--append-system-prompt',
     APPEND,
+    // The key goes in as a flag, and every secret leaves the env, so the agent's bash cannot print it with `env`.
+    ...(process.env.AI_GATEWAY_API_KEY
+      ? ['--api-key', process.env.AI_GATEWAY_API_KEY]
+      : []),
     prompt,
   ], {
     cwd,
     env: {
-      ...process.env,
+      ...withoutSecrets(process.env),
       PI_CODING_AGENT_DIR: configDir,
       NO_COLOR: '1',
       CI: '1',

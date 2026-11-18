@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto'
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'pathe'
 import { glob } from 'tinyglobby'
+import { redact } from './secrets'
 import { repoRoot } from './workspace'
 
 /** One file set per run: `<config>/<task>/<arm>-<trial>.json`, with `.diff`, `.tools.json` and `.gates.log` next to it. */
@@ -60,12 +61,15 @@ export async function readRun(config: string, task: string, arm: Arm, trial: num
   }
 }
 
-/** Write a run and its files. A file the run does not have, like the gate log of a passing run, is removed. */
+/**
+ * Write a run and its files, with secret env values redacted. A file the run does not have,
+ * like the gate log of a passing run, is removed.
+ */
 export async function saveRun(files: RunFiles): Promise<void> {
   const { result } = files
   const path = base(result.config, result.task, result.arm, result.trial)
   await mkdir(dirname(path), { recursive: true })
-  await writeFile(`${path}.json`, `${JSON.stringify(result, null, 2)}\n`)
+  await writeFile(`${path}.json`, redact(`${JSON.stringify(result, null, 2)}\n`))
   const extra: [string, string | undefined][] = [
     ['.diff', files.diff],
     ['.tools.json', files.calls && `${JSON.stringify(files.calls, null, 2)}\n`],
@@ -75,7 +79,7 @@ export async function saveRun(files: RunFiles): Promise<void> {
     if (content === undefined)
       await rm(`${path}${ext}`, { force: true })
     else
-      await writeFile(`${path}${ext}`, content)
+      await writeFile(`${path}${ext}`, redact(content))
   }
 }
 

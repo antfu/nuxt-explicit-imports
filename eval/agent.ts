@@ -3,21 +3,29 @@ import type { AgentMetrics, AgentOptions } from './types'
 import process from 'node:process'
 import { query } from '@anthropic-ai/claude-agent-sdk'
 import { APPEND, emptyMetrics, recordCall, recordOutput, toolResultText } from './metrics'
+import { withoutSecrets } from './secrets'
 
 const GATEWAY_URL = 'https://ai-gateway.vercel.sh'
 
 /**
- * The env of the agent process. With only `AI_GATEWAY_API_KEY` set, route through the Vercel AI Gateway.
+ * The env of the agent process: no secrets but the one credential Claude Code uses.
+ * Its Bash tool inherits that one, so `saveRun` redacts it. `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`
+ * would hide it, but also blocks commands like `env` or `${VAR}`, which the Sonnet runs did not have.
+ * With only `AI_GATEWAY_API_KEY` set, route through the Vercel AI Gateway.
  * With a gateway token, drop `ANTHROPIC_API_KEY`: Claude Code sends it as `x-api-key` and the gateway rejects it.
  */
 function agentEnv(env: NodeJS.ProcessEnv = process.env): Record<string, string | undefined> {
-  const out: Record<string, string | undefined> = { ...env, NO_COLOR: '1', CI: '1' }
-  if (env.AI_GATEWAY_API_KEY && !env.ANTHROPIC_BASE_URL) {
-    out.ANTHROPIC_BASE_URL = GATEWAY_URL
-    out.ANTHROPIC_AUTH_TOKEN = env.AI_GATEWAY_API_KEY
+  const out: Record<string, string | undefined> = {
+    ...withoutSecrets(env),
+    NO_COLOR: '1',
+    CI: '1',
   }
-  if (out.ANTHROPIC_AUTH_TOKEN)
-    delete out.ANTHROPIC_API_KEY
+  if (env.ANTHROPIC_AUTH_TOKEN)
+    out.ANTHROPIC_AUTH_TOKEN = env.ANTHROPIC_AUTH_TOKEN
+  else if (env.AI_GATEWAY_API_KEY && !env.ANTHROPIC_BASE_URL)
+    Object.assign(out, { ANTHROPIC_BASE_URL: GATEWAY_URL, ANTHROPIC_AUTH_TOKEN: env.AI_GATEWAY_API_KEY })
+  else if (env.ANTHROPIC_API_KEY)
+    out.ANTHROPIC_API_KEY = env.ANTHROPIC_API_KEY
   return out
 }
 
