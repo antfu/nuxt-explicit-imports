@@ -9,6 +9,32 @@ export interface AgentOptions {
   timeoutMs: number
 }
 
+const GATEWAY_URL = 'https://ai-gateway.vercel.sh'
+
+/**
+ * The env of the agent process. With only `AI_GATEWAY_API_KEY` set, route through the Vercel AI Gateway.
+ * With a gateway token, drop `ANTHROPIC_API_KEY`: Claude Code sends it as `x-api-key` and the gateway rejects it.
+ */
+function agentEnv(env: NodeJS.ProcessEnv = process.env): Record<string, string | undefined> {
+  const out: Record<string, string | undefined> = { ...env, NO_COLOR: '1', CI: '1' }
+  if (env.AI_GATEWAY_API_KEY && !env.ANTHROPIC_BASE_URL) {
+    out.ANTHROPIC_BASE_URL = GATEWAY_URL
+    out.ANTHROPIC_AUTH_TOKEN = env.AI_GATEWAY_API_KEY
+  }
+  if (out.ANTHROPIC_AUTH_TOKEN)
+    delete out.ANTHROPIC_API_KEY
+  return out
+}
+
+/** Where the agent's API calls go, for the log. */
+export function describeAuth(env = agentEnv()): string {
+  if (env.ANTHROPIC_AUTH_TOKEN)
+    return `ANTHROPIC_AUTH_TOKEN via ${env.ANTHROPIC_BASE_URL ?? 'api.anthropic.com'}`
+  if (env.ANTHROPIC_API_KEY)
+    return `ANTHROPIC_API_KEY via ${env.ANTHROPIC_BASE_URL ?? 'api.anthropic.com'}`
+  return 'your local Claude Code login (no API key or gateway token set)'
+}
+
 const APPEND = 'You are working on a Nuxt 4 app in the current working directory. Only read and change files inside it.'
 
 function toolResultText(content: unknown): string {
@@ -33,8 +59,8 @@ const TOOL_KINDS: Record<string, ToolKind> = {
   NotebookEdit: 'edit',
 }
 
-/** Sort a Bash command by what it does. Verify wins over edit, edit over explore, for chained commands. */
-function bashKind(command: string): ToolKind {
+/** Sort one simple command by what it does. Verify wins over edit, edit over explore. */
+function commandKind(command: string): ToolKind {
   if (/\b(?:typecheck|vue-tsc|tsc|build|vitest|test)\b/.test(command))
     return 'verify'
   // `>` writes a file, but not `2>`, `&>`, `>&2` or `> /dev/null`.
@@ -45,14 +71,50 @@ function bashKind(command: string): ToolKind {
   return 'other'
 }
 
-function toolKind(name: string, input: unknown): ToolKind {
+/** Drop heredoc bodies: keep each `<<EOF` line, skip the lines up to the closing `EOF`. */
+function dropHeredocs(command: string): string {
+  const out: string[] = []
+  let end: string | undefined
+  for (const line of command.split('\n')) {
+    if (end !== undefined) {
+      if (line.trim() === end)
+        end = undefined
+      continue
+    }
+    out.push(line)
+    end = /<<-?\s*['"]?(\w+)/.exec(line)?.[1]
+  }
+  return out.join('\n')
+}
+
+/**
+ * Every kind a Bash command does. Heredoc bodies and quoted text are dropped first,
+ * so a `>` in written content or in a search pattern is not read as a redirect.
+ * Chained commands (`&&`, `||`, `;`, new lines) are sorted one by one.
+ */
+function bashKinds(command: string): ToolKind[] {
+  const skeleton = dropHeredocs(command).replace(/'[^']*'|"(?:[^"\\]|\\.)*"/g, '""')
+  const kinds = new Set<ToolKind>()
+  for (const command of skeleton.split(/&&|\|\||[;\n]/)) {
+    // Later pipeline stages (`| tail`, `| grep`) only filter output, unless they write a file.
+    const [first = '', ...rest] = command.split('|')
+    kinds.add(commandKind(first))
+    if (rest.some(stage => commandKind(stage) === 'edit'))
+      kinds.add('edit')
+  }
+  if (kinds.size > 1)
+    kinds.delete('other')
+  return [...kinds]
+}
+
+function toolKinds(name: string, input: unknown): ToolKind[] {
   if (name === 'Bash') {
     const command = input && typeof input === 'object' && 'command' in input
       ? String(input.command)
       : ''
-    return bashKind(command)
+    return bashKinds(command)
   }
-  return TOOL_KINDS[name] ?? 'other'
+  return [TOOL_KINDS[name] ?? 'other']
 }
 
 function addUsage(metrics: AgentMetrics, usages: ModelUsage[]): void {
@@ -64,23 +126,48 @@ function addUsage(metrics: AgentMetrics, usages: ModelUsage[]): void {
   }
 }
 
-/** Count tool calls, keep tool output and read usage from the final result. */
+function recordCall(metrics: AgentMetrics, id: string, name: string, input: unknown): void {
+  metrics.toolCalls[name] = (metrics.toolCalls[name] ?? 0) + 1
+  const kinds = toolKinds(name, input)
+  for (const kind of kinds)
+    metrics.toolKinds[kind]++
+  metrics.calls.push({
+    id,
+    name,
+    kinds,
+    input,
+    output: '',
+  })
+}
+
+function recordOutput(metrics: AgentMetrics, id: string, text: string): void {
+  metrics.toolOutputChars += text.length
+  const call = metrics.calls.find(c => c.id === id)
+  if (call) {
+    call.output = text
+    return
+  }
+  metrics.calls.push({
+    id,
+    name: 'unknown',
+    kinds: ['other'],
+    input: null,
+    output: text,
+  })
+}
+
+/** Count tool calls, log each call with its output and read usage from the final result. */
 function record(metrics: AgentMetrics, message: SDKMessage): void {
   if (message.type === 'assistant') {
     for (const block of message.message.content) {
-      if (block.type !== 'tool_use')
-        continue
-      metrics.toolCalls[block.name] = (metrics.toolCalls[block.name] ?? 0) + 1
-      metrics.toolKinds[toolKind(block.name, block.input)]++
+      if (block.type === 'tool_use')
+        recordCall(metrics, block.id, block.name, block.input)
     }
   }
   else if (message.type === 'user' && Array.isArray(message.message.content)) {
     for (const block of message.message.content) {
-      if (typeof block !== 'object' || block.type !== 'tool_result')
-        continue
-      const text = toolResultText(block.content)
-      metrics.toolOutputs.push(text)
-      metrics.toolOutputChars += text.length
+      if (typeof block === 'object' && block.type === 'tool_result')
+        recordOutput(metrics, block.tool_use_id, toolResultText(block.content))
     }
   }
   else if (message.type === 'result') {
@@ -118,7 +205,7 @@ export async function runAgent(prompt: string, cwd: string, options: AgentOption
     costUsd: 0,
     ms: 0,
     apiMs: 0,
-    toolOutputs: [],
+    calls: [],
   }
 
   try {
@@ -140,7 +227,7 @@ export async function runAgent(prompt: string, cwd: string, options: AgentOption
           'Agent',
           'Task',
         ],
-        env: { ...process.env, NO_COLOR: '1', CI: '1' },
+        env: agentEnv(),
       },
     })) {
       record(metrics, message)

@@ -6,7 +6,7 @@ import process from 'node:process'
 import { cac } from 'cac'
 import { consola } from 'consola'
 import { join } from 'pathe'
-import { runAgent } from './agent'
+import { describeAuth, runAgent } from './agent'
 import { build, runCheck, typecheck } from './gates'
 import { summarize } from './report'
 import { TASKS } from './tasks'
@@ -41,6 +41,18 @@ function pick<T extends string>(value: string | undefined, all: readonly T[], la
       throw new Error(`Unknown ${label} "${item}". Use: ${all.join(', ')}.`)
   }
   return list as T[]
+}
+
+/** One cheap agent call, so a bad key fails here and not in every run. */
+async function preflight(options: AgentOptions): Promise<boolean> {
+  consola.info(`Agent auth: ${describeAuth()}`)
+  const probe = await runAgent('Reply with OK.', tmpdir(), { ...options, maxTurns: 1, timeoutMs: 60_000 })
+  if (probe.stop === 'success')
+    return true
+  consola.error(`Agent preflight failed: ${probe.stop === 'timeout'
+    ? 'no answer in 60s. Claude Code retries auth errors, so check the key'
+    : probe.stop}`)
+  return false
 }
 
 async function pool<T, R>(items: T[], size: number, fn: (item: T) => Promise<R>): Promise<R[]> {
@@ -82,9 +94,10 @@ async function runJob(job: Job, root: string, outDir: string, agentOptions: Agen
     await createWorkspace(job.task, job.arm, dir)
     if (agentOptions) {
       consola.start(`${name}: agent`)
-      const { toolOutputs, ...metrics } = await runAgent(job.task.prompt, dir, agentOptions)
+      const { calls, ...metrics } = await runAgent(job.task.prompt, dir, agentOptions)
       result.agent = metrics
-      result.errorsDuringRun = mergeTaxonomy(...toolOutputs.map(classify))
+      result.errorsDuringRun = mergeTaxonomy(...calls.map(c => classify(c.output)))
+      await writeFile(join(outDir, 'tools', `${name}.json`), `${JSON.stringify(calls, null, 2)}\n`)
       await writeFile(join(outDir, 'diffs', `${name}.diff`), await workspaceDiff(dir))
     }
     consola.start(`${name}: gates`)
@@ -164,6 +177,7 @@ cli
     const root = join(tmpdir(), 'nuxt-explicit-imports-eval', stamp)
     await mkdir(join(outDir, 'diffs'), { recursive: true })
     await mkdir(join(outDir, 'gates'), { recursive: true })
+    await mkdir(join(outDir, 'tools'), { recursive: true })
 
     const agentOptions: AgentOptions | undefined = flags.dryRun
       ? undefined
@@ -172,8 +186,11 @@ cli
           maxTurns: Number(flags.maxTurns),
           timeoutMs: Number(flags.timeout) * 60_000,
         }
-    if (agentOptions && !process.env.ANTHROPIC_API_KEY)
-      consola.warn('ANTHROPIC_API_KEY is not set, the agent uses your local Claude Code login.')
+    if (agentOptions && !await preflight(agentOptions)) {
+      await rm(outDir, { recursive: true, force: true })
+      process.exitCode = 1
+      return
+    }
 
     consola.info(`${jobs.length} runs, workspaces in ${root}`)
     const results = await pool(jobs, Number(flags.concurrency), job => runJob(job, root, outDir, agentOptions, !!flags.keep))

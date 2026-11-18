@@ -1,7 +1,7 @@
 import type { AgentMetrics, Arm, ErrorKind, RunResult, Taxonomy } from './types'
 import { ARMS } from './types'
 
-type Agent = Omit<AgentMetrics, 'toolOutputs'>
+type Agent = Omit<AgentMetrics, 'calls'>
 
 const KINDS: ErrorKind[] = [
   'missing-name',
@@ -27,23 +27,32 @@ const METRICS: Metric[] = [
   {
     label: 'Turns',
     get: a => a.turns,
+    digits: 1,
   },
-  { label: 'Tool calls', get: toolCalls },
   {
-    label: '- explore (read, search)',
+    label: 'Tool calls',
+    get: toolCalls,
+    digits: 1,
+  },
+  {
+    label: '- that explore (read, search)',
     get: a => a.toolKinds.explore,
+    digits: 1,
   },
   {
-    label: '- edit',
+    label: '- that edit',
     get: a => a.toolKinds.edit,
+    digits: 1,
   },
   {
-    label: '- verify (typecheck, build)',
+    label: '- that verify (typecheck, build)',
     get: a => a.toolKinds.verify,
+    digits: 1,
   },
   {
     label: '- other',
     get: a => a.toolKinds.other,
+    digits: 1,
   },
   { label: 'Input tokens (incl. cache)', get: inputTokens },
   {
@@ -103,10 +112,11 @@ function mean(values: number[]): number {
     ? sum(values) / values.length
     : Number.NaN
 }
+/** Fixed digits, without a trailing `.0`: `5` and `5.5`, so a change between two shown values is visible. */
 function fmt(n: number, digits = 0): string {
   return Number.isNaN(n)
     ? '-'
-    : n.toFixed(digits)
+    : n.toFixed(digits).replace(/\.0+$/, '')
 }
 function pct(pass: number, total: number): string {
   return total
@@ -187,8 +197,13 @@ function perTaskTable(tasks: string[], byArm: (arm: Arm, list?: RunResult[]) => 
     {
       label: 'turns',
       get: a => a.turns,
+      digits: 1,
     },
-    { label: 'tools', get: toolCalls },
+    {
+      label: 'tools',
+      get: toolCalls,
+      digits: 1,
+    },
     {
       label: 'k tokens',
       get: a => (inputTokens(a) + a.outputTokens) / 1000,

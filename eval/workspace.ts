@@ -35,7 +35,7 @@ export async function createWorkspace(task: Task, arm: Arm, dir: string): Promis
   const git = (...args: string[]): Promise<unknown> => exec('git', args, { cwd: dir })
   await git('init', '-q')
   await git('add', '-A')
-  await git('-c', 'user.name=eval', '-c', 'user.email=eval@localhost', 'commit', '-q', '-m', 'init')
+  await git('-c', 'user.name=eval', '-c', 'user.email=eval@localhost', '-c', 'commit.gpgsign=false', 'commit', '-q', '-m', 'init')
 }
 
 /** Everything the agent changed, including new files. */

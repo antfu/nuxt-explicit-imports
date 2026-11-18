@@ -48,7 +48,7 @@ export interface GateResult {
   ms: number
 }
 
-/** What a tool call was for. `explore`: read or search. `edit`: change files. `verify`: run typecheck, build or tests. */
+/** What a tool call was for. A Bash call that chains commands can be several. `explore`: read or search. `edit`: change files. `verify`: run typecheck, build or tests. */
 export type ToolKind = 'explore' | 'edit' | 'verify' | 'other'
 
 export interface AgentMetrics {
@@ -57,7 +57,10 @@ export interface AgentMetrics {
   turns: number
   /** Tool calls by tool name. */
   toolCalls: Record<string, number>
-  /** Tool calls by purpose. Bash calls are sorted by their command. */
+  /**
+   * Tool calls by purpose. Bash calls are sorted by their command, and a chained call
+   * counts once for each kind it does, so the kinds can add up to more than the calls.
+   */
   toolKinds: Record<ToolKind, number>
   /** Uncached input tokens. */
   inputTokens: number
@@ -71,8 +74,16 @@ export interface AgentMetrics {
   ms: number
   /** Time spent waiting on the model API. */
   apiMs: number
-  /** Text of every tool result, used for the error taxonomy. */
-  toolOutputs: string[]
+  /** Every tool call in order, with its result text. Written to `tools/`, used for the error taxonomy. */
+  calls: ToolCall[]
+}
+
+interface ToolCall {
+  id: string
+  name: string
+  kinds: ToolKind[]
+  input: unknown
+  output: string
 }
 
 export type ErrorKind
@@ -95,7 +106,7 @@ export interface RunResult {
   typecheck: Omit<GateResult, 'output'>
   build: Omit<GateResult, 'output'>
   assertions: Assertion[]
-  agent?: Omit<AgentMetrics, 'toolOutputs'>
+  agent?: Omit<AgentMetrics, 'calls'>
   /** Errors the agent hit while working, read from its tool results. */
   errorsDuringRun: Taxonomy
   /** Errors left in the final gate output. */

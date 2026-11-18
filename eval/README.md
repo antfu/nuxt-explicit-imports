@@ -8,12 +8,13 @@ pnpm eval                    # 6 tasks x 2 arms x 5 trials = 60 agent runs
 pnpm eval --tasks bugfix-multihop --trials 1 --model claude-haiku-5-5
 ```
 
-The agent uses `ANTHROPIC_API_KEY`, or your local Claude Code login when the key is not set. Results go to `eval/results/<date>/`:
+The agent uses `ANTHROPIC_AUTH_TOKEN` with `ANTHROPIC_BASE_URL` (a gateway), then `ANTHROPIC_API_KEY`, then your local Claude Code login. With only `AI_GATEWAY_API_KEY` set, it goes through the Vercel AI Gateway. Before the runs start, one short preflight call checks the auth, and the eval stops if it fails. Results go to `eval/results/<date>/`:
 
 - `summary.md`: pass rate, efficiency per arm and per task, tool usage and error counts
 - `results.json`: every run, with assertions and agent metrics
 - `diffs/`: what the agent changed in each run
 - `gates/`: typecheck and build logs of the runs where a gate failed
+- `tools/`: every tool call of each run, in order, with its input, its kinds and its output
 
 ## Arms
 
@@ -62,7 +63,7 @@ Every agent run records, and `summary.md` compares per arm (median, mean, and th
 | ---------------------------- | ------------------------------------------------------------------------- |
 | Turns                        | `num_turns` of the SDK result                                             |
 | Tool calls, per tool         | `tool_use` blocks                                                         |
-| Tool calls, per purpose      | `explore` (Read, Grep, Glob, read-only Bash), `edit`, `verify` (typecheck, build, tests), `other`. Bash calls are sorted by their command |
+| Tool calls, per purpose      | `explore` (Read, Grep, Glob, read-only Bash), `edit`, `verify` (typecheck, build, tests), `other`. Bash calls are sorted by their command, after heredoc bodies and quoted text are dropped. A chained call (`&&`, `;`, ...) counts once for each kind it does, so the kinds can add up to more than the calls. A later pipeline stage (`\| tail`) counts only when it writes a file |
 | Input tokens                 | uncached, cache read and cache write, from `modelUsage`                   |
 | Output tokens, total tokens  | `modelUsage`                                                              |
 | Tool output read             | characters of tool results sent back to the model                         |
