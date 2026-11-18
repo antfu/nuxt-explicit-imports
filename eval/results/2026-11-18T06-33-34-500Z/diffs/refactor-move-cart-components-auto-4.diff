@@ -1,0 +1,60 @@
+diff --git a/app/components/AppHeader.vue b/app/components/AppHeader.vue
+index 728b1bc..6f863e5 100644
+--- a/app/components/AppHeader.vue
++++ b/app/components/AppHeader.vue
+@@ -4,7 +4,7 @@
+       Shop
+     </NuxtLink>
+     <NuxtLink to="/cart">
+-      Cart <CartBadge />
++      Cart <CheckoutBadge />
+     </NuxtLink>
+   </header>
+ </template>
+diff --git a/app/components/cart/Badge.vue b/app/components/checkout/Badge.vue
+similarity index 100%
+rename from app/components/cart/Badge.vue
+rename to app/components/checkout/Badge.vue
+diff --git a/app/components/cart/Item.vue b/app/components/checkout/Item.vue
+similarity index 100%
+rename from app/components/cart/Item.vue
+rename to app/components/checkout/Item.vue
+diff --git a/app/components/cart/Summary.vue b/app/components/checkout/Summary.vue
+similarity index 100%
+rename from app/components/cart/Summary.vue
+rename to app/components/checkout/Summary.vue
+diff --git a/app/pages/cart.vue b/app/pages/cart.vue
+index 11faf72..39133ae 100644
+--- a/app/pages/cart.vue
++++ b/app/pages/cart.vue
+@@ -7,7 +7,7 @@ const { lines } = useCart()
+   <div>
+     <h1>Cart</h1>
+     <ul v-if="lines.length">
+-      <CartItem
++      <CheckoutItem
+         v-for="line in lines"
+         :key="line.slug"
+         :line="line"
+@@ -17,7 +17,7 @@ const { lines } = useCart()
+     <p v-else id="cart-empty">
+       Your cart is empty.
+     </p>
+-    <CartSummary />
++    <CheckoutSummary />
+     <NuxtLink to="/checkout">
+       Checkout
+     </NuxtLink>
+diff --git a/app/pages/checkout.vue b/app/pages/checkout.vue
+index aa4efb2..772641a 100644
+--- a/app/pages/checkout.vue
++++ b/app/pages/checkout.vue
+@@ -13,7 +13,7 @@ const { notify } = useNotify()
+       Secure checkout
+     </UiBadge>
+     <FormInput v-model="email" label="Email" />
+-    <CartSummary />
++    <CheckoutSummary />
+     <UiButton id="place-order" @click="notify(`Order placed for ${email}`)">
+       Place order
+     </UiButton>

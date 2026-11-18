@@ -1,0 +1,41 @@
+diff --git a/app/components/cart/Badge.vue b/layers/cart/app/components/cart/Badge.vue
+similarity index 100%
+rename from app/components/cart/Badge.vue
+rename to layers/cart/app/components/cart/Badge.vue
+diff --git a/app/components/cart/Item.vue b/layers/cart/app/components/cart/Item.vue
+similarity index 100%
+rename from app/components/cart/Item.vue
+rename to layers/cart/app/components/cart/Item.vue
+diff --git a/app/components/cart/Summary.vue b/layers/cart/app/components/cart/Summary.vue
+similarity index 100%
+rename from app/components/cart/Summary.vue
+rename to layers/cart/app/components/cart/Summary.vue
+diff --git a/app/composables/useCart.ts b/layers/cart/app/composables/useCart.ts
+similarity index 100%
+rename from app/composables/useCart.ts
+rename to layers/cart/app/composables/useCart.ts
+diff --git a/app/composables/useCartTotal.ts b/layers/cart/app/composables/useCartTotal.ts
+similarity index 100%
+rename from app/composables/useCartTotal.ts
+rename to layers/cart/app/composables/useCartTotal.ts
+diff --git a/app/composables/useDiscount.ts b/layers/cart/app/composables/useDiscount.ts
+similarity index 100%
+rename from app/composables/useDiscount.ts
+rename to layers/cart/app/composables/useDiscount.ts
+diff --git a/app/middleware/cart-not-empty.ts b/layers/cart/app/middleware/cart-not-empty.ts
+similarity index 100%
+rename from app/middleware/cart-not-empty.ts
+rename to layers/cart/app/middleware/cart-not-empty.ts
+diff --git a/app/utils/discount.ts b/layers/cart/app/utils/discount.ts
+similarity index 100%
+rename from app/utils/discount.ts
+rename to layers/cart/app/utils/discount.ts
+diff --git a/layers/cart/nuxt.config.ts b/layers/cart/nuxt.config.ts
+new file mode 100644
+index 0000000..b0feb3e
+--- /dev/null
++++ b/layers/cart/nuxt.config.ts
+@@ -0,0 +1,3 @@
++export default defineNuxtConfig({
++  extends: ['../base'],
++})

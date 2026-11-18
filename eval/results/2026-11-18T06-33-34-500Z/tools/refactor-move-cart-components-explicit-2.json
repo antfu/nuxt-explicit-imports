@@ -1,0 +1,37 @@
+[
+  {
+    "id": "toolu_01GgfzXUE8PX91SAgGpLA3bN",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "ls app/components/cart app/components; grep -rniE \"cart\" app nuxt.config.ts --include=* -l | grep -v node_modules"
+    },
+    "output": "app/components:\nAppFooter.vue\nAppHeader.vue\ncart\nproduct\n\napp/components/cart:\nBadge.vue\nItem.vue\nSummary.vue\n(eval):1: no matches found: --include=*"
+  },
+  {
+    "id": "toolu_0132jotrarJKXbWBhVwkyn8b",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rnE \"Cart|components/cart\" app nuxt.config.ts | grep -v node_modules; ls app/components/checkout 2>&1"
+    },
+    "output": "Exit code 1\napp/middleware/cart-not-empty.ts:2:import { useCart } from '~/composables/useCart'\napp/middleware/cart-not-empty.ts:5:  const { count } = useCart()\napp/composables/useCartTotal.ts:2:import { useCart } from '~/composables/useCart'\napp/composables/useCartTotal.ts:9:/** Cart totals in cents, as shown to the customer. */\napp/composables/useCartTotal.ts:10:export function useCartTotal() {\napp/composables/useCartTotal.ts:11:  const { lines } = useCart()\napp/composables/useCart.ts:1:import type { CartLine } from '#shared/types/cart'\napp/composables/useCart.ts:6:/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\napp/composables/useCart.ts:7:export function useCart() {\napp/composables/useCart.ts:8:  const lines = useCookie<CartLine[]>('cart', { default: () => [] })\napp/components/AppHeader.vue:2:import CartBadge from '~/components/cart/Badge.vue'\napp/components/AppHeader.vue:12:      Cart <CartBadge />\napp/components/cart/Badge.vue:3:import { useCart } from '~/composables/useCart'\napp/components/cart/Badge.vue:5:const { count } = useCart()\napp/components/cart/Item.vue:2:import type { CartLine } from '#shared/types/cart'\napp/components/cart/Item.vue:5:import { useCart } from '~/composables/useCart'\napp/components/cart/Item.vue:9:const props = defineProps<{ line: CartLine, product?: Product }>()\napp/components/cart/Item.vue:10:const { remove } = useCart()\napp/components/cart/Summary.vue:2:import { useCartTotal } from '~/composables/useCartTotal'\napp/components/cart/Summary.vue:6:const { subtotal, total, percent } = useCartTotal()\napp/pages/checkout.vue:3:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/checkout.vue:25:    <CartSummary />\napp/pages/cart.vue:2:import CartItem from '~/components/cart/Item.vue'\napp/pages/cart.vue:3:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/cart.vue:5:import { useCart } from '~/composables/useCart'\napp/pages/cart.vue:9:const { lines } = useCart()\napp/pages/cart.vue:14:    <h1>Cart</h1>\napp/pages/cart.vue:16:      <CartItem\napp/pages/cart.vue:26:    <CartSummary />\napp/pages/products/[slug].vue:8:import { useCart } from '~/composables/useCart'\napp/pages/products/[slug].vue:13:const { add } = useCart()\napp/pages/products/[slug].vue:16:function addToCart() {\napp/pages/products/[slug].vue:31:    <UiButton id=\"add-to-cart\" @click=\"addToCart\">\nls: app/components/checkout: No such file or directory"
+  },
+  {
+    "id": "toolu_019RgET44bH5dRDi5gwAmC6W",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "git mv app/components/cart app/components/checkout && sed -i '' 's#components/cart/#components/checkout/#' app/components/AppHeader.vue app/pages/checkout.vue app/pages/cart.vue && grep -rn \"from '\\.\\|cart/\" app/components/checkout; grep -rn \"components/cart\" . --exclude-dir=node_modules --exclude-dir=.nuxt --exclude-dir=.output --exclude-dir=.git; npm run typecheck 2>&1 | tail -5; npm run build 2>&1 | tail -5"
+    },
+    "output": "> typecheck\n> nuxt typecheck\n\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (878 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 134ms · modules 38ms · app 374ms · types 388ms · client 1.31s · server 494ms · nitro 3.90s\n◆ ✨ Build complete in 6.64s!"
+  }
+]

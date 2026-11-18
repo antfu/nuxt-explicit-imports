@@ -1,0 +1,47 @@
+[
+  {
+    "id": "toolu_01WjTb3SuiZTucBfTfqDakTN",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "git ls-files | grep -v lock; cat nuxt.config.ts package.json"
+    },
+    "output": ".gitignore\napp/app.vue\napp/components/AppFooter.vue\napp/components/AppHeader.vue\napp/components/cart/Badge.vue\napp/components/cart/Item.vue\napp/components/cart/Summary.vue\napp/components/product/Card.vue\napp/components/product/Grid.vue\napp/components/product/Price.vue\napp/composables/useCart.ts\napp/composables/useCartTotal.ts\napp/composables/useDiscount.ts\napp/composables/useProducts.ts\napp/composables/useTheme.ts\napp/layouts/default.vue\napp/middleware/cart-not-empty.ts\napp/pages/cart.vue\napp/pages/checkout.vue\napp/pages/index.vue\napp/pages/products/[slug].vue\napp/utils/discount.ts\napp/utils/money.ts\nlayers/base/app/composables/useCart.ts\nlayers/base/app/composables/useNotify.ts\nlayers/base/app/composables/useTheme.ts\nlayers/base/app/utils/percent.ts\nlayers/base/nuxt.config.ts\nlayers/ui/app/components/ProductCard.vue\nlayers/ui/app/components/UiBadge.vue\nlayers/ui/app/components/UiButton.vue\nlayers/ui/app/components/UiCard.vue\nlayers/ui/app/components/form/Input.vue\nlayers/ui/nuxt.config.ts\nnuxt.config.ts\npackage.json\nserver/api/cart/quote.post.ts\nserver/api/products/[slug].get.ts\nserver/api/products/index.get.ts\nserver/utils/db.ts\nserver/utils/discount.ts\nserver/utils/money.ts\nserver/utils/quote.ts\nshared/types/cart.ts\nshared/types/product.ts\nshared/utils/discount.ts\nshared/utils/math.ts\nshared/utils/slug.ts\ntsconfig.json\nexport default defineNuxtConfig({\n  compatibilityDate: '2026-01-01',\n  devtools: { enabled: false },\n  telemetry: false,\n})\n{\n  \"name\": \"eval-shop\",\n  \"type\": \"module\",\n  \"private\": true,\n  \"scripts\": {\n    \"build\": \"nuxt build\",\n    \"typecheck\": \"nuxt typecheck\"\n  }\n}"
+  },
+  {
+    "id": "toolu_01423RNGJ9QDKygHdJ2VVUCo",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cat app/components/product/Card.vue app/components/product/Grid.vue layers/ui/app/components/ProductCard.vue layers/ui/app/components/UiBadge.vue layers/base/app/utils/percent.ts app/composables/useDiscount.ts app/composables/useProducts.ts app/pages/index.vue shared/types/product.ts app/utils/discount.ts layers/*/nuxt.config.ts"
+    },
+    "output": "<script setup lang=\"ts\">\nimport type { Product } from '#shared/types/product'\n\ndefineProps<{ product: Product }>()\n</script>\n\n<template>\n  <UiCard>\n    <article class=\"product-card\">\n      <NuxtLink :to=\"`/products/${product.slug}`\">\n        <h2>{{ product.name }}</h2>\n      </NuxtLink>\n      <ProductPrice :cents=\"product.priceCents\" />\n      <slot />\n    </article>\n  </UiCard>\n</template>\n<script setup lang=\"ts\">\nimport type { Product } from '#shared/types/product'\n\ndefineProps<{ products: Product[] }>()\n</script>\n\n<template>\n  <section class=\"product-grid\">\n    <ProductCard v-for=\"product in products\" :key=\"product.slug\" :product=\"product\" />\n  </section>\n</template>\n<script setup lang=\"ts\">\nimport type { Product } from '#shared/types/product'\n\ndefineProps<{ product: Product }>()\n</script>\n\n<template>\n  <article class=\"ui-product-card\">\n    {{ product.name }}\n  </article>\n</template>\n<template>\n  <span class=\"ui-badge\">\n    <slot />\n  </span>\n</template>\n/** `10` -> `10%`. */\nexport function formatPercent(percent: number): string {\n  return `${percent}%`\n}\n\n/** `percent` of `cents`, rounded to the nearest cent. */\nexport function percentOf(cents: number, percent: number): number {\n  return Math.round(cents * percent / 100)\n}\n/** The active discount code, read from the `discount-code` cookie. */\nexport function useDiscount() {\n  const code = useCookie<string | null>('discount-code', { default: () => null })\n  const percent = computed(() => discountPercent(code.value))\n  return { code, percent }\n}\nimport type { Product } from '#shared/types/product'\n\n/** All products. Cached under the `products` key, so `useNuxtData('products')` reads them too. */\nexport function useProducts() {\n  return useFetch<Product[]>('/api/products', { key: 'products', default: () => [] })\n}\n<script setup lang=\"ts\">\nconst { data: products } = await useProducts()\n</script>\n\n<template>\n  <div>\n    <h1>Shop</h1>\n    <ProductGrid :products=\"products\" />\n  </div>\n</template>\nexport interface Product {\n  slug: string\n  name: string\n  priceCents: number\n}\n/**\n * Price after discount, as shown in the UI.\n * The discount is rounded down, so the UI never promises more than the server quote.\n */\nexport function applyDiscount(cents: number, percent: number): number {\n  return cents - Math.floor(cents * percent / 100)\n}\n\n/** `399` -> `-$3.99`. */\nexport function formatDiscount(cents: number): string {\n  return `-${formatMoney(cents)}`\n}\nexport default defineNuxtConfig({})\nexport default defineNuxtConfig({})"
+  },
+  {
+    "id": "toolu_01FL3LyPn15VCGzWwc31MEJk",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cat shared/utils/discount.ts; cat server/api/products/index.get.ts | head -20"
+    },
+    "output": "export const DISCOUNT_CODES: Record<string, number> = {\n  SAVE10: 10,\n  HALF: 50,\n}\n\n/** Discount percentage for a code, 0 when the code is unknown. */\nexport function discountPercent(code: string | null | undefined): number {\n  return clamp(DISCOUNT_CODES[code?.toUpperCase() ?? ''] ?? 0, 0, 100)\n}\nexport default defineEventHandler(() => {\n  return listProducts()\n})"
+  },
+  {
+    "id": "toolu_01JY7BgGGF3euFScM943smFX",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "verify"
+    ],
+    "input": {
+      "command": "cat > app/pages/deals.vue <<'EOF'\n<script setup lang=\"ts\">\nconst { data: products } = await useProducts()\nconst { percent } = useDiscount()\nconst deals = computed(() => products.value.filter(p => p.priceCents < 500))\n</script>\n\n<template>\n  <div>\n    <h1>Deals</h1>\n    <section class=\"product-grid\">\n      <ProductCard v-for=\"product in deals\" :key=\"product.slug\" :product=\"product\">\n        <UiBadge>Deal</UiBadge>\n        <p v-if=\"percent\" id=\"deal-discount\">{{ formatPercent(percent) }}</p>\n      </ProductCard>\n    </section>\n  </div>\n</template>\nEOF\nnpm run typecheck 2>&1 | tail -15; npm run build 2>&1 | tail -8"
+    },
+    "output": "> typecheck\n> nuxt typecheck\n\n  ├─ .output/server/chunks/virtual/precomputed.mjs (23.4 kB) (1.98 kB gzip)\n  ├─ .output/server/chunks/virtual/styles.mjs (1.43 kB) (428 B gzip)\n  ├─ .output/server/index.mjs (440 B) (234 B gzip)\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.58 MB (882 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 245ms · modules 58ms · app 409ms · types 333ms · client 1.27s · server 572ms · nitro 4.29s\n◆ ✨ Build complete in 7.18s!"
+  }
+]

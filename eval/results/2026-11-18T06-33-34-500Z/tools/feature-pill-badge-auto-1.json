@@ -1,0 +1,37 @@
+[
+  {
+    "id": "toolu_01PLZCGQa5AMDFMPYvVQoQuA",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "git ls-files | grep -v lock; cat nuxt.config.ts; grep -rn \"UiBadge\" --include=*.vue --include=*.ts . --exclude-dir=node_modules --exclude-dir=.nuxt --exclude-dir=.output | head -20"
+    },
+    "output": ".gitignore\napp/app.vue\napp/components/AppFooter.vue\napp/components/AppHeader.vue\napp/components/cart/Badge.vue\napp/components/cart/Item.vue\napp/components/cart/Summary.vue\napp/components/product/Card.vue\napp/components/product/Grid.vue\napp/components/product/Price.vue\napp/composables/useCart.ts\napp/composables/useCartTotal.ts\napp/composables/useDiscount.ts\napp/composables/useProducts.ts\napp/composables/useTheme.ts\napp/layouts/default.vue\napp/middleware/cart-not-empty.ts\napp/pages/cart.vue\napp/pages/checkout.vue\napp/pages/index.vue\napp/pages/products/[slug].vue\napp/utils/discount.ts\napp/utils/money.ts\nlayers/base/app/composables/useCart.ts\nlayers/base/app/composables/useNotify.ts\nlayers/base/app/composables/useTheme.ts\nlayers/base/app/utils/percent.ts\nlayers/base/nuxt.config.ts\nlayers/ui/app/components/ProductCard.vue\nlayers/ui/app/components/UiBadge.vue\nlayers/ui/app/components/UiButton.vue\nlayers/ui/app/components/UiCard.vue\nlayers/ui/app/components/form/Input.vue\nlayers/ui/nuxt.config.ts\nnuxt.config.ts\npackage.json\nserver/api/cart/quote.post.ts\nserver/api/products/[slug].get.ts\nserver/api/products/index.get.ts\nserver/utils/db.ts\nserver/utils/discount.ts\nserver/utils/money.ts\nserver/utils/quote.ts\nshared/types/cart.ts\nshared/types/product.ts\nshared/utils/discount.ts\nshared/utils/math.ts\nshared/utils/slug.ts\ntsconfig.json\nexport default defineNuxtConfig({\n  compatibilityDate: '2026-01-01',\n  devtools: { enabled: false },\n  telemetry: false,\n})\n(eval):1: no matches found: --include=*.vue"
+  },
+  {
+    "id": "toolu_01SpRea35cQ3LYoV7gUXMBgM",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cat layers/ui/app/components/UiBadge.vue app/components/cart/Badge.vue; grep -rn \"Badge\" app layers | grep -v \"^layers/ui/app/components/UiBadge\""
+    },
+    "output": "<template>\n  <span class=\"ui-badge\">\n    <slot />\n  </span>\n</template>\n<script setup lang=\"ts\">\nconst { count } = useCart()\n</script>\n\n<template>\n  <UiBadge class=\"cart-badge\">\n    {{ count }}\n  </UiBadge>\n</template>\napp/components/AppHeader.vue:7:      Cart <CartBadge />\napp/components/cart/Badge.vue:6:  <UiBadge class=\"cart-badge\">\napp/components/cart/Badge.vue:8:  </UiBadge>\napp/pages/checkout.vue:12:    <UiBadge class=\"secure\">\napp/pages/checkout.vue:14:    </UiBadge>\napp/pages/products/[slug].vue:21:    <UiBadge class=\"stock\">\napp/pages/products/[slug].vue:23:    </UiBadge>"
+  },
+  {
+    "id": "toolu_01DZkP1FqYqYnCS4dX33HeTe",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "verify",
+      "explore"
+    ],
+    "input": {
+      "command": "cat > app/components/UiBadge.vue <<'E'\n<template>\n  <span class=\"ui-badge pill\">\n    <slot />\n  </span>\n</template>\nE\nnpm run typecheck 2>&1 | tail -5; npm run build 2>&1 | tail -5; grep -rl \"ui-badge pill\" .output | head -3"
+    },
+    "output": "> typecheck\n> nuxt typecheck\n\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 139ms · modules 33ms · app 332ms · types 372ms · client 909ms · server 344ms · nitro 3.40s\n◆ ✨ Build complete in 5.53s!\n.output/server/chunks/build/useNotify-Dd0UgJL3.mjs\n.output/public/_nuxt/r1vhsps1.js"
+  }
+]

@@ -1,0 +1,60 @@
+[
+  {
+    "id": "toolu_01HzyaoHtKTuo7zpXXo73rco",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "git ls-files | grep -v lock; cat nuxt.config.ts app/app.vue 2>/dev/null"
+    },
+    "output": ".gitignore\napp/app.vue\napp/components/AppFooter.vue\napp/components/AppHeader.vue\napp/components/cart/Badge.vue\napp/components/cart/Item.vue\napp/components/cart/Summary.vue\napp/components/product/Card.vue\napp/components/product/Grid.vue\napp/components/product/Price.vue\napp/composables/useCart.ts\napp/composables/useCartTotal.ts\napp/composables/useDiscount.ts\napp/composables/useProducts.ts\napp/composables/useTheme.ts\napp/layouts/default.vue\napp/middleware/cart-not-empty.ts\napp/pages/cart.vue\napp/pages/checkout.vue\napp/pages/index.vue\napp/pages/products/[slug].vue\napp/utils/discount.ts\napp/utils/money.ts\nlayers/base/app/composables/useCart.ts\nlayers/base/app/composables/useNotify.ts\nlayers/base/app/composables/useTheme.ts\nlayers/base/app/utils/percent.ts\nlayers/base/nuxt.config.ts\nlayers/ui/app/components/ProductCard.vue\nlayers/ui/app/components/UiBadge.vue\nlayers/ui/app/components/UiButton.vue\nlayers/ui/app/components/UiCard.vue\nlayers/ui/app/components/form/Input.vue\nlayers/ui/nuxt.config.ts\nnuxt.config.ts\npackage.json\nserver/api/cart/quote.post.ts\nserver/api/products/[slug].get.ts\nserver/api/products/index.get.ts\nserver/utils/db.ts\nserver/utils/discount.ts\nserver/utils/money.ts\nserver/utils/quote.ts\nshared/types/cart.ts\nshared/types/product.ts\nshared/utils/discount.ts\nshared/utils/math.ts\nshared/utils/slug.ts\ntsconfig.json\nexport default defineNuxtConfig({\n  compatibilityDate: '2026-01-01',\n  devtools: { enabled: false },\n  telemetry: false,\n})\n<template>\n  <NuxtLayout>\n    <NuxtPage />\n  </NuxtLayout>\n</template>"
+  },
+  {
+    "id": "toolu_01JZsDXYBthR8eAvUU2VTxbH",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cat app/composables/useTheme.ts layers/base/app/composables/useTheme.ts layers/base/nuxt.config.ts layers/ui/nuxt.config.ts; grep -rn \"useTheme\" app layers --include=*.vue --include=*.ts | grep -v \"composables/useTheme\""
+    },
+    "output": "/** The shop is dark. Overrides the base layer's `useTheme`. */\nexport function useColorScheme() {\n  return useState('theme', () => 'dark')\n}\nexport function useTheme() {\n  return useState('theme', () => 'light')\n}\nexport default defineNuxtConfig({})\nexport default defineNuxtConfig({})\n(eval):1: no matches found: --include=*.vue"
+  },
+  {
+    "id": "toolu_01LWGPvaiAvDfXtPqj2C9skP",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"useTheme\\|useColorScheme\\|theme\" app layers shared server | grep -v \"^layers/base/app/composables/useTheme\"; cat package.json | grep -A8 scripts"
+    },
+    "output": "app/composables/useTheme.ts:1:/** The shop is dark. Overrides the base layer's `useTheme`. */\napp/composables/useTheme.ts:2:export function useColorScheme() {\napp/composables/useTheme.ts:3:  return useState('theme', () => 'dark')\napp/layouts/default.vue:2:const theme = useTheme()\napp/layouts/default.vue:6:  <div :class=\"`theme-${theme}`\">\n  \"scripts\": {\n    \"build\": \"nuxt build\",\n    \"typecheck\": \"nuxt typecheck\"\n  }\n}"
+  },
+  {
+    "id": "toolu_01Xr1isYZcyvjQ546H4pp6qn",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "verify"
+    ],
+    "input": {
+      "command": "sed -i 's/useColorScheme/useTheme/' app/composables/useTheme.ts\nsed -i \"s/^export default defineNuxtConfig({/export default defineNuxtConfig({\\n  extends: ['.\\/layers\\/base', '.\\/layers\\/ui'],/\" nuxt.config.ts\nnpm run typecheck 2>&1 | tail -15; npm run build 2>&1 | tail -8"
+    },
+    "output": "sed: 1: \"app/composables/useThem ...\": command a expects \\ followed by text\nsed: 1: \"nuxt.config.ts\n\": extra characters at the end of n command\n\n> typecheck\n> nuxt typecheck\n\n  ├─ .output/server/chunks/virtual/precomputed.mjs (19.5 kB) (1.71 kB gzip)\n  ├─ .output/server/chunks/virtual/styles.mjs (1.43 kB) (428 B gzip)\n  ├─ .output/server/index.mjs (440 B) (234 B gzip)\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 512ms · modules 62ms · app 1.30s · types 978ms · client 3.03s · server 883ms · nitro 8.88s\n◆ ✨ Build complete in 15.6s!"
+  },
+  {
+    "id": "toolu_018SMSDurmmBs8TYezomPbuj",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "sed -i '' 's/useColorScheme/useTheme/' app/composables/useTheme.ts; git diff --stat; npm run typecheck 2>&1 | tail -5; npm run build 2>&1 | tail -3; grep -o \"theme-[a-z]*\" -r .output/server/chunks | head -3"
+    },
+    "output": " app/composables/useTheme.ts | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n\n> typecheck\n> nuxt typecheck\n\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 248ms · modules 60ms · app 677ms · types 701ms · client 1.63s · server 585ms · nitro 4.91s\n◆ ✨ Build complete in 8.82s!\n.output/server/chunks/build/default-BQYXVGhb.mjs:theme-"
+  }
+]

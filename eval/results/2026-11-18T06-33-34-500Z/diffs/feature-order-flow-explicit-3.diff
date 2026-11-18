@@ -1,0 +1,96 @@
+diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
+new file mode 100644
+index 0000000..cd8eb19
+--- /dev/null
++++ b/app/pages/orders/[id].vue
+@@ -0,0 +1,20 @@
++<script setup lang="ts">
++import { useRoute, useFetch } from '#app'
++
++const route = useRoute()
++const id = route.params.id
++const { data: order } = await useFetch<{ id: string, total: string }>(`/api/orders/${id}`)
++const { data: lines } = await useFetch<{ slug: string, qty: number, name: string }[]>(`/api/orders/${id}/lines`, { default: () => [] })
++</script>
++
++<template>
++  <section v-if="order">
++    <h1>Order</h1>
++    <ul>
++      <li v-for="line in lines" :key="line.slug" class="order-line">
++        {{ line.name }}
++      </li>
++    </ul>
++    <p>Total: <span id="order-total">{{ order.total }}</span></p>
++  </section>
++</template>
+diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
+new file mode 100644
+index 0000000..6e21ccb
+--- /dev/null
++++ b/server/api/orders/[id].get.ts
+@@ -0,0 +1,9 @@
++import { createError, defineEventHandler, getRouterParam } from 'h3'
++import { findOrder } from '#server/utils/orders'
++
++export default defineEventHandler((event) => {
++  const found = findOrder(getRouterParam(event, 'id') ?? '')
++  if (!found)
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  return found.order
++})
+diff --git a/server/api/orders/[id]/lines.get.ts b/server/api/orders/[id]/lines.get.ts
+new file mode 100644
+index 0000000..f8db93a
+--- /dev/null
++++ b/server/api/orders/[id]/lines.get.ts
+@@ -0,0 +1,10 @@
++import { createError, defineEventHandler, getRouterParam } from 'h3'
++import { findOrder } from '#server/utils/orders'
++import { findProduct } from '#server/utils/db'
++
++export default defineEventHandler((event) => {
++  const found = findOrder(getRouterParam(event, 'id') ?? '')
++  if (!found)
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  return found.lines.map(l => ({ slug: l.slug, qty: l.qty, name: findProduct(l.slug)?.name ?? l.slug }))
++})
+diff --git a/server/api/orders/index.post.ts b/server/api/orders/index.post.ts
+new file mode 100644
+index 0000000..3ff7e88
+--- /dev/null
++++ b/server/api/orders/index.post.ts
+@@ -0,0 +1,8 @@
++import type { CartLine } from '#shared/types/cart'
++import { defineEventHandler, readBody } from 'h3'
++import { createOrder } from '#server/utils/orders'
++
++export default defineEventHandler(async (event) => {
++  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)
++  return createOrder(body?.lines ?? [], body?.code)
++})
+diff --git a/server/utils/orders.ts b/server/utils/orders.ts
+new file mode 100644
+index 0000000..2eaf8b1
+--- /dev/null
++++ b/server/utils/orders.ts
+@@ -0,0 +1,19 @@
++import type { CartLine } from '#shared/types/cart'
++import type { Quote } from '#server/utils/quote'
++import { computeQuote } from '#server/utils/quote'
++
++export interface Order extends Quote {
++  id: string
++}
++
++const orders = new Map<string, { order: Order, lines: CartLine[] }>()
++
++export function createOrder(lines: CartLine[], code?: string): Order {
++  const order: Order = { id: crypto.randomUUID(), ...computeQuote(lines, code) }
++  orders.set(order.id, { order, lines: lines.map(l => ({ slug: l.slug, qty: l.qty })) })
++  return order
++}
++
++export function findOrder(id: string) {
++  return orders.get(id)
++}

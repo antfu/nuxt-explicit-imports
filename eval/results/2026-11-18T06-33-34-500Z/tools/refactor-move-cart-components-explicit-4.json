@@ -1,0 +1,37 @@
+[
+  {
+    "id": "toolu_011PTaNxoWAV1ajNub5tU3Er",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "ls app/components/cart app/components/checkout 2>&1; grep -rniE \"cart\" app nuxt.config.ts --include=* -l"
+    },
+    "output": "ls: app/components/checkout: No such file or directory\napp/components/cart:\nBadge.vue\nItem.vue\nSummary.vue\n(eval):1: no matches found: --include=*"
+  },
+  {
+    "id": "toolu_01HE5pJorCTWmRQrhFogMuiw",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rniE \"cart\" app nuxt.config.ts | grep -v \"^app/components/cart/.*:.*class=\""
+    },
+    "output": "app/middleware/cart-not-empty.ts:2:import { useCart } from '~/composables/useCart'\napp/middleware/cart-not-empty.ts:5:  const { count } = useCart()\napp/middleware/cart-not-empty.ts:7:    return navigateTo('/cart')\napp/composables/useCartTotal.ts:2:import { useCart } from '~/composables/useCart'\napp/composables/useCartTotal.ts:9:/** Cart totals in cents, as shown to the customer. */\napp/composables/useCartTotal.ts:10:export function useCartTotal() {\napp/composables/useCartTotal.ts:11:  const { lines } = useCart()\napp/composables/useCart.ts:1:import type { CartLine } from '#shared/types/cart'\napp/composables/useCart.ts:6:/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\napp/composables/useCart.ts:7:export function useCart() {\napp/composables/useCart.ts:8:  const lines = useCookie<CartLine[]>('cart', { default: () => [] })\napp/components/AppHeader.vue:2:import CartBadge from '~/components/cart/Badge.vue'\napp/components/AppHeader.vue:11:    <NuxtLink to=\"/cart\">\napp/components/AppHeader.vue:12:      Cart <CartBadge />\napp/components/cart/Badge.vue:3:import { useCart } from '~/composables/useCart'\napp/components/cart/Badge.vue:5:const { count } = useCart()\napp/components/cart/Summary.vue:2:import { useCartTotal } from '~/composables/useCartTotal'\napp/components/cart/Summary.vue:6:const { subtotal, total, percent } = useCartTotal()\napp/components/cart/Summary.vue:10:  <section id=\"cart-summary\">\napp/components/cart/Summary.vue:11:    <p>Subtotal: <span id=\"cart-subtotal\">{{ formatMoney(subtotal) }}</span></p>\napp/components/cart/Summary.vue:15:    <p>Total: <span id=\"cart-total\">{{ formatMoney(total) }}</span></p>\napp/components/cart/Item.vue:2:import type { CartLine } from '#shared/types/cart'\napp/components/cart/Item.vue:5:import { useCart } from '~/composables/useCart'\napp/components/cart/Item.vue:9:const props = defineProps<{ line: CartLine, product?: Product }>()\napp/components/cart/Item.vue:10:const { remove } = useCart()\napp/pages/cart.vue:2:import CartItem from '~/components/cart/Item.vue'\napp/pages/cart.vue:3:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/cart.vue:5:import { useCart } from '~/composables/useCart'\napp/pages/cart.vue:9:const { lines } = useCart()\napp/pages/cart.vue:14:    <h1>Cart</h1>\napp/pages/cart.vue:16:      <CartItem\napp/pages/cart.vue:23:    <p v-else id=\"cart-empty\">\napp/pages/cart.vue:24:      Your cart is empty.\napp/pages/cart.vue:26:    <CartSummary />\napp/pages/products/[slug].vue:8:import { useCart } from '~/composables/useCart'\napp/pages/products/[slug].vue:13:const { add } = useCart()\napp/pages/products/[slug].vue:16:function addToCart() {\napp/pages/products/[slug].vue:20:  notify(`${product.value.name} added to the cart`)\napp/pages/products/[slug].vue:31:    <UiButton id=\"add-to-cart\" @click=\"addToCart\">\napp/pages/products/[slug].vue:32:      Add to cart\napp/pages/checkout.vue:3:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/checkout.vue:11:definePageMeta({ middleware: 'cart-not-empty' })\napp/pages/checkout.vue:25:    <CartSummary />"
+  },
+  {
+    "id": "toolu_011n6hBFewk6cGXPyc8NBzw9",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "git mv app/components/cart app/components/checkout && sed -i '' 's#~/components/cart/#~/components/checkout/#' app/components/AppHeader.vue app/pages/cart.vue app/pages/checkout.vue && grep -rn \"components/cart\" . --exclude-dir=node_modules --exclude-dir=.nuxt --exclude-dir=.output --exclude-dir=.git; npm run typecheck 2>&1 | tail -5; npm run build 2>&1 | tail -5"
+    },
+    "output": "> typecheck\n> nuxt typecheck\n\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (878 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 383ms · modules 83ms · app 1.26s · types 1.32s · client 2.15s · server 841ms · nitro 8.04s\n◆ ✨ Build complete in 14.0s!"
+  }
+]

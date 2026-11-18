@@ -1,0 +1,22 @@
+diff --git a/app/pages/products/[slug].vue b/app/pages/products/[slug].vue
+index e87ff42..7e6bf71 100644
+--- a/app/pages/products/[slug].vue
++++ b/app/pages/products/[slug].vue
+@@ -4,6 +4,7 @@ import type { Product } from '#shared/types/product'
+ const route = useRoute()
+ const { data: product } = await useFetch<Product & { price: string }>(`/api/products/${route.params.slug}`)
+ const { add } = useCart()
++const { percent } = useDiscount()
+ const { notify } = useNotify()
+ 
+ function addToCart() {
+@@ -18,6 +19,9 @@ function addToCart() {
+   <UiCard v-if="product">
+     <h1>{{ product.name }}</h1>
+     <ProductPrice id="price" :cents="product.priceCents" />
++    <p v-if="percent" id="discounted">
++      {{ formatMoney(applyDiscount(product.priceCents, percent)) }}
++    </p>
+     <UiBadge class="stock">
+       In stock
+     </UiBadge>

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "toolu_01WjnyAzMoeTAigcr7EE1o5x",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"useCart\" --exclude-dir=node_modules --exclude-dir=.nuxt --exclude-dir=.output . ; ls; cat nuxt.config.ts; find . -path ./node_modules -prune -o -name \"*omposables*\" -print"
+    },
+    "output": "app/middleware/cart-not-empty.ts:2:  const { count } = useCart()\napp/composables/useCartTotal.ts:4:export function useCartTotal() {\napp/composables/useCartTotal.ts:5:  const { lines } = useCart()\napp/composables/useCart.ts:3:/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\napp/composables/useCart.ts:4:export function useCart() {\napp/components/cart/Badge.vue:2:const { count } = useCart()\napp/components/cart/Item.vue:6:const { remove } = useCart()\napp/components/cart/Summary.vue:2:const { subtotal, total, percent } = useCartTotal()\napp/pages/cart.vue:3:const { lines } = useCart()\napp/pages/products/[slug].vue:6:const { add } = useCart()\nlayers/base/app/composables/useCart.ts:5: * Apps that persist the cart override it with their own `useCart`.\nlayers/base/app/composables/useCart.ts:7:export function useCart() {\napp\nlayers\nnode_modules\nnuxt.config.ts\npackage.json\nserver\nshared\ntsconfig.json\nexport default defineNuxtConfig({\n  compatibilityDate: '2026-01-01',\n  devtools: { enabled: false },\n  telemetry: false,\n})\n./app/composables\n./layers/base/app/composables"
+  },
+  {
+    "id": "toolu_013SfpdKdvR5oTQ4zuy2gHsc",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "git mv app/composables/useCart.ts app/composables/useShoppingCart.ts\nsed -i '' 's/useCart()/useShoppingCart()/; s/Overrides the base layer.s legacy `useCart`\\./Replaces the base layer'\"'\"'s legacy `useCart`./' app/composables/useShoppingCart.ts app/middleware/cart-not-empty.ts app/composables/useCartTotal.ts app/components/cart/Badge.vue app/components/cart/Item.vue app/pages/cart.vue \"app/pages/products/[slug].vue\"\nhead -5 app/composables/useShoppingCart.ts; npm run typecheck 2>&1 | tail -5; npm run build 2>&1 | tail -5"
+    },
+    "output": "import type { CartLine } from '#shared/types/cart'\n\n/** The cart, persisted in the `cart` cookie. Replaces the base layer's legacy `useCart`. */\nexport function useShoppingCart() {\n  const lines = useCookie<CartLine[]>('cart', { default: () => [] })\n\n> typecheck\n> nuxt typecheck\n\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 190ms · modules 43ms · app 493ms · types 376ms · client 1.60s · server 1.44s · nitro 7.32s\n◆ ✨ Build complete in 11.4s!"
+  }
+]

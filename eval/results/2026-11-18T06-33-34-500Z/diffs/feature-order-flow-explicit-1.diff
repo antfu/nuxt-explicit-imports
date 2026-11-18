@@ -1,0 +1,107 @@
+diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
+new file mode 100644
+index 0000000..6c9b4f7
+--- /dev/null
++++ b/app/pages/orders/[id].vue
+@@ -0,0 +1,31 @@
++<script setup lang="ts">
++import type { CartLine } from '#shared/types/cart'
++import { useFetch, useRoute } from '#app'
++import { computed } from 'vue'
++import { useProducts } from '~/composables/useProducts'
++import { formatMoney } from '~/utils/money'
++
++const route = useRoute()
++const id = route.params.id
++const { data: products } = await useProducts()
++const { data: order } = await useFetch<{ id: string, total: string }>(`/api/orders/${id}`)
++const { data: lines } = await useFetch<CartLine[]>(`/api/orders/${id}/lines`, { default: () => [] })
++
++// The API formats money as `19.99 USD`; show it in the UI format (`$19.99`).
++const total = computed(() => order.value ? formatMoney(Math.round(Number.parseFloat(order.value.total) * 100)) : '')
++function nameOf(slug: string) {
++  return products.value.find(p => p.slug === slug)?.name ?? slug
++}
++</script>
++
++<template>
++  <div v-if="order">
++    <h1>Order</h1>
++    <ul>
++      <li v-for="line in lines" :key="line.slug" class="order-line">
++        {{ nameOf(line.slug) }} x{{ line.qty }}
++      </li>
++    </ul>
++    <p>Total: <span id="order-total">{{ total }}</span></p>
++  </div>
++</template>
+diff --git a/server/api/orders/[id]/index.get.ts b/server/api/orders/[id]/index.get.ts
+new file mode 100644
+index 0000000..8262aa2
+--- /dev/null
++++ b/server/api/orders/[id]/index.get.ts
+@@ -0,0 +1,9 @@
++import { createError, defineEventHandler, getRouterParam } from 'h3'
++import { findOrder } from '#server/utils/orders'
++
++export default defineEventHandler((event) => {
++  const entry = findOrder(getRouterParam(event, 'id') ?? '')
++  if (!entry)
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  return entry.order
++})
+diff --git a/server/api/orders/[id]/lines.get.ts b/server/api/orders/[id]/lines.get.ts
+new file mode 100644
+index 0000000..725d220
+--- /dev/null
++++ b/server/api/orders/[id]/lines.get.ts
+@@ -0,0 +1,9 @@
++import { createError, defineEventHandler, getRouterParam } from 'h3'
++import { findOrder } from '#server/utils/orders'
++
++export default defineEventHandler((event) => {
++  const entry = findOrder(getRouterParam(event, 'id') ?? '')
++  if (!entry)
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  return entry.lines
++})
+diff --git a/server/api/orders/index.post.ts b/server/api/orders/index.post.ts
+new file mode 100644
+index 0000000..a9e7523
+--- /dev/null
++++ b/server/api/orders/index.post.ts
+@@ -0,0 +1,10 @@
++import type { CartLine } from '#shared/types/cart'
++import { defineEventHandler, readBody } from 'h3'
++import { computeQuote } from '#server/utils/quote'
++import { saveOrder } from '#server/utils/orders'
++
++export default defineEventHandler(async (event) => {
++  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)
++  const lines = (body?.lines ?? []).map(l => ({ slug: l.slug, qty: l.qty }))
++  return saveOrder(lines, computeQuote(lines, body?.code))
++})
+diff --git a/server/utils/orders.ts b/server/utils/orders.ts
+new file mode 100644
+index 0000000..9180ef3
+--- /dev/null
++++ b/server/utils/orders.ts
+@@ -0,0 +1,18 @@
++import type { CartLine } from '#shared/types/cart'
++import type { Quote } from '#server/utils/quote'
++
++export interface Order extends Quote {
++  id: string
++}
++
++const orders = new Map<string, { order: Order, lines: CartLine[] }>()
++
++export function saveOrder(lines: CartLine[], quote: Quote): Order {
++  const order: Order = { id: crypto.randomUUID(), ...quote }
++  orders.set(order.id, { order, lines })
++  return order
++}
++
++export function findOrder(id: string) {
++  return orders.get(id)
++}
