@@ -1,0 +1,28 @@
+diff --git a/app/components/UiBadge.vue b/app/components/UiBadge.vue
+new file mode 100644
+index 0000000..c293c4d
+--- /dev/null
++++ b/app/components/UiBadge.vue
+@@ -0,0 +1,5 @@
++<template>
++  <span class="ui-badge pill">
++    <slot />
++  </span>
++</template>
+diff --git a/nuxt.config.ts b/nuxt.config.ts
+index 45b50fb..9af780c 100644
+--- a/nuxt.config.ts
++++ b/nuxt.config.ts
+@@ -1,7 +1,12 @@
++import { fileURLToPath } from 'node:url'
++
+ export default defineNuxtConfig({
+   compatibilityDate: '2026-01-01',
+   devtools: { enabled: false },
+   telemetry: false,
++  alias: {
++    '#layers/ui/app/components/UiBadge.vue': fileURLToPath(new URL('./app/components/UiBadge.vue', import.meta.url))
++  },
+   // Auto-imports are off: import every composable, util and component explicitly.
+   imports: { autoImport: false },
+   components: { dirs: [] },

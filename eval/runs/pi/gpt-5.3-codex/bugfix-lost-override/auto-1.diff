@@ -1,0 +1,10 @@
+diff --git a/app/composables/useTheme.ts b/app/composables/useTheme.ts
+index 9ce611d..72f5ee1 100644
+--- a/app/composables/useTheme.ts
++++ b/app/composables/useTheme.ts
+@@ -1,4 +1,4 @@
+ /** The shop is dark. Overrides the base layer's `useTheme`. */
+-export function useColorScheme() {
++export function useTheme() {
+   return useState('theme', () => 'dark')
+ }

@@ -1,0 +1,75 @@
+{
+  "config": "claude-code/claude-haiku-5-5",
+  "fingerprint": "f5053215c606c492",
+  "date": "2026-11-18T09:53:10.099Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "feature-deals-page",
+  "kind": "feature",
+  "fixture": "shop",
+  "arm": "auto",
+  "trial": 5,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 3509
+  },
+  "build": {
+    "ok": true,
+    "ms": 6914
+  },
+  "assertions": [
+    {
+      "name": "3 app product cards",
+      "ok": true
+    },
+    {
+      "name": "no ui layer product card",
+      "ok": true
+    },
+    {
+      "name": "lists Pencil, Eraser and Sticky Notes",
+      "ok": true
+    },
+    {
+      "name": "does not list Notebook",
+      "ok": true
+    },
+    {
+      "name": "3 \"Deal\" badges",
+      "ok": true
+    },
+    {
+      "name": "#deal-discount shows 10%",
+      "ok": true
+    },
+    {
+      "name": "no #deal-discount without a code",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 8,
+    "toolCalls": {
+      "Bash": 6,
+      "Write": 1
+    },
+    "toolKinds": {
+      "explore": 4,
+      "edit": 2,
+      "verify": 2,
+      "other": 0
+    },
+    "inputTokens": 1321,
+    "outputTokens": 5608,
+    "cacheReadTokens": 193676,
+    "cacheWriteTokens": 15680,
+    "toolOutputChars": 14470,
+    "costUsd": 0.0068328600000000005,
+    "ms": 55120,
+    "apiMs": 31118
+  }
+}

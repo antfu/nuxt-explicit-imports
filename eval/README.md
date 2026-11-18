@@ -124,6 +124,7 @@ TypeScript and build errors are counted twice: in the agent's tool output while 
 
 ## Known limits
 
+- The fixture's `package.json` lists no dependencies, since the workspace links the repo's packages. Haiku often reads that as "nothing installed" and runs `npm install` into its workspace. That costs it tokens and time in both arms alike. Workspaces link each package on its own, so npm can never reach the repo's `node_modules`.
 - In the `explicit` arm, a missing component import passes typecheck and build: Nuxt does not use `strictTemplates`, and the component renders as nothing. Only the task checks catch it, by asserting on the rendered HTML. It shows up as a failed assertion, not in the taxonomy.
 - Sonnet passed all 60 runs of the first 6 tasks, in about 5 turns each. The last 3 tasks were added to make the tasks harder. Each one was checked with a hand-written solution in both arms.
 - To regenerate an `explicit` arm: copy `auto`, run `node dist/cli.mjs migrate --root <copy>`, then apply the `nuxt.config.ts` of the existing `explicit` arm. Check the diff by hand.

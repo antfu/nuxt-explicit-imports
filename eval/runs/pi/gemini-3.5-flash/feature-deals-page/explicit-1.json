@@ -1,0 +1,52 @@
+{
+  "config": "pi/gemini-3.5-flash",
+  "fingerprint": "3c9d6b17e40f4188",
+  "date": "2026-11-18T10:59:48.593Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "feature-deals-page",
+  "kind": "feature",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 1,
+  "pass": false,
+  "typecheck": {
+    "ok": true,
+    "ms": 2585
+  },
+  "build": {
+    "ok": true,
+    "ms": 5623
+  },
+  "assertions": [
+    {
+      "name": "check ran to the end",
+      "ok": false,
+      "detail": "Error: GET /deals returned 404"
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "error_max_turns",
+    "turns": 41,
+    "toolCalls": {
+      "bash": 15,
+      "read": 25
+    },
+    "toolKinds": {
+      "explore": 39,
+      "edit": 0,
+      "verify": 1,
+      "other": 0
+    },
+    "inputTokens": 191787,
+    "outputTokens": 8720,
+    "cacheReadTokens": 159784,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 18242,
+    "costUsd": 0.3901280999999999,
+    "ms": 99426,
+    "apiMs": 92873
+  }
+}

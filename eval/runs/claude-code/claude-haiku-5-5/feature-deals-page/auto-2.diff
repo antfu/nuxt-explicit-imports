@@ -1,15 +1,17 @@
 diff --git a/app/pages/deals.vue b/app/pages/deals.vue
 new file mode 100644
-index 0000000..28a20ed
+index 0000000..0dc6b07
 --- /dev/null
 +++ b/app/pages/deals.vue
-@@ -0,0 +1,21 @@
+@@ -0,0 +1,23 @@
 +<script setup lang="ts">
++/** Products priced strictly under $5.00. */
++const DEAL_THRESHOLD_CENTS = 500
++
 +const { data: products } = await useProducts()
 +const { percent } = useDiscount()
 +
-+/** Products priced under $5.00. */
-+const deals = computed(() => products.value.filter(product => product.priceCents < 500))
++const deals = computed(() => products.value.filter(product => product.priceCents < DEAL_THRESHOLD_CENTS))
 +</script>
 +
 +<template>

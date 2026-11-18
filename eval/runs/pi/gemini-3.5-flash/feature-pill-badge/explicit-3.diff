@@ -1,0 +1,37 @@
+diff --git a/app/components/UiBadge.vue b/app/components/UiBadge.vue
+new file mode 100644
+index 0000000..c293c4d
+--- /dev/null
++++ b/app/components/UiBadge.vue
+@@ -0,0 +1,5 @@
++<template>
++  <span class="ui-badge pill">
++    <slot />
++  </span>
++</template>
+diff --git a/app/components/cart/Badge.vue b/app/components/cart/Badge.vue
+index bb15a42..1f28416 100644
+--- a/app/components/cart/Badge.vue
++++ b/app/components/cart/Badge.vue
+@@ -1,5 +1,5 @@
+ <script setup lang="ts">
+-import UiBadge from '#layers/ui/app/components/UiBadge.vue'
++import UiBadge from '~/components/UiBadge.vue'
+ import { useCart } from '~/composables/useCart'
+ 
+ const { count } = useCart()
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+new file mode 100644
+index 0000000..9b60ae1
+--- /dev/null
++++ b/pnpm-lock.yaml
+@@ -0,0 +1,9 @@
++lockfileVersion: '9.0'
++
++settings:
++  autoInstallPeers: true
++  excludeLinksFromLockfile: false
++
++importers:
++
++  .: {}

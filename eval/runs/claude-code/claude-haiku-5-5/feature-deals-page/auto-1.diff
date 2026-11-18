@@ -1,16 +1,16 @@
 diff --git a/app/pages/deals.vue b/app/pages/deals.vue
 new file mode 100644
-index 0000000..ba90d1c
+index 0000000..76fe8e7
 --- /dev/null
 +++ b/app/pages/deals.vue
 @@ -0,0 +1,22 @@
 +<script setup lang="ts">
-+/** Products priced under $5.00 (500 cents), exclusive. */
-+const DEAL_CEILING_CENTS = 500
++/** Products priced under $5.00. */
++const DEAL_MAX_CENTS = 500
 +
 +const { data: products } = await useProducts()
 +const { percent } = useDiscount()
-+const deals = computed(() => products.value.filter(p => p.priceCents < DEAL_CEILING_CENTS))
++const deals = computed(() => (products.value ?? []).filter(product => product.priceCents < DEAL_MAX_CENTS))
 +</script>
 +
 +<template>
@@ -19,7 +19,7 @@ index 0000000..ba90d1c
 +    <section class="product-grid">
 +      <ProductCard v-for="product in deals" :key="product.slug" :product="product">
 +        <UiBadge>Deal</UiBadge>
-+        <p v-if="percent" id="deal-discount">
++        <p v-if="percent > 0" id="deal-discount">
 +          {{ formatPercent(percent) }}
 +        </p>
 +      </ProductCard>

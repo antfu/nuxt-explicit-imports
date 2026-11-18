@@ -1,0 +1,170 @@
+diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
+new file mode 100644
+index 0000000..cb400ef
+--- /dev/null
++++ b/app/pages/orders/[id].vue
+@@ -0,0 +1,36 @@
++<script setup lang="ts">
++import type { Order } from '#shared/types/order'
++import { computed } from 'vue'
++import { useRoute, useFetch, createError } from '#app'
++import { formatMoney } from '~/utils/money'
++import { formatDiscount } from '~/utils/discount'
++
++const route = useRoute()
++const { data: order, error } = await useFetch<Order>(`/api/orders/${route.params.id}`)
++if (error.value)
++  throw createError({ statusCode: error.value.statusCode ?? 404, statusMessage: 'Order not found' })
++
++/** The API formats amounts as `19.99 USD`; the UI shows them as `$19.99`. */
++function toCents(amount: string): number {
++  return Math.round(Number.parseFloat(amount) * 100)
++}
++
++const discountCents = computed(() => toCents(order.value?.discount ?? '0 USD'))
++</script>
++
++<template>
++  <div v-if="order">
++    <h1>Order {{ order.id }}</h1>
++    <ul>
++      <li v-for="line in order.lines" :key="line.slug" class="order-line">
++        <span class="name">{{ line.name }}</span>
++        <span class="qty">x{{ line.qty }}</span>
++      </li>
++    </ul>
++    <p>Subtotal: <span id="order-subtotal">{{ formatMoney(toCents(order.subtotal)) }}</span></p>
++    <p v-if="discountCents">
++      Discount: {{ formatDiscount(discountCents) }}
++    </p>
++    <p>Total: <span id="order-total">{{ formatMoney(toCents(order.total)) }}</span></p>
++  </div>
++</template>
+diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
+new file mode 100644
+index 0000000..47ae93a
+--- /dev/null
++++ b/server/api/orders/[id].get.ts
+@@ -0,0 +1,9 @@
++import { defineEventHandler, getRouterParam, createError } from 'h3'
++import { findOrder } from '#server/utils/orders'
++
++export default defineEventHandler((event) => {
++  const order = findOrder(getRouterParam(event, 'id') ?? '')
++  if (!order)
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  return order
++})
+diff --git a/server/api/orders/index.post.ts b/server/api/orders/index.post.ts
+new file mode 100644
+index 0000000..949f4f8
+--- /dev/null
++++ b/server/api/orders/index.post.ts
+@@ -0,0 +1,19 @@
++import type { CartLine } from '#shared/types/cart'
++import { createError, defineEventHandler, readBody } from 'h3'
++import { findProduct } from '#server/utils/db'
++import { createOrder } from '#server/utils/orders'
++
++export default defineEventHandler(async (event) => {
++  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)
++  const lines = body?.lines
++  if (!Array.isArray(lines) || lines.length === 0)
++    throw createError({ statusCode: 400, statusMessage: 'Order needs at least one line' })
++  for (const line of lines) {
++    if (!findProduct(line?.slug))
++      throw createError({ statusCode: 400, statusMessage: `Unknown product: ${line?.slug}` })
++    if (!Number.isInteger(line.qty) || line.qty < 1)
++      throw createError({ statusCode: 400, statusMessage: `Invalid quantity for ${line.slug}` })
++  }
++  const { id, subtotal, discount, total } = createOrder(lines, body?.code)
++  return { id, subtotal, discount, total }
++})
+diff --git a/server/utils/orders.ts b/server/utils/orders.ts
+new file mode 100644
+index 0000000..c5511cb
+--- /dev/null
++++ b/server/utils/orders.ts
+@@ -0,0 +1,30 @@
++import type { CartLine } from '#shared/types/cart'
++import type { Order } from '#shared/types/order'
++import { findProduct } from '#server/utils/db'
++import { formatMoney } from '#server/utils/money'
++import { priceLines } from '#server/utils/quote'
++
++/** In-memory order store. Orders are lost when the server restarts. */
++const orders = new Map<string, Order>()
++
++/** Stores an order priced by the server, and returns it. Lines must reference known products. */
++export function createOrder(lines: CartLine[], code?: string): Order {
++  const amounts = priceLines(lines, code)
++  const order: Order = {
++    id: crypto.randomUUID(),
++    subtotal: formatMoney(amounts.subtotal),
++    discount: formatMoney(amounts.discount),
++    total: formatMoney(amounts.total),
++    lines: lines.map(line => ({
++      slug: line.slug,
++      name: findProduct(line.slug)?.name ?? line.slug,
++      qty: line.qty,
++    })),
++  }
++  orders.set(order.id, order)
++  return order
++}
++
++export function findOrder(id: string): Order | undefined {
++  return orders.get(id)
++}
+diff --git a/server/utils/quote.ts b/server/utils/quote.ts
+index 94eaddb..04a2e32 100644
+--- a/server/utils/quote.ts
++++ b/server/utils/quote.ts
+@@ -11,12 +11,24 @@ export interface Quote {
+   total: string
+ }
+ 
+-export function computeQuote(lines: CartLine[], code?: string): Quote {
++export interface Amounts {
++  subtotal: number
++  discount: number
++  total: number
++}
++
++/** Authoritative amounts in cents for a set of lines and an optional discount code. */
++export function priceLines(lines: CartLine[], code?: string): Amounts {
+   const subtotal = sumBy(lines, line => (findProduct(line.slug)?.priceCents ?? 0) * line.qty)
+   const discount = computeDiscount(subtotal, discountPercent(code))
++  return { subtotal, discount, total: subtotal - discount }
++}
++
++export function computeQuote(lines: CartLine[], code?: string): Quote {
++  const { subtotal, discount, total } = priceLines(lines, code)
+   return {
+     subtotal: formatMoney(subtotal),
+     discount: formatMoney(discount),
+-    total: formatMoney(subtotal - discount),
++    total: formatMoney(total),
+   }
+ }
+diff --git a/shared/types/order.ts b/shared/types/order.ts
+new file mode 100644
+index 0000000..d0a5ef9
+--- /dev/null
++++ b/shared/types/order.ts
+@@ -0,0 +1,15 @@
++/** A line of a placed order, with the product name resolved at order time. */
++export interface OrderLine {
++  slug: string
++  name: string
++  qty: number
++}
++
++/** An order as returned by the API. Amounts use the quote format, e.g. `19.99 USD`. */
++export interface Order {
++  id: string
++  subtotal: string
++  discount: string
++  total: string
++  lines: OrderLine[]
++}

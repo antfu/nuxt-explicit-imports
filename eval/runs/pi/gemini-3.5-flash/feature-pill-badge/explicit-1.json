@@ -1,7 +1,7 @@
 {
   "config": "pi/gemini-3.5-flash",
   "fingerprint": "8f63c069f80692df",
-  "date": "2026-11-18T08:24:56.331Z",
+  "date": "2026-11-18T11:20:08.804Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "feature-pill-badge",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 1519
+    "ms": 1779
   },
   "build": {
     "ok": true,
-    "ms": 3271
+    "ms": 4559
   },
   "assertions": [
     {
@@ -44,32 +44,30 @@
       "ok": true
     }
   ],
-  "errorsDuringRun": {
-    "other-ts": 2
-  },
+  "errorsDuringRun": {},
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 25,
+    "turns": 22,
     "toolCalls": {
-      "bash": 12,
-      "read": 9,
+      "bash": 9,
+      "read": 8,
       "write": 1,
-      "edit": 2
+      "edit": 3
     },
     "toolKinds": {
-      "explore": 16,
-      "edit": 3,
-      "verify": 5,
+      "explore": 14,
+      "edit": 4,
+      "verify": 3,
       "other": 0
     },
-    "inputTokens": 106022,
-    "outputTokens": 4973,
-    "cacheReadTokens": 93504,
+    "inputTokens": 85576,
+    "outputTokens": 3732,
+    "cacheReadTokens": 54007,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 34228,
-    "costUsd": 0.2178156,
-    "ms": 84660,
-    "apiMs": 57376
+    "toolOutputChars": 27695,
+    "costUsd": 0.17005305,
+    "ms": 61197,
+    "apiMs": 50869
   }
 }

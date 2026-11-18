@@ -1,0 +1,86 @@
+{
+  "config": "claude-code/claude-haiku-5-5",
+  "fingerprint": "7b0942c31255ed86",
+  "date": "2026-11-18T10:16:52.281Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "refactor-extract-cart-layer",
+  "kind": "refactor",
+  "fixture": "shop",
+  "arm": "auto",
+  "trial": 3,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 8211
+  },
+  "build": {
+    "ok": true,
+    "ms": 18492
+  },
+  "assertions": [
+    {
+      "name": "every cart file is in layers/cart/app/",
+      "ok": true
+    },
+    {
+      "name": "no cart file left in app/",
+      "ok": true
+    },
+    {
+      "name": "base layer useCart untouched",
+      "ok": true
+    },
+    {
+      "name": "header badge shows 3",
+      "ok": true
+    },
+    {
+      "name": "/cart renders 2 cart items",
+      "ok": true
+    },
+    {
+      "name": "/cart subtotal is $41.48",
+      "ok": true
+    },
+    {
+      "name": "/checkout is not redirected",
+      "ok": true
+    },
+    {
+      "name": "/checkout renders the summary",
+      "ok": true
+    },
+    {
+      "name": "SAVE10: /cart total is $37.34",
+      "ok": true
+    },
+    {
+      "name": "empty cart: /checkout redirects to /cart",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 14,
+    "toolCalls": {
+      "Bash": 13
+    },
+    "toolKinds": {
+      "explore": 11,
+      "edit": 3,
+      "verify": 2,
+      "other": 0
+    },
+    "inputTokens": 1395,
+    "outputTokens": 14423,
+    "cacheReadTokens": 479014,
+    "cacheWriteTokens": 45829,
+    "toolOutputChars": 57139,
+    "costUsd": 0.017869765,
+    "ms": 126712,
+    "apiMs": 77395
+  }
+}

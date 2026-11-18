@@ -1,0 +1,64 @@
+{
+  "config": "pi/gpt-5.3-codex",
+  "fingerprint": "e3485ed8b309819d",
+  "date": "2026-11-18T10:33:16.138Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "feature-product-discount",
+  "kind": "feature",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 3,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 4725
+  },
+  "build": {
+    "ok": true,
+    "ms": 8429
+  },
+  "assertions": [
+    {
+      "name": "SAVE10: #discounted is $18.00",
+      "ok": true
+    },
+    {
+      "name": "HALF: #discounted is $10.00",
+      "ok": true
+    },
+    {
+      "name": "no #discounted without a code",
+      "ok": true
+    },
+    {
+      "name": "#price still $19.99",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 9,
+    "toolCalls": {
+      "bash": 4,
+      "read": 16,
+      "edit": 1
+    },
+    "toolKinds": {
+      "explore": 18,
+      "edit": 1,
+      "verify": 2,
+      "other": 0
+    },
+    "inputTokens": 18249,
+    "outputTokens": 1664,
+    "cacheReadTokens": 28416,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 25291,
+    "costUsd": 0.060204549999999996,
+    "ms": 47131,
+    "apiMs": 35247
+  }
+}

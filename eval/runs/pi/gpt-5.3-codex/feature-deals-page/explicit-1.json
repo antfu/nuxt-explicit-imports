@@ -1,0 +1,76 @@
+{
+  "config": "pi/gpt-5.3-codex",
+  "fingerprint": "3c9d6b17e40f4188",
+  "date": "2026-11-18T10:30:29.556Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "feature-deals-page",
+  "kind": "feature",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 1,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 3599
+  },
+  "build": {
+    "ok": true,
+    "ms": 7063
+  },
+  "assertions": [
+    {
+      "name": "3 app product cards",
+      "ok": true
+    },
+    {
+      "name": "no ui layer product card",
+      "ok": true
+    },
+    {
+      "name": "lists Pencil, Eraser and Sticky Notes",
+      "ok": true
+    },
+    {
+      "name": "does not list Notebook",
+      "ok": true
+    },
+    {
+      "name": "3 \"Deal\" badges",
+      "ok": true
+    },
+    {
+      "name": "#deal-discount shows 10%",
+      "ok": true
+    },
+    {
+      "name": "no #deal-discount without a code",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 12,
+    "toolCalls": {
+      "bash": 6,
+      "read": 20,
+      "write": 1
+    },
+    "toolKinds": {
+      "explore": 24,
+      "edit": 1,
+      "verify": 2,
+      "other": 0
+    },
+    "inputTokens": 14390,
+    "outputTokens": 1860,
+    "cacheReadTokens": 35840,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 22452,
+    "costUsd": 0.057494500000000004,
+    "ms": 60217,
+    "apiMs": 45624
+  }
+}

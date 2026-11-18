@@ -1,7 +1,7 @@
 {
   "config": "claude-code/claude-haiku-5-5",
   "fingerprint": "f5053215c606c492",
-  "date": "2026-11-18T08:26:38.978Z",
+  "date": "2026-11-18T09:52:14.635Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "feature-deals-page",
@@ -9,44 +9,67 @@
   "fixture": "shop",
   "arm": "auto",
   "trial": 2,
-  "pass": false,
+  "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 1572
+    "ms": 2998
   },
   "build": {
     "ok": true,
-    "ms": 4286
+    "ms": 9844
   },
   "assertions": [
     {
-      "name": "check ran to the end",
-      "ok": false,
-      "detail": "Error: Server did not start: TypeError: fetch failed"
+      "name": "3 app product cards",
+      "ok": true
+    },
+    {
+      "name": "no ui layer product card",
+      "ok": true
+    },
+    {
+      "name": "lists Pencil, Eraser and Sticky Notes",
+      "ok": true
+    },
+    {
+      "name": "does not list Notebook",
+      "ok": true
+    },
+    {
+      "name": "3 \"Deal\" badges",
+      "ok": true
+    },
+    {
+      "name": "#deal-discount shows 10%",
+      "ok": true
+    },
+    {
+      "name": "no #deal-discount without a code",
+      "ok": true
     }
   ],
   "errorsDuringRun": {},
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 10,
+    "turns": 9,
     "toolCalls": {
-      "Bash": 8,
+      "Bash": 7,
       "Write": 1
     },
     "toolKinds": {
-      "explore": 7,
+      "explore": 6,
       "edit": 2,
       "verify": 3,
       "other": 0
     },
-    "inputTokens": 1325,
-    "outputTokens": 6272,
-    "cacheReadTokens": 256685,
-    "cacheWriteTokens": 18479,
-    "toolOutputChars": 18224,
-    "costUsd": 0.008145225,
-    "ms": 55980,
-    "apiMs": 35413
+    "inputTokens": 1323,
+    "outputTokens": 6669,
+    "cacheReadTokens": 243635,
+    "cacheWriteTokens": 20208,
+    "toolOutputChars": 21485,
+    "costUsd": 0.00842915,
+    "ms": 87422,
+    "apiMs": 43697
   }
 }

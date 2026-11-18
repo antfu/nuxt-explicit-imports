@@ -1,0 +1,48 @@
+diff --git a/app/components/AppHeader.vue b/app/components/AppHeader.vue
+index b8e6755..cefe185 100644
+--- a/app/components/AppHeader.vue
++++ b/app/components/AppHeader.vue
+@@ -1,5 +1,5 @@
+ <script setup lang="ts">
+-import CartBadge from '~/components/cart/Badge.vue'
++import CartBadge from '~/components/checkout/Badge.vue'
+ import { NuxtLink } from '#components'
+ </script>
+ 
+diff --git a/app/components/cart/Badge.vue b/app/components/checkout/Badge.vue
+similarity index 100%
+rename from app/components/cart/Badge.vue
+rename to app/components/checkout/Badge.vue
+diff --git a/app/components/cart/Item.vue b/app/components/checkout/Item.vue
+similarity index 100%
+rename from app/components/cart/Item.vue
+rename to app/components/checkout/Item.vue
+diff --git a/app/components/cart/Summary.vue b/app/components/checkout/Summary.vue
+similarity index 100%
+rename from app/components/cart/Summary.vue
+rename to app/components/checkout/Summary.vue
+diff --git a/app/pages/cart.vue b/app/pages/cart.vue
+index bf378cb..a83db7c 100644
+--- a/app/pages/cart.vue
++++ b/app/pages/cart.vue
+@@ -1,6 +1,6 @@
+ <script setup lang="ts">
+-import CartItem from '~/components/cart/Item.vue'
+-import CartSummary from '~/components/cart/Summary.vue'
++import CartItem from '~/components/checkout/Item.vue'
++import CartSummary from '~/components/checkout/Summary.vue'
+ import { useProducts } from '~/composables/useProducts'
+ import { useCart } from '~/composables/useCart'
+ import { NuxtLink } from '#components'
+diff --git a/app/pages/checkout.vue b/app/pages/checkout.vue
+index cf14bdf..690a191 100644
+--- a/app/pages/checkout.vue
++++ b/app/pages/checkout.vue
+@@ -1,6 +1,6 @@
+ <script setup lang="ts">
+ import FormInput from '#layers/ui/app/components/form/Input.vue'
+-import CartSummary from '~/components/cart/Summary.vue'
++import CartSummary from '~/components/checkout/Summary.vue'
+ import UiBadge from '#layers/ui/app/components/UiBadge.vue'
+ import UiButton from '#layers/ui/app/components/UiButton.vue'
+ import { definePageMeta } from '#app/composables/pages'

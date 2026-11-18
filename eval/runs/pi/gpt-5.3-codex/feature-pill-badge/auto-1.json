@@ -1,7 +1,7 @@
 {
   "config": "pi/gpt-5.3-codex",
   "fingerprint": "557ed5e7139fb93c",
-  "date": "2026-11-18T08:23:10.741Z",
+  "date": "2026-11-18T10:42:59.111Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "feature-pill-badge",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 2043
+    "ms": 3650
   },
   "build": {
     "ok": true,
-    "ms": 11387
+    "ms": 5361
   },
   "assertions": [
     {
@@ -50,23 +50,23 @@
     "stop": "success",
     "turns": 8,
     "toolCalls": {
-      "bash": 6,
+      "bash": 5,
       "read": 1,
       "write": 1
     },
     "toolKinds": {
       "explore": 4,
       "edit": 1,
-      "verify": 3,
+      "verify": 2,
       "other": 0
     },
-    "inputTokens": 8425,
-    "outputTokens": 547,
-    "cacheReadTokens": 13824,
+    "inputTokens": 10689,
+    "outputTokens": 443,
+    "cacheReadTokens": 8704,
     "cacheWriteTokens": 0,
-    "toolOutputChars": 9853,
-    "costUsd": 0.02482095,
-    "ms": 36115,
-    "apiMs": 18193
+    "toolOutputChars": 11202,
+    "costUsd": 0.026430949999999998,
+    "ms": 24241,
+    "apiMs": 18109
   }
 }

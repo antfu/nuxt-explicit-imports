@@ -1,0 +1,56 @@
+{
+  "config": "pi/gpt-5.3-codex",
+  "fingerprint": "dcbcb909de888930",
+  "date": "2026-11-18T10:54:58.037Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "bugfix-lost-override",
+  "kind": "bugfix",
+  "fixture": "shop",
+  "arm": "auto",
+  "trial": 5,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 4240
+  },
+  "build": {
+    "ok": true,
+    "ms": 11333
+  },
+  "assertions": [
+    {
+      "name": "home renders theme-dark",
+      "ok": true
+    },
+    {
+      "name": "base layer theme untouched",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 9,
+    "toolCalls": {
+      "bash": 5,
+      "read": 8,
+      "edit": 1
+    },
+    "toolKinds": {
+      "explore": 11,
+      "edit": 1,
+      "verify": 2,
+      "other": 0
+    },
+    "inputTokens": 11240,
+    "outputTokens": 967,
+    "cacheReadTokens": 16000,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 13856,
+    "costUsd": 0.036008,
+    "ms": 44107,
+    "apiMs": 26539
+  }
+}

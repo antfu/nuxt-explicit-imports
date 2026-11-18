@@ -1,0 +1,75 @@
+{
+  "config": "claude-code/claude-haiku-5-5",
+  "fingerprint": "2e801976b0b1474d",
+  "date": "2026-11-18T10:03:11.071Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "refactor-move-cart-components",
+  "kind": "refactor",
+  "fixture": "shop",
+  "arm": "auto",
+  "trial": 2,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 5210
+  },
+  "build": {
+    "ok": true,
+    "ms": 11319
+  },
+  "assertions": [
+    {
+      "name": "app/components/cart/ is empty",
+      "ok": true
+    },
+    {
+      "name": "3 components in app/components/checkout/",
+      "ok": true
+    },
+    {
+      "name": "header badge shows 3",
+      "ok": true
+    },
+    {
+      "name": "/cart renders 2 cart items",
+      "ok": true
+    },
+    {
+      "name": "/cart subtotal is $41.48",
+      "ok": true
+    },
+    {
+      "name": "/checkout is not redirected",
+      "ok": true
+    },
+    {
+      "name": "/checkout renders the summary",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 17,
+    "toolCalls": {
+      "Bash": 12,
+      "Edit": 4
+    },
+    "toolKinds": {
+      "explore": 11,
+      "edit": 9,
+      "verify": 3,
+      "other": 0
+    },
+    "inputTokens": 1267,
+    "outputTokens": 8058,
+    "cacheReadTokens": 368060,
+    "cacheWriteTokens": 18475,
+    "toolOutputChars": 14420,
+    "costUsd": 0.010145675,
+    "ms": 132713,
+    "apiMs": 46961
+  }
+}

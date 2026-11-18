@@ -1,0 +1,74 @@
+{
+  "config": "pi/gemini-3.5-flash",
+  "fingerprint": "6e894cc0deeff69d",
+  "date": "2026-11-18T11:14:10.593Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "feature-order-flow",
+  "kind": "feature",
+  "fixture": "shop",
+  "arm": "auto",
+  "trial": 1,
+  "pass": false,
+  "typecheck": {
+    "ok": true,
+    "ms": 1527
+  },
+  "build": {
+    "ok": true,
+    "ms": 3298
+  },
+  "assertions": [
+    {
+      "name": "POST returns an id",
+      "ok": true
+    },
+    {
+      "name": "POST total is 37.33 USD",
+      "ok": true
+    },
+    {
+      "name": "POST subtotal and discount",
+      "ok": true
+    },
+    {
+      "name": "a second order gets another id",
+      "ok": true
+    },
+    {
+      "name": "GET returns the stored order",
+      "ok": true
+    },
+    {
+      "name": "check ran to the end",
+      "ok": false,
+      "detail": "Error: GET /orders/1 returned 404"
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "error_max_turns",
+    "turns": 41,
+    "toolCalls": {
+      "bash": 12,
+      "read": 25,
+      "edit": 1,
+      "write": 2
+    },
+    "toolKinds": {
+      "explore": 35,
+      "edit": 3,
+      "verify": 2,
+      "other": 0
+    },
+    "inputTokens": 150722,
+    "outputTokens": 14271,
+    "cacheReadTokens": 221437,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 11855,
+    "costUsd": 0.3877375500000001,
+    "ms": 123396,
+    "apiMs": 119203
+  }
+}

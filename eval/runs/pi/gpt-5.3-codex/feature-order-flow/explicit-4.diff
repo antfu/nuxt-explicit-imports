@@ -1,0 +1,180 @@
+diff --git a/app/pages/checkout.vue b/app/pages/checkout.vue
+index cf14bdf..cc59af7 100644
+--- a/app/pages/checkout.vue
++++ b/app/pages/checkout.vue
+@@ -1,18 +1,33 @@
+ <script setup lang="ts">
++import type { OrderSummary } from '#shared/types/order'
+ import FormInput from '#layers/ui/app/components/form/Input.vue'
+ import CartSummary from '~/components/cart/Summary.vue'
+ import UiBadge from '#layers/ui/app/components/UiBadge.vue'
+ import UiButton from '#layers/ui/app/components/UiButton.vue'
+ import { definePageMeta } from '#app/composables/pages'
++import { navigateTo } from '#app'
+ import { useProducts } from '~/composables/useProducts'
++import { useCart } from '~/composables/useCart'
++import { useDiscount } from '~/composables/useDiscount'
+ import { ref } from 'vue'
+-import { useNotify } from '#layers/base/app/composables/useNotify'
+ 
+ definePageMeta({ middleware: 'cart-not-empty' })
+ 
+ await useProducts()
+ const email = ref('')
+-const { notify } = useNotify()
++const { lines } = useCart()
++const { code } = useDiscount()
++
++async function placeOrder() {
++  const order = await $fetch<OrderSummary>('/api/orders', {
++    method: 'POST',
++    body: {
++      lines: lines.value,
++      code: code.value ?? undefined,
++    },
++  })
++  await navigateTo(`/orders/${order.id}`)
++}
+ </script>
+ 
+ <template>
+@@ -23,7 +38,7 @@ const { notify } = useNotify()
+     </UiBadge>
+     <FormInput v-model="email" label="Email" />
+     <CartSummary />
+-    <UiButton id="place-order" @click="notify(`Order placed for ${email}`)">
++    <UiButton id="place-order" @click="placeOrder">
+       Place order
+     </UiButton>
+   </div>
+diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
+new file mode 100644
+index 0000000..12b645c
+--- /dev/null
++++ b/app/pages/orders/[id].vue
+@@ -0,0 +1,37 @@
++<script setup lang="ts">
++import type { CartLine } from '#shared/types/cart'
++import type { StoredOrder } from '#shared/types/order'
++import { computed } from 'vue'
++import { useRoute, useFetch } from '#app'
++import { useProducts } from '~/composables/useProducts'
++import { formatMoney } from '~/utils/money'
++
++const route = useRoute()
++const { data: products } = await useProducts()
++const { data: order } = await useFetch<StoredOrder>(`/api/orders/${route.params.id}`)
++
++const productsBySlug = computed(() => new Map((products.value ?? []).map(product => [product.slug, product.name])))
++
++function lineName(line: CartLine): string {
++  return productsBySlug.value.get(line.slug) ?? line.slug
++}
++
++function parseServerMoney(money: string): number {
++  const amount = Number.parseFloat(money)
++  return Number.isFinite(amount) ? Math.round(amount * 100) : 0
++}
++
++const orderTotal = computed(() => formatMoney(parseServerMoney(order.value?.total ?? '0.00 USD')))
++</script>
++
++<template>
++  <div>
++    <h1>Order {{ order?.id }}</h1>
++    <ul>
++      <li v-for="line in order?.lines ?? []" :key="line.slug" class="order-line">
++        {{ lineName(line) }}
++      </li>
++    </ul>
++    <p>Total: <span id="order-total">{{ orderTotal }}</span></p>
++  </div>
++</template>
+diff --git a/server/api/orders.post.ts b/server/api/orders.post.ts
+new file mode 100644
+index 0000000..b22b14b
+--- /dev/null
++++ b/server/api/orders.post.ts
+@@ -0,0 +1,14 @@
++import type { CreateOrderBody, OrderSummary } from '#shared/types/order'
++import { defineEventHandler, readBody } from 'h3'
++import { createOrder } from '#server/utils/orders'
++
++export default defineEventHandler(async (event): Promise<OrderSummary> => {
++  const body = await readBody<CreateOrderBody>(event)
++  const order = createOrder(body?.lines ?? [], body?.code)
++  return {
++    id: order.id,
++    subtotal: order.subtotal,
++    discount: order.discount,
++    total: order.total,
++  }
++})
+diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
+new file mode 100644
+index 0000000..04129bc
+--- /dev/null
++++ b/server/api/orders/[id].get.ts
+@@ -0,0 +1,11 @@
++import type { StoredOrder } from '#shared/types/order'
++import { createError, defineEventHandler, getRouterParam } from 'h3'
++import { findOrder } from '#server/utils/orders'
++
++export default defineEventHandler((event): StoredOrder => {
++  const id = getRouterParam(event, 'id') ?? ''
++  const order = findOrder(id)
++  if (!order)
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  return order
++})
+diff --git a/server/utils/orders.ts b/server/utils/orders.ts
+new file mode 100644
+index 0000000..13b1882
+--- /dev/null
++++ b/server/utils/orders.ts
+@@ -0,0 +1,18 @@
++import type { CartLine } from '#shared/types/cart'
++import type { StoredOrder } from '#shared/types/order'
++import { computeQuote } from '#server/utils/quote'
++
++const orders = new Map<string, StoredOrder>()
++let nextOrderId = 1
++
++export function createOrder(lines: CartLine[], code?: string): StoredOrder {
++  const quote = computeQuote(lines, code)
++  const id = String(nextOrderId++)
++  const order: StoredOrder = { id, lines, code, ...quote }
++  orders.set(id, order)
++  return order
++}
++
++export function findOrder(id: string): StoredOrder | undefined {
++  return orders.get(id)
++}
+diff --git a/shared/types/order.ts b/shared/types/order.ts
+new file mode 100644
+index 0000000..2fe098f
+--- /dev/null
++++ b/shared/types/order.ts
+@@ -0,0 +1,21 @@
++import type { CartLine } from '#shared/types/cart'
++
++export interface CreateOrderBody {
++  lines: CartLine[]
++  code?: string
++}
++
++export interface OrderTotals {
++  subtotal: string
++  discount: string
++  total: string
++}
++
++export interface OrderSummary extends OrderTotals {
++  id: string
++}
++
++export interface StoredOrder extends OrderSummary {
++  lines: CartLine[]
++  code?: string
++}

@@ -1,0 +1,90 @@
+{
+  "config": "pi/gemini-3.5-flash",
+  "fingerprint": "c6575201a7adaefc",
+  "date": "2026-11-18T11:27:33.176Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "refactor-extract-cart-layer",
+  "kind": "refactor",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 5,
+  "pass": false,
+  "typecheck": {
+    "ok": true,
+    "ms": 1847
+  },
+  "build": {
+    "ok": true,
+    "ms": 5116
+  },
+  "assertions": [
+    {
+      "name": "every cart file is in layers/cart/app/",
+      "ok": false,
+      "detail": "composables/useCart.ts, composables/useCartTotal.ts, composables/useDiscount.ts, components/cart/Badge.vue, components/cart/Item.vue, components/cart/Summary.vue, utils/discount.ts, middleware/cart-not-empty.ts"
+    },
+    {
+      "name": "no cart file left in app/",
+      "ok": false,
+      "detail": "composables/useCart.ts, composables/useCartTotal.ts, composables/useDiscount.ts, components/cart/Badge.vue, components/cart/Item.vue, components/cart/Summary.vue, utils/discount.ts, middleware/cart-not-empty.ts"
+    },
+    {
+      "name": "base layer useCart untouched",
+      "ok": true
+    },
+    {
+      "name": "header badge shows 3",
+      "ok": true
+    },
+    {
+      "name": "/cart renders 2 cart items",
+      "ok": true
+    },
+    {
+      "name": "/cart subtotal is $41.48",
+      "ok": true
+    },
+    {
+      "name": "/checkout is not redirected",
+      "ok": true
+    },
+    {
+      "name": "/checkout renders the summary",
+      "ok": true
+    },
+    {
+      "name": "SAVE10: /cart total is $37.34",
+      "ok": true
+    },
+    {
+      "name": "empty cart: /checkout redirects to /cart",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "error_max_turns",
+    "turns": 41,
+    "toolCalls": {
+      "bash": 19,
+      "read": 20,
+      "write": 1
+    },
+    "toolKinds": {
+      "explore": 35,
+      "edit": 1,
+      "verify": 3,
+      "other": 1
+    },
+    "inputTokens": 180216,
+    "outputTokens": 9331,
+    "cacheReadTokens": 496566,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 57962,
+    "costUsd": 0.4287879000000001,
+    "ms": 111879,
+    "apiMs": 103387
+  }
+}

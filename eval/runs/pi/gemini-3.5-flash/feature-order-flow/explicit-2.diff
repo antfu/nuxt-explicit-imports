@@ -1,0 +1,175 @@
+diff --git a/app/pages/checkout.vue b/app/pages/checkout.vue
+index cf14bdf..18b9582 100644
+--- a/app/pages/checkout.vue
++++ b/app/pages/checkout.vue
+@@ -7,12 +7,37 @@ import { definePageMeta } from '#app/composables/pages'
+ import { useProducts } from '~/composables/useProducts'
+ import { ref } from 'vue'
+ import { useNotify } from '#layers/base/app/composables/useNotify'
++import { navigateTo } from '#app'
++import { useCart } from '~/composables/useCart'
++import { useDiscount } from '~/composables/useDiscount'
++import type { Order } from '#shared/types/order'
+ 
+ definePageMeta({ middleware: 'cart-not-empty' })
+ 
+ await useProducts()
+ const email = ref('')
+ const { notify } = useNotify()
++const { lines } = useCart()
++const { code } = useDiscount()
++
++async function placeOrder() {
++  try {
++    const order = await $fetch<Order>('/api/orders', {
++      method: 'POST',
++      body: {
++        lines: lines.value,
++        code: code.value,
++      },
++    })
++    
++    notify(`Order placed for ${email.value}`)
++    lines.value = []
++    code.value = null
++    await navigateTo(`/orders/${order.id}`)
++  } catch (err) {
++    console.error(err)
++  }
++}
+ </script>
+ 
+ <template>
+@@ -23,7 +48,7 @@ const { notify } = useNotify()
+     </UiBadge>
+     <FormInput v-model="email" label="Email" />
+     <CartSummary />
+-    <UiButton id="place-order" @click="notify(`Order placed for ${email}`)">
++    <UiButton id="place-order" @click="placeOrder">
+       Place order
+     </UiButton>
+   </div>
+diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
+new file mode 100644
+index 0000000..aaccbda
+--- /dev/null
++++ b/app/pages/orders/[id].vue
+@@ -0,0 +1,41 @@
++<script setup lang="ts">
++import type { Order } from '#shared/types/order'
++import type { Product } from '#shared/types/product'
++import { useRoute, useFetch, useNuxtData } from '#app'
++import { computed } from 'vue'
++import { useProducts } from '~/composables/useProducts'
++import { formatMoney } from '~/utils/money'
++
++const route = useRoute()
++
++// Fetch products list to look up names
++await useProducts()
++const { data: products } = useNuxtData<Product[]>('products')
++
++// Fetch the order
++const { data: order } = await useFetch<Order>(`/api/orders/${route.params.id}`)
++
++function getProductName(slug: string): string {
++  const product = products.value?.find(p => p.slug === slug)
++  return product ? product.name : slug
++}
++
++const displayTotal = computed(() => {
++  if (!order.value?.total) return ''
++  // Extract number from server total e.g. "19.99 USD" -> 19.99
++  const val = parseFloat(order.value.total)
++  return formatMoney(Math.round(val * 100))
++})
++</script>
++
++<template>
++  <div v-if="order">
++    <h1>Order {{ order.id }}</h1>
++    <ul>
++      <li v-for="line in order.lines" :key="line.slug" class="order-line">
++        {{ getProductName(line.slug) }}
++      </li>
++    </ul>
++    <p>Total: <span id="order-total">{{ displayTotal }}</span></p>
++  </div>
++</template>
+diff --git a/server/api/orders.post.ts b/server/api/orders.post.ts
+new file mode 100644
+index 0000000..7c7f7e7
+--- /dev/null
++++ b/server/api/orders.post.ts
+@@ -0,0 +1,12 @@
++import type { CartLine } from '#shared/types/cart'
++import { defineEventHandler, readBody } from 'h3'
++import { computeQuote } from '#server/utils/quote'
++import { createOrder } from '#server/utils/orders'
++
++export default defineEventHandler(async (event) => {
++  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)
++  const lines = body?.lines ?? []
++  const code = body?.code
++  const quote = computeQuote(lines, code)
++  return createOrder(lines, quote)
++})
+diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
+new file mode 100644
+index 0000000..93c621e
+--- /dev/null
++++ b/server/api/orders/[id].get.ts
+@@ -0,0 +1,10 @@
++import { defineEventHandler, getRouterParam, createError } from 'h3'
++import { getOrder } from '#server/utils/orders'
++
++export default defineEventHandler((event) => {
++  const id = getRouterParam(event, 'id') ?? ''
++  const order = getOrder(id)
++  if (!order)
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  return order
++})
+diff --git a/server/utils/orders.ts b/server/utils/orders.ts
+new file mode 100644
+index 0000000..486fbf8
+--- /dev/null
++++ b/server/utils/orders.ts
+@@ -0,0 +1,22 @@
++import type { Order } from '#shared/types/order'
++import type { CartLine } from '#shared/types/cart'
++
++const orders = new Map<string, Order>()
++let counter = 0
++
++export function createOrder(lines: CartLine[], quote: { subtotal: string, discount: string, total: string }): Order {
++  const id = String(++counter)
++  const order: Order = {
++    id,
++    subtotal: quote.subtotal,
++    discount: quote.discount,
++    total: quote.total,
++    lines,
++  }
++  orders.set(id, order)
++  return order
++}
++
++export function getOrder(id: string): Order | undefined {
++  return orders.get(id)
++}
+diff --git a/shared/types/order.ts b/shared/types/order.ts
+new file mode 100644
+index 0000000..9606928
+--- /dev/null
++++ b/shared/types/order.ts
+@@ -0,0 +1,9 @@
++import type { CartLine } from './cart'
++
++export interface Order {
++  id: string
++  subtotal: string
++  discount: string
++  total: string
++  lines: CartLine[]
++}

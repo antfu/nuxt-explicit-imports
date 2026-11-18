@@ -1,0 +1,121 @@
+diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
+new file mode 100644
+index 0000000..5eb16b6
+--- /dev/null
++++ b/app/pages/orders/[id].vue
+@@ -0,0 +1,30 @@
++<script setup lang="ts">
++import type { Order } from '#shared/types/order'
++
++const route = useRoute()
++const { data: order } = await useFetch<Order>(`/api/orders/${route.params.id}`)
++const { data: products } = await useProducts()
++
++const getProductName = (slug: string) => {
++  const product = products.value?.find(p => p.slug === slug)
++  return product ? product.name : slug
++}
++
++function formatServerMoney(serverMoney?: string): string {
++  if (!serverMoney) return ''
++  const amount = parseFloat(serverMoney.replace(/[^0-9.]/g, ''))
++  return formatMoney(Math.round(amount * 100))
++}
++</script>
++
++<template>
++  <div v-if="order">
++    <h1>Order {{ order.id }}</h1>
++    <ul>
++      <li v-for="line in (order.lines ?? [])" :key="line.slug" class="order-line">
++        {{ getProductName(line.slug) }}
++      </li>
++    </ul>
++    <p>Total: <span id="order-total">{{ formatServerMoney(order.total) }}</span></p>
++  </div>
++</template>
+diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
+new file mode 100644
+index 0000000..9bb2d4c
+--- /dev/null
++++ b/server/api/orders/[id].get.ts
+@@ -0,0 +1,8 @@
++export default defineEventHandler((event) => {
++  const id = getRouterParam(event, 'id') ?? ''
++  const order = findOrder(id)
++  if (!order) {
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  }
++  return order
++})
+diff --git a/server/api/orders/index.post.ts b/server/api/orders/index.post.ts
+new file mode 100644
+index 0000000..94d4cb4
+--- /dev/null
++++ b/server/api/orders/index.post.ts
+@@ -0,0 +1,25 @@
++import type { CartLine } from '#shared/types/cart'
++import type { Order } from '#shared/types/order'
++
++export default defineEventHandler(async (event) => {
++  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)
++  const lines = body?.lines ?? []
++  const code = body?.code
++
++  const quote = computeQuote(lines, code)
++
++  // Generate a unique ID for the order
++  const id = Math.random().toString(36).substring(2, 9)
++
++  const order: Order = {
++    id,
++    subtotal: quote.subtotal,
++    discount: quote.discount,
++    total: quote.total,
++    lines,
++  }
++
++  saveOrder(order)
++
++  return order
++})
+diff --git a/server/utils/db.ts b/server/utils/db.ts
+index 04e58a5..12d8498 100644
+--- a/server/utils/db.ts
++++ b/server/utils/db.ts
+@@ -1,4 +1,5 @@
+ import type { Product } from '#shared/types/product'
++import type { Order } from '#shared/types/order'
+ 
+ const products: Product[] = [
+   ['Notebook', 1999],
+@@ -16,3 +17,14 @@ export function listProducts(): Product[] {
+ export function findProduct(slug: string): Product | undefined {
+   return products.find(p => p.slug === slug)
+ }
++
++const orders = new Map<string, Order>()
++
++export function saveOrder(order: Order) {
++  orders.set(order.id, order)
++}
++
++export function findOrder(id: string): Order | undefined {
++  return orders.get(id)
++}
++
+diff --git a/shared/types/order.ts b/shared/types/order.ts
+new file mode 100644
+index 0000000..9606928
+--- /dev/null
++++ b/shared/types/order.ts
+@@ -0,0 +1,9 @@
++import type { CartLine } from './cart'
++
++export interface Order {
++  id: string
++  subtotal: string
++  discount: string
++  total: string
++  lines: CartLine[]
++}

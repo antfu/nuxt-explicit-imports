@@ -1,0 +1,65 @@
+diff --git a/server/api/orders.post.ts b/server/api/orders.post.ts
+new file mode 100644
+index 0000000..6bcf022
+--- /dev/null
++++ b/server/api/orders.post.ts
+@@ -0,0 +1,6 @@
++import type { CartLine } from '#shared/types/cart'
++
++export default defineEventHandler(async (event) => {
++  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)
++  return createOrder(body?.lines ?? [], body?.code)
++})
+diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
+new file mode 100644
+index 0000000..9bb2d4c
+--- /dev/null
++++ b/server/api/orders/[id].get.ts
+@@ -0,0 +1,8 @@
++export default defineEventHandler((event) => {
++  const id = getRouterParam(event, 'id') ?? ''
++  const order = findOrder(id)
++  if (!order) {
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  }
++  return order
++})
+diff --git a/server/utils/db.ts b/server/utils/db.ts
+index 04e58a5..db91a1a 100644
+--- a/server/utils/db.ts
++++ b/server/utils/db.ts
+@@ -1,4 +1,34 @@
+ import type { Product } from '#shared/types/product'
++import type { CartLine } from '#shared/types/cart'
++import { computeQuote } from './quote'
++
++export interface Order {
++  id: string
++  subtotal: string
++  discount: string
++  total: string
++  lines: CartLine[]
++}
++
++const orders: Order[] = []
++let nextOrderId = 1
++
++export function createOrder(lines: CartLine[], code?: string): Order {
++  const quote = computeQuote(lines, code)
++  const order: Order = {
++    id: String(nextOrderId++),
++    subtotal: quote.subtotal,
++    discount: quote.discount,
++    total: quote.total,
++    lines,
++  }
++  orders.push(order)
++  return order
++}
++
++export function findOrder(id: string): Order | undefined {
++  return orders.find(o => o.id === id)
++}
+ 
+ const products: Product[] = [
+   ['Notebook', 1999],

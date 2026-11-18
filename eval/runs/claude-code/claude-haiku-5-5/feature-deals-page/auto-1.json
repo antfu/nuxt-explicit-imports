@@ -1,7 +1,7 @@
 {
   "config": "claude-code/claude-haiku-5-5",
   "fingerprint": "f5053215c606c492",
-  "date": "2026-11-18T08:26:40.624Z",
+  "date": "2026-11-18T09:52:03.681Z",
   "maxTurns": 40,
   "timeoutMin": 10,
   "task": "feature-deals-page",
@@ -12,11 +12,11 @@
   "pass": true,
   "typecheck": {
     "ok": true,
-    "ms": 1578
+    "ms": 3572
   },
   "build": {
     "ok": true,
-    "ms": 3575
+    "ms": 4610
   },
   "assertions": [
     {
@@ -52,24 +52,24 @@
   "errorsAtEnd": {},
   "agent": {
     "stop": "success",
-    "turns": 10,
+    "turns": 9,
     "toolCalls": {
-      "Bash": 8,
+      "Bash": 7,
       "Write": 1
     },
     "toolKinds": {
-      "explore": 7,
+      "explore": 5,
       "edit": 2,
       "verify": 3,
       "other": 0
     },
-    "inputTokens": 1325,
-    "outputTokens": 6806,
-    "cacheReadTokens": 268586,
-    "cacheWriteTokens": 19469,
-    "toolOutputChars": 18707,
-    "costUsd": 0.008654985,
-    "ms": 68383,
-    "apiMs": 44643
+    "inputTokens": 1321,
+    "outputTokens": 6570,
+    "cacheReadTokens": 205490,
+    "cacheWriteTokens": 19415,
+    "toolOutputChars": 19457,
+    "costUsd": 0.007898874999999998,
+    "ms": 81025,
+    "apiMs": 36799
   }
 }

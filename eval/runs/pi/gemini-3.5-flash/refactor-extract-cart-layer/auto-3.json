@@ -1,0 +1,90 @@
+{
+  "config": "pi/gemini-3.5-flash",
+  "fingerprint": "7b0942c31255ed86",
+  "date": "2026-11-18T11:23:23.141Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "refactor-extract-cart-layer",
+  "kind": "refactor",
+  "fixture": "shop",
+  "arm": "auto",
+  "trial": 3,
+  "pass": false,
+  "typecheck": {
+    "ok": true,
+    "ms": 1632
+  },
+  "build": {
+    "ok": true,
+    "ms": 3729
+  },
+  "assertions": [
+    {
+      "name": "every cart file is in layers/cart/app/",
+      "ok": false,
+      "detail": "components/cart/Badge.vue, components/cart/Item.vue, components/cart/Summary.vue"
+    },
+    {
+      "name": "no cart file left in app/",
+      "ok": false,
+      "detail": "composables/useCart.ts, composables/useCartTotal.ts, composables/useDiscount.ts, components/cart/Badge.vue, components/cart/Item.vue, components/cart/Summary.vue, utils/discount.ts, middleware/cart-not-empty.ts"
+    },
+    {
+      "name": "base layer useCart untouched",
+      "ok": true
+    },
+    {
+      "name": "header badge shows 3",
+      "ok": true
+    },
+    {
+      "name": "/cart renders 2 cart items",
+      "ok": true
+    },
+    {
+      "name": "/cart subtotal is $41.48",
+      "ok": true
+    },
+    {
+      "name": "/checkout is not redirected",
+      "ok": true
+    },
+    {
+      "name": "/checkout renders the summary",
+      "ok": true
+    },
+    {
+      "name": "SAVE10: /cart total is $37.34",
+      "ok": true
+    },
+    {
+      "name": "empty cart: /checkout redirects to /cart",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "error_max_turns",
+    "turns": 41,
+    "toolCalls": {
+      "bash": 8,
+      "read": 26,
+      "write": 6
+    },
+    "toolKinds": {
+      "explore": 32,
+      "edit": 6,
+      "verify": 2,
+      "other": 0
+    },
+    "inputTokens": 205343,
+    "outputTokens": 6762,
+    "cacheReadTokens": 367269,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 40521,
+    "costUsd": 0.42396285,
+    "ms": 95416,
+    "apiMs": 87796
+  }
+}

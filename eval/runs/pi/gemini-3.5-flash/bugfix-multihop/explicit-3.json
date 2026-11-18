@@ -1,0 +1,64 @@
+{
+  "config": "pi/gemini-3.5-flash",
+  "fingerprint": "87d6cf3f13881ab7",
+  "date": "2026-11-18T11:29:03.238Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "bugfix-multihop",
+  "kind": "bugfix",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 3,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1775
+  },
+  "build": {
+    "ok": true,
+    "ms": 3793
+  },
+  "assertions": [
+    {
+      "name": "no code: /cart total is $39.98",
+      "ok": true
+    },
+    {
+      "name": "SAVE10: /cart total is $35.99",
+      "ok": true
+    },
+    {
+      "name": "no code: quote total is 39.98 USD",
+      "ok": true
+    },
+    {
+      "name": "SAVE10: quote total is 35.98 USD",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 22,
+    "toolCalls": {
+      "bash": 9,
+      "read": 11,
+      "edit": 1
+    },
+    "toolKinds": {
+      "explore": 17,
+      "edit": 1,
+      "verify": 3,
+      "other": 0
+    },
+    "inputTokens": 102961,
+    "outputTokens": 3335,
+    "cacheReadTokens": 7664,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 19651,
+    "costUsd": 0.1856061,
+    "ms": 54176,
+    "apiMs": 45568
+  }
+}
