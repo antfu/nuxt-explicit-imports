@@ -1,0 +1,94 @@
+export const ARMS = ['auto', 'explicit'] as const
+/** `auto`: Nuxt auto-imports on. `explicit`: every import written out, auto-imports off. */
+export type Arm = typeof ARMS[number]
+
+type Fixture = 'shop'
+
+/** A text replacement applied to the fixture before the agent starts, in both arms unless `arm` is set. */
+interface Seed {
+  file: string
+  from: string
+  to: string
+  arm?: Arm
+}
+
+export interface CheckContext {
+  /** Request a path on the built app and return the body. Redirects are followed. */
+  fetchText: (path: string, init?: RequestInit) => Promise<string>
+  /** Request a path on the built app and parse the JSON body. */
+  fetchJson: (path: string, init?: RequestInit) => Promise<unknown>
+  /** Read a file relative to the app root, `undefined` if missing. */
+  read: (file: string) => Promise<string | undefined>
+  exists: (file: string) => Promise<boolean>
+  /** Files under `dir` whose content matches `pattern`. */
+  grep: (pattern: RegExp, dir: string) => Promise<string[]>
+  assert: (name: string, ok: boolean, detail?: string) => void
+}
+
+export interface Task {
+  id: string
+  fixture: Fixture
+  kind: 'feature' | 'refactor' | 'bugfix'
+  /** Sent verbatim to the agent, the same in both arms. */
+  prompt: string
+  seed?: Seed[]
+  /** Hidden check, run against the built app after the agent stops. */
+  check: (ctx: CheckContext) => Promise<void>
+}
+
+export interface Assertion {
+  name: string
+  ok: boolean
+  detail?: string
+}
+
+export interface GateResult {
+  ok: boolean
+  output: string
+  ms: number
+}
+
+export interface AgentMetrics {
+  /** Why the agent stopped: `success`, `error_max_turns`, `timeout`, ... */
+  stop: string
+  turns: number
+  toolCalls: Record<string, number>
+  inputTokens: number
+  outputTokens: number
+  cacheReadTokens: number
+  cacheWriteTokens: number
+  costUsd: number
+  ms: number
+  /** Text of every tool result, used for the error taxonomy. */
+  toolOutputs: string[]
+}
+
+export type ErrorKind
+  = | 'missing-name'
+    | 'bad-module-path'
+    | 'bad-export'
+    | 'duplicate-declaration'
+    | 'other-ts'
+    | 'build-resolve'
+
+export type Taxonomy = Partial<Record<ErrorKind, number>>
+
+export interface RunResult {
+  task: string
+  kind: Task['kind']
+  fixture: Fixture
+  arm: Arm
+  trial: number
+  pass: boolean
+  typecheck: Omit<GateResult, 'output'>
+  build: Omit<GateResult, 'output'>
+  assertions: Assertion[]
+  agent?: Omit<AgentMetrics, 'toolOutputs'>
+  /** Errors the agent hit while working, read from its tool results. */
+  errorsDuringRun: Taxonomy
+  /** Errors left in the final gate output. */
+  errorsAtEnd: Taxonomy
+  /** Set when the harness itself failed, not the agent. */
+  harnessError?: string
+  dir: string
+}

@@ -37,6 +37,7 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
+    "eval": "tsx eval/run.ts",
     "knip": "knip",
     "lint": "eslint --cache",
     "prepack": "nr build",
@@ -68,6 +69,7 @@
     "@antfu/ni": "catalog:cli",
     "@antfu/skills": "catalog:agentic",
     "@antfu/utils": "catalog:inlined",
+    "@anthropic-ai/claude-agent-sdk": "catalog:testing",
     "@types/node": "catalog:types",
     "@types/picomatch": "catalog:types",
     "bumpp": "catalog:cli",
@@ -87,7 +89,8 @@
     "tsx": "catalog:cli",
     "typescript": "catalog:cli",
     "vite": "catalog:cli",
-    "vitest": "catalog:testing"
+    "vitest": "catalog:testing",
+    "vue-tsc": "catalog:testing"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm i --frozen-lockfile --ignore-scripts --offline && pnpm run ci && pnpx nano-staged"

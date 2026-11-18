@@ -11,6 +11,10 @@ export default antfu(
       'test/fixtures/**',
       'test/__snapshots__/**',
       'test/.tmp/**',
+      // Eval apps: the auto arm relies on auto-imports on purpose.
+      'eval/fixtures/**',
+      'eval/results/**',
+      'eval/.tmp/**',
     ],
   },
 )
