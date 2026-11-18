@@ -1,0 +1,63 @@
+{
+  "config": "claude-code/claude-sonnet-5-5",
+  "fingerprint": "ef9d2f72aa4a0d7d",
+  "date": "2026-11-18T07:17:38.042Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "bugfix-multihop",
+  "kind": "bugfix",
+  "fixture": "shop",
+  "arm": "auto",
+  "trial": 1,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 9002
+  },
+  "build": {
+    "ok": true,
+    "ms": 9739
+  },
+  "assertions": [
+    {
+      "name": "no code: /cart total is $39.98",
+      "ok": true
+    },
+    {
+      "name": "SAVE10: /cart total is $35.99",
+      "ok": true
+    },
+    {
+      "name": "no code: quote total is 39.98 USD",
+      "ok": true
+    },
+    {
+      "name": "SAVE10: quote total is 35.98 USD",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 6,
+    "toolCalls": {
+      "Bash": 4,
+      "Edit": 1
+    },
+    "toolKinds": {
+      "explore": 2,
+      "edit": 2,
+      "verify": 2,
+      "other": 0
+    },
+    "inputTokens": 1265,
+    "outputTokens": 1000,
+    "cacheReadTokens": 116975,
+    "cacheWriteTokens": 6085,
+    "toolOutputChars": 4911,
+    "costUsd": 0.03944,
+    "ms": 41669,
+    "apiMs": 15790
+  }
+}

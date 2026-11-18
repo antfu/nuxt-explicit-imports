@@ -48,6 +48,13 @@ export interface GateResult {
   ms: number
 }
 
+export interface AgentOptions {
+  /** Model id in the harness's own format. */
+  model: string
+  maxTurns: number
+  timeoutMs: number
+}
+
 /** What a tool call was for. A Bash call that chains commands can be several. `explore`: read or search. `edit`: change files. `verify`: run typecheck, build or tests. */
 export type ToolKind = 'explore' | 'edit' | 'verify' | 'other'
 
@@ -78,7 +85,7 @@ export interface AgentMetrics {
   calls: ToolCall[]
 }
 
-interface ToolCall {
+export interface ToolCall {
   id: string
   name: string
   kinds: ToolKind[]
@@ -97,6 +104,14 @@ export type ErrorKind
 export type Taxonomy = Partial<Record<ErrorKind, number>>
 
 export interface RunResult {
+  /** The config that ran it, like `claude-code/claude-sonnet-5-5`. `none` in a dry run. */
+  config: string
+  /** See `fingerprint()` in `store.ts`. */
+  fingerprint: string
+  /** When the run finished. */
+  date: string
+  maxTurns: number
+  timeoutMin: number
   task: string
   kind: Task['kind']
   fixture: Fixture
@@ -113,5 +128,4 @@ export interface RunResult {
   errorsAtEnd: Taxonomy
   /** Set when the harness itself failed, not the agent. */
   harnessError?: string
-  dir: string
 }

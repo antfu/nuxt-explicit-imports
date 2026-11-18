@@ -15,7 +15,5 @@ temp
 test/.tmp
 .nuxt
 .output
-eval/results/*
-# Full runs cited in the README are committed.
-!eval/results/2026-11-18T06-33-34-500Z/
+eval/results
 eval/.tmp

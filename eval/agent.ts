@@ -1,13 +1,8 @@
 import type { ModelUsage, SDKMessage } from '@anthropic-ai/claude-agent-sdk'
-import type { AgentMetrics, ToolKind } from './types'
+import type { AgentMetrics, AgentOptions } from './types'
 import process from 'node:process'
 import { query } from '@anthropic-ai/claude-agent-sdk'
-
-export interface AgentOptions {
-  model: string
-  maxTurns: number
-  timeoutMs: number
-}
+import { APPEND, emptyMetrics, recordCall, recordOutput, toolResultText } from './metrics'
 
 const GATEWAY_URL = 'https://ai-gateway.vercel.sh'
 
@@ -26,95 +21,13 @@ function agentEnv(env: NodeJS.ProcessEnv = process.env): Record<string, string |
   return out
 }
 
-/** Where the agent's API calls go, for the log. */
-export function describeAuth(env = agentEnv()): string {
+/** Where Claude Code's API calls go, for the log. */
+export function describeClaudeAuth(env = agentEnv()): string {
   if (env.ANTHROPIC_AUTH_TOKEN)
     return `ANTHROPIC_AUTH_TOKEN via ${env.ANTHROPIC_BASE_URL ?? 'api.anthropic.com'}`
   if (env.ANTHROPIC_API_KEY)
     return `ANTHROPIC_API_KEY via ${env.ANTHROPIC_BASE_URL ?? 'api.anthropic.com'}`
   return 'your local Claude Code login (no API key or gateway token set)'
-}
-
-const APPEND = 'You are working on a Nuxt 4 app in the current working directory. Only read and change files inside it.'
-
-function toolResultText(content: unknown): string {
-  if (typeof content === 'string')
-    return content
-  if (Array.isArray(content)) {
-    return content.map(part => (part && typeof part === 'object' && 'text' in part
-      ? String(part.text)
-      : '')).join('\n')
-  }
-  return ''
-}
-
-const TOOL_KINDS: Record<string, ToolKind> = {
-  Read: 'explore',
-  Grep: 'explore',
-  Glob: 'explore',
-  LS: 'explore',
-  Edit: 'edit',
-  MultiEdit: 'edit',
-  Write: 'edit',
-  NotebookEdit: 'edit',
-}
-
-/** Sort one simple command by what it does. Verify wins over edit, edit over explore. */
-function commandKind(command: string): ToolKind {
-  if (/\b(?:typecheck|vue-tsc|tsc|build|vitest|test)\b/.test(command))
-    return 'verify'
-  // `>` writes a file, but not `2>`, `&>`, `>&2` or `> /dev/null`.
-  if (/\bsed\s+-i\b|\b(?:mv|cp|rm|mkdir|touch|tee)\s|(?<![\d&])>(?!&|\s*\/dev\/null)|\bgit\s+mv\b/.test(command))
-    return 'edit'
-  if (/\b(?:cat|head|tail|less|grep|rg|find|ls|tree|sed|awk|wc|git\s+(?:grep|log|show|diff|status))\b/.test(command))
-    return 'explore'
-  return 'other'
-}
-
-/** Drop heredoc bodies: keep each `<<EOF` line, skip the lines up to the closing `EOF`. */
-function dropHeredocs(command: string): string {
-  const out: string[] = []
-  let end: string | undefined
-  for (const line of command.split('\n')) {
-    if (end !== undefined) {
-      if (line.trim() === end)
-        end = undefined
-      continue
-    }
-    out.push(line)
-    end = /<<-?\s*['"]?(\w+)/.exec(line)?.[1]
-  }
-  return out.join('\n')
-}
-
-/**
- * Every kind a Bash command does. Heredoc bodies and quoted text are dropped first,
- * so a `>` in written content or in a search pattern is not read as a redirect.
- * Chained commands (`&&`, `||`, `;`, new lines) are sorted one by one.
- */
-function bashKinds(command: string): ToolKind[] {
-  const skeleton = dropHeredocs(command).replace(/'[^']*'|"(?:[^"\\]|\\.)*"/g, '""')
-  const kinds = new Set<ToolKind>()
-  for (const command of skeleton.split(/&&|\|\||[;\n]/)) {
-    // Later pipeline stages (`| tail`, `| grep`) only filter output, unless they write a file.
-    const [first = '', ...rest] = command.split('|')
-    kinds.add(commandKind(first))
-    if (rest.some(stage => commandKind(stage) === 'edit'))
-      kinds.add('edit')
-  }
-  if (kinds.size > 1)
-    kinds.delete('other')
-  return [...kinds]
-}
-
-function toolKinds(name: string, input: unknown): ToolKind[] {
-  if (name === 'Bash') {
-    const command = input && typeof input === 'object' && 'command' in input
-      ? String(input.command)
-      : ''
-    return bashKinds(command)
-  }
-  return [TOOL_KINDS[name] ?? 'other']
 }
 
 function addUsage(metrics: AgentMetrics, usages: ModelUsage[]): void {
@@ -124,36 +37,6 @@ function addUsage(metrics: AgentMetrics, usages: ModelUsage[]): void {
     metrics.cacheReadTokens += usage.cacheReadInputTokens
     metrics.cacheWriteTokens += usage.cacheCreationInputTokens
   }
-}
-
-function recordCall(metrics: AgentMetrics, id: string, name: string, input: unknown): void {
-  metrics.toolCalls[name] = (metrics.toolCalls[name] ?? 0) + 1
-  const kinds = toolKinds(name, input)
-  for (const kind of kinds)
-    metrics.toolKinds[kind]++
-  metrics.calls.push({
-    id,
-    name,
-    kinds,
-    input,
-    output: '',
-  })
-}
-
-function recordOutput(metrics: AgentMetrics, id: string, text: string): void {
-  metrics.toolOutputChars += text.length
-  const call = metrics.calls.find(c => c.id === id)
-  if (call) {
-    call.output = text
-    return
-  }
-  metrics.calls.push({
-    id,
-    name: 'unknown',
-    kinds: ['other'],
-    input: null,
-    output: text,
-  })
 }
 
 /** Count tool calls, log each call with its output and read usage from the final result. */
@@ -180,33 +63,14 @@ function record(metrics: AgentMetrics, message: SDKMessage): void {
 }
 
 /**
- * Run one agent session in `cwd` and collect its cost and tool output.
+ * Run one Claude Code session in `cwd` with the Claude Agent SDK and collect its cost and tool output.
  * User and project settings, CLAUDE.md and skills are not loaded, so both arms see only the app.
  */
-export async function runAgent(prompt: string, cwd: string, options: AgentOptions): Promise<AgentMetrics> {
+export async function runClaudeCode(prompt: string, cwd: string, options: AgentOptions): Promise<AgentMetrics> {
   const start = Date.now()
   const abort = new AbortController()
   const timer = setTimeout(() => abort.abort(), options.timeoutMs)
-  const metrics: AgentMetrics = {
-    stop: 'unknown',
-    turns: 0,
-    toolCalls: {},
-    toolKinds: {
-      explore: 0,
-      edit: 0,
-      verify: 0,
-      other: 0,
-    },
-    inputTokens: 0,
-    outputTokens: 0,
-    cacheReadTokens: 0,
-    cacheWriteTokens: 0,
-    toolOutputChars: 0,
-    costUsd: 0,
-    ms: 0,
-    apiMs: 0,
-    calls: [],
-  }
+  const metrics = emptyMetrics()
 
   try {
     for await (const message of query({

@@ -1,4 +1,9 @@
+import type { AgentConfig } from './configs'
 import type { AgentMetrics, Arm, ErrorKind, RunResult, Taxonomy } from './types'
+import { writeFile } from 'node:fs/promises'
+import { join } from 'pathe'
+import { fingerprint, loadRuns, RUNS_DIR } from './store'
+import { TASKS } from './tasks'
 import { ARMS } from './types'
 
 type Agent = Omit<AgentMetrics, 'calls'>
@@ -303,7 +308,7 @@ function failureLine(r: RunResult): string {
 }
 
 /** Markdown summary: pass rate, efficiency per arm and per task, tool usage, then error counts. */
-export function summarize(results: RunResult[], meta: Record<string, string | number>): string {
+function summarize(results: RunResult[], meta: Record<string, string | number>): string {
   const byArm = (arm: Arm, list = results): RunResult[] => list.filter(r => r.arm === arm && !r.harnessError)
   const runsByArm = {
     auto: byArm('auto'),
@@ -412,4 +417,143 @@ export function summarize(results: RunResult[], meta: Record<string, string | nu
         ]
       : []),
   ].join('\n')
+}
+
+interface ConfigRuns {
+  config: AgentConfig
+  /** Runs whose fingerprint matches the current task and fixture, without harness errors. */
+  current: RunResult[]
+  stale: number
+}
+
+/** Stored runs of a config, split into current and stale. Runs of removed tasks count as stale. */
+async function configRuns(config: AgentConfig): Promise<ConfigRuns> {
+  const all = await loadRuns(config.id)
+  const current: RunResult[] = []
+  for (const run of all) {
+    const task = TASKS.find(t => t.id === run.task)
+    if (task && run.fingerprint === await fingerprint(task, run.arm))
+      current.push(run)
+  }
+  const order = (r: RunResult): string => `${String(TASKS.findIndex(t => t.id === r.task)).padStart(3, '0')} ${r.arm} ${String(r.trial).padStart(3, '0')}`
+  current.sort((a, b) => order(a).localeCompare(order(b)))
+  return { config, current, stale: all.length - current.length }
+}
+
+function passed(runs: RunResult[], arm: Arm): string {
+  const list = runs.filter(r => r.arm === arm && !r.harnessError)
+  return pct(list.filter(r => r.pass).length, list.length)
+}
+
+/** Mean of a metric per arm, as `auto -> explicit (change)`. */
+function meanChange(runs: RunResult[], get: (a: Agent) => number, digits: number, unit = ''): string {
+  const avg = (arm: Arm): number => mean(agentsOf(runs.filter(r => r.arm === arm)).map(get))
+  const auto = avg('auto')
+  const explicit = avg('explicit')
+  return `${unit}${fmt(auto, digits)} -> ${unit}${fmt(explicit, digits)} (${delta(auto, explicit)})`
+}
+
+function errorCount(runs: RunResult[], arm: Arm): number {
+  return sum(runs.filter(r => r.arm === arm).flatMap(r => Object.values(r.errorsDuringRun) as number[]))
+}
+
+/** One row per config: pass rate and mean cost per arm, so models and harnesses compare at a glance. */
+function matrix(groups: ConfigRuns[]): string {
+  const overview = table(
+    [
+      'Config',
+      'Runs',
+      'auto pass',
+      'explicit pass',
+      'Tokens per run (k)',
+      'Cost per run',
+      'Agent time per run (s)',
+      'Errors hit (auto / explicit)',
+    ],
+    groups.map(({ config, current }) => current.length
+      ? [
+          `[\`${config.id}\`](./${config.id}/summary.md)`,
+          String(current.length),
+          passed(current, 'auto'),
+          passed(current, 'explicit'),
+          meanChange(current, a => (inputTokens(a) + a.outputTokens) / 1000, 0),
+          meanChange(current, a => a.costUsd, 3, '$'),
+          meanChange(current, a => a.ms / 1000, 0),
+          `${errorCount(current, 'auto')} / ${errorCount(current, 'explicit')}`,
+        ]
+      : [
+          `\`${config.id}\``,
+          '0',
+          'not run',
+          '',
+          '',
+          '',
+          '',
+          '',
+        ]),
+  )
+  const ran = groups.filter(g => g.current.length)
+  const perTask = table(
+    [
+      'Task',
+      ...ran.flatMap(g => ARMS.map(arm => `${g.config.id} ${arm}`)),
+    ],
+    TASKS.map(task => [
+      task.id,
+      ...ran.flatMap(g => ARMS.map((arm) => {
+        const list = g.current.filter(r => r.task === task.id && r.arm === arm && !r.harnessError)
+        return list.length
+          ? `${list.filter(r => r.pass).length}/${list.length}`
+          : '-'
+      })),
+    ]),
+  )
+  const stale = groups.filter(g => g.stale)
+  return [
+    '# Eval matrix',
+    '',
+    'Written by `pnpm eval report` from the runs stored in this folder. Each config has a full `summary.md`. Do not edit by hand.',
+    '',
+    'Means per run. "change" is explicit compared to auto: a positive value means explicit used more. "Errors hit" counts the TypeScript and build errors in the agent\'s tool output while it worked.',
+    '',
+    overview,
+    '',
+    '## Passes per task',
+    '',
+    perTask,
+    '',
+    ...(stale.length
+      ? [
+          '## Stale runs',
+          '',
+          'Runs whose task or fixture changed since. They are left out above, and `pnpm eval` runs them again.',
+          '',
+          ...stale.map(g => `- \`${g.config.id}\`: ${g.stale}`),
+          '',
+        ]
+      : []),
+  ].join('\n')
+}
+
+/** Write `summary.md` for every config with runs, and the matrix in `eval/runs/README.md`. Returns the matrix path. */
+export async function writeReports(configs: AgentConfig[]): Promise<string> {
+  const groups = await Promise.all(configs.map(configRuns))
+  for (const { config, current, stale } of groups) {
+    if (!current.length)
+      continue
+    await writeFile(join(RUNS_DIR, config.id, 'summary.md'), summarize(current, {
+      'config': config.id,
+      'harness': config.harness,
+      'model': config.model,
+      'runs': current.length,
+      'stale runs left out': stale,
+      'trials per task and arm': Math.max(...current.map(r => r.trial)),
+      'maxTurns': current[0]!.maxTurns,
+      'timeoutMin': current[0]!.timeoutMin,
+      'last run': current.map(r => r.date).sort().at(-1)!,
+    }))
+  }
+  const path = join(RUNS_DIR, 'README.md')
+  await writeFile(path, `${matrix(groups)}\n`)
+  return path
 }

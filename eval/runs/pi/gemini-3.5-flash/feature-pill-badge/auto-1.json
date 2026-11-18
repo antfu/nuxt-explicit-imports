@@ -1,0 +1,72 @@
+{
+  "config": "pi/gemini-3.5-flash",
+  "fingerprint": "557ed5e7139fb93c",
+  "date": "2026-11-18T08:24:19.210Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "feature-pill-badge",
+  "kind": "feature",
+  "fixture": "shop",
+  "arm": "auto",
+  "trial": 1,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 6196
+  },
+  "build": {
+    "ok": true,
+    "ms": 6136
+  },
+  "assertions": [
+    {
+      "name": "app/components/UiBadge.vue exists",
+      "ok": true
+    },
+    {
+      "name": "ui layer badge untouched",
+      "ok": true
+    },
+    {
+      "name": "/: every badge is a pill",
+      "ok": true
+    },
+    {
+      "name": "/products/notebook: every badge is a pill",
+      "ok": true
+    },
+    {
+      "name": "/checkout: every badge is a pill",
+      "ok": true
+    },
+    {
+      "name": "header badge still shows 3",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 15,
+    "toolCalls": {
+      "bash": 8,
+      "read": 5,
+      "write": 1
+    },
+    "toolKinds": {
+      "explore": 10,
+      "edit": 1,
+      "verify": 3,
+      "other": 0
+    },
+    "inputTokens": 67570,
+    "outputTokens": 2075,
+    "cacheReadTokens": 23428,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 20875,
+    "costUsd": 0.12354419999999999,
+    "ms": 52394,
+    "apiMs": 30241
+  }
+}

@@ -70,6 +70,7 @@
     "@antfu/skills": "catalog:agentic",
     "@antfu/utils": "catalog:inlined",
     "@anthropic-ai/claude-agent-sdk": "catalog:testing",
+    "@earendil-works/pi-coding-agent": "catalog:testing",
     "@types/node": "catalog:types",
     "@types/picomatch": "catalog:types",
     "bumpp": "catalog:cli",

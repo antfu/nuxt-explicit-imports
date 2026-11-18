@@ -1,35 +1,44 @@
-import type { AgentOptions } from './agent'
+import type { AgentConfig } from './configs'
+import type { RunFiles } from './store'
 import type { Arm, RunResult, Task } from './types'
-import { mkdir, rm, writeFile } from 'node:fs/promises'
+import { rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import process from 'node:process'
 import { cac } from 'cac'
 import { consola } from 'consola'
 import { join } from 'pathe'
-import { describeAuth, runAgent } from './agent'
+import { CONFIGS, describeAuth, runAgent } from './configs'
 import { build, runCheck, typecheck } from './gates'
-import { summarize } from './report'
+import { writeReports } from './report'
+import { fingerprint, readRun, saveRun } from './store'
 import { TASKS } from './tasks'
 import { classify, mergeTaxonomy } from './taxonomy'
 import { ARMS } from './types'
-import { createWorkspace, repoRoot, workspaceDiff } from './workspace'
+import { createWorkspace, workspaceDiff } from './workspace'
 
 interface Flags {
+  configs?: string
   tasks?: string
   arms?: string
   trials: number
-  model: string
   maxTurns: number
   timeout: number
   concurrency: number
+  force?: boolean
   dryRun?: boolean
   keep?: boolean
 }
 
 interface Job {
+  config?: AgentConfig
   task: Task
   arm: Arm
   trial: number
+}
+
+interface Limits {
+  maxTurns: number
+  timeoutMin: number
 }
 
 function pick<T extends string>(value: string | undefined, all: readonly T[], label: string): T[] {
@@ -43,40 +52,57 @@ function pick<T extends string>(value: string | undefined, all: readonly T[], la
   return list as T[]
 }
 
-/** One cheap agent call, so a bad key fails here and not in every run. */
-async function preflight(options: AgentOptions): Promise<boolean> {
-  consola.info(`Agent auth: ${describeAuth()}`)
-  const probe = await runAgent('Reply with OK.', tmpdir(), { ...options, maxTurns: 1, timeoutMs: 60_000 })
+/** One cheap agent call per config, so a bad key fails here and not in every run. */
+async function preflight(config: AgentConfig): Promise<boolean> {
+  consola.info(`${config.id}: ${describeAuth(config)}`)
+  const probe = await runAgent(config, 'Reply with OK.', tmpdir(), { maxTurns: 1, timeoutMs: 60_000 })
   if (probe.stop === 'success')
     return true
-  consola.error(`Agent preflight failed: ${probe.stop === 'timeout'
+  consola.error(`${config.id}: preflight failed: ${probe.stop === 'timeout'
     ? 'no answer in 60s. Claude Code retries auth errors, so check the key'
     : probe.stop}`)
   return false
 }
 
-async function pool<T, R>(items: T[], size: number, fn: (item: T) => Promise<R>): Promise<R[]> {
-  const results: R[] = Array.from({ length: items.length })
+async function pool<T>(items: T[], size: number, fn: (item: T) => Promise<void>): Promise<void> {
   let next = 0
   await Promise.all(Array.from({
     length: Math.min(size, items.length),
   }, async () => {
-    while (next < items.length) {
-      const index = next++
-      results[index] = await fn(items[index]!)
-    }
+    while (next < items.length)
+      await fn(items[next++]!)
   }))
-  return results
+}
+
+/** A stored run that says nothing about the agent: the harness or the model API failed. Run it again. */
+function broken(run: RunResult): boolean {
+  return !!run.harnessError || !!run.agent?.stop.startsWith('error:')
+}
+
+/** The cells that have no current run yet: missing, stale or broken. All of them with `--force`. */
+async function pending(jobs: Required<Job>[], force: boolean): Promise<Required<Job>[]> {
+  const todo: Required<Job>[] = []
+  for (const job of jobs) {
+    const stored = await readRun(job.config.id, job.task.id, job.arm, job.trial)
+    if (force || !stored || broken(stored) || stored.fingerprint !== await fingerprint(job.task, job.arm))
+      todo.push(job)
+  }
+  return todo
 }
 
 /**
  * One run: fresh workspace, agent (skipped in dry run), then the hidden gates and check.
  * The verdict comes only from the hidden gates, never from what the agent reports.
  */
-async function runJob(job: Job, root: string, outDir: string, agentOptions: AgentOptions | undefined, keep: boolean): Promise<RunResult> {
-  const name = `${job.task.id}-${job.arm}-${job.trial}`
-  const dir = join(root, name)
+async function runJob(job: Job, root: string, limits: Limits, keep: boolean): Promise<RunFiles> {
+  const config = job.config?.id ?? 'none'
+  const name = `${config} ${job.task.id}-${job.arm}-${job.trial}`
+  const dir = join(root, config.replace(/\W+/g, '-'), `${job.task.id}-${job.arm}-${job.trial}`)
   const result: RunResult = {
+    config,
+    fingerprint: await fingerprint(job.task, job.arm),
+    date: '',
+    ...limits,
     task: job.task.id,
     kind: job.task.kind,
     fixture: job.task.fixture,
@@ -88,17 +114,20 @@ async function runJob(job: Job, root: string, outDir: string, agentOptions: Agen
     assertions: [],
     errorsDuringRun: {},
     errorsAtEnd: {},
-    dir,
   }
+  const files: RunFiles = { result }
   try {
     await createWorkspace(job.task, job.arm, dir)
-    if (agentOptions) {
+    if (job.config) {
       consola.start(`${name}: agent`)
-      const { calls, ...metrics } = await runAgent(job.task.prompt, dir, agentOptions)
+      const { calls, ...metrics } = await runAgent(job.config, job.task.prompt, dir, {
+        maxTurns: limits.maxTurns,
+        timeoutMs: limits.timeoutMin * 60_000,
+      })
       result.agent = metrics
       result.errorsDuringRun = mergeTaxonomy(...calls.map(c => classify(c.output)))
-      await writeFile(join(outDir, 'tools', `${name}.json`), `${JSON.stringify(calls, null, 2)}\n`)
-      await writeFile(join(outDir, 'diffs', `${name}.diff`), await workspaceDiff(dir))
+      files.calls = calls
+      files.diff = await workspaceDiff(dir)
     }
     consola.start(`${name}: gates`)
     const tc = await typecheck(dir)
@@ -109,7 +138,7 @@ async function runJob(job: Job, root: string, outDir: string, agentOptions: Agen
       ? {}
       : classify(bd.output))
     if (!tc.ok || !bd.ok)
-      await writeFile(join(outDir, 'gates', `${name}.log`), `# typecheck\n${tc.output}\n# build\n${bd.output}`)
+      files.gatesLog = `# typecheck\n${tc.output}\n# build\n${bd.output}`
     result.assertions = await runCheck(job.task, dir)
     result.pass = tc.ok && bd.ok && result.assertions.every(a => a.ok)
     consola[result.pass ? 'success' : 'fail'](`${name}: ${result.pass ? 'pass' : 'fail'}`)
@@ -121,10 +150,11 @@ async function runJob(job: Job, root: string, outDir: string, agentOptions: Agen
     consola.error(`${name}: harness error: ${result.harnessError}`)
   }
   finally {
+    result.date = new Date().toISOString()
     if (!keep)
       await rm(dir, { recursive: true, force: true })
   }
-  return result
+  return files
 }
 
 /**
@@ -147,78 +177,71 @@ function dryRunProblems(results: RunResult[]): string[] {
   })
 }
 
+async function dryRun(tasks: Task[], arms: Arm[], root: string, limits: Limits, flags: Flags): Promise<void> {
+  const jobs: Job[] = tasks.flatMap(task => arms.map(arm => ({ task, arm, trial: 1 })))
+  const results: RunResult[] = []
+  await pool(jobs, Number(flags.concurrency), async job => void results.push((await runJob(job, root, limits, !!flags.keep)).result))
+  const problems = dryRunProblems(results)
+  for (const problem of problems)
+    consola.error(problem)
+  if (problems.length)
+    process.exitCode = 1
+  else
+    consola.success(`Dry run OK: ${results.length} workspaces build, and no task is solved before the agent runs.`)
+}
+
 const cli = cac('eval')
+const configIds = CONFIGS.map(c => c.id)
 
 cli
-  .command('', 'Compare a coding agent on the same Nuxt tasks with auto-imports on and off')
+  .command('', 'Run the missing cells of the matrix: config x task x arm x trial')
+  .option('--configs <ids>', `Comma-separated configs (default: all): ${configIds.join(', ')}`)
   .option('--tasks <ids>', `Comma-separated task ids (default: all): ${TASKS.map(t => t.id).join(', ')}`)
   .option('--arms <arms>', `Comma-separated arms: ${ARMS.join(', ')}`)
-  .option('--trials <n>', 'Trials per task and arm', { default: 5 })
-  .option('--model <id>', 'Agent model', { default: 'claude-sonnet-5-5' })
+  .option('--trials <n>', 'Trials per task and arm: runs trials 1 to n', { default: 5 })
   .option('--max-turns <n>', 'Max agent turns per run', { default: 40 })
   .option('--timeout <min>', 'Agent timeout per run, in minutes', { default: 10 })
   .option('--concurrency <n>', 'Runs in parallel', { default: 2 })
+  .option('--force', 'Run the selected cells again, even when a current run is stored')
   .option('--dry-run', 'No agent: check the fixtures build and every task check fails before work')
   .option('--keep', 'Keep the workspaces in the temp dir')
   .action(async (flags: Flags) => {
     const ids = pick(flags.tasks, TASKS.map(t => t.id), 'task')
+    const tasks = TASKS.filter(task => ids.includes(task.id))
     const arms = pick(flags.arms, ARMS, 'arm')
-    const trials = flags.dryRun
-      ? 1
-      : Number(flags.trials)
-    const jobs: Job[] = TASKS
-      .filter(task => ids.includes(task.id))
-      .flatMap(task => arms.flatMap(arm => Array.from({ length: trials }, (_, i) => ({ task, arm, trial: i + 1 }))))
-
-    const stamp = new Date().toISOString().replace(/[:.]/g, '-')
-    const outDir = join(repoRoot, 'eval/results', flags.dryRun
-      ? `${stamp}-dry`
-      : stamp)
-    const root = join(tmpdir(), 'nuxt-explicit-imports-eval', stamp)
-    await mkdir(join(outDir, 'diffs'), { recursive: true })
-    await mkdir(join(outDir, 'gates'), { recursive: true })
-    await mkdir(join(outDir, 'tools'), { recursive: true })
-
-    const agentOptions: AgentOptions | undefined = flags.dryRun
-      ? undefined
-      : {
-          model: flags.model,
-          maxTurns: Number(flags.maxTurns),
-          timeoutMs: Number(flags.timeout) * 60_000,
-        }
-    if (agentOptions && !await preflight(agentOptions)) {
-      await rm(outDir, { recursive: true, force: true })
-      process.exitCode = 1
-      return
+    const limits: Limits = {
+      maxTurns: Number(flags.maxTurns),
+      timeoutMin: Number(flags.timeout),
     }
+    const root = join(tmpdir(), 'nuxt-explicit-imports-eval', new Date().toISOString().replace(/[:.]/g, '-'))
+    if (flags.dryRun)
+      return dryRun(tasks, arms, root, limits, flags)
 
-    consola.info(`${jobs.length} runs, workspaces in ${root}`)
-    const results = await pool(jobs, Number(flags.concurrency), job => runJob(job, root, outDir, agentOptions, !!flags.keep))
+    const configs = CONFIGS.filter(c => pick(flags.configs, configIds, 'config').includes(c.id))
+    const all = configs.flatMap(config => tasks.flatMap(task => arms.flatMap(arm =>
+      Array.from({
+        length: Number(flags.trials),
+      }, (_, i) => ({ config, task, arm, trial: i + 1 })))))
+    const jobs = await pending(all, !!flags.force)
+    consola.info(`${all.length} cells selected, ${all.length - jobs.length} already stored, ${jobs.length} to run`)
 
-    const meta = {
-      date: new Date().toISOString(),
-      model: flags.dryRun ? 'none (dry run)' : flags.model,
-      trials,
-      maxTurns: flags.maxTurns,
-      timeoutMin: flags.timeout,
-    }
-    await writeFile(join(outDir, 'results.json'), `${JSON.stringify({ meta, results }, null, 2)}\n`)
-
-    if (flags.dryRun) {
-      const problems = dryRunProblems(results)
-      if (problems.length) {
-        for (const problem of problems)
-          consola.error(problem)
+    for (const config of configs.filter(c => jobs.some(j => j.config === c))) {
+      if (!await preflight(config)) {
         process.exitCode = 1
+        return
       }
-      else {
-        consola.success(`Dry run OK: ${results.length} workspaces build, and no task is solved before the agent runs.`)
-      }
-      return
     }
+    if (jobs.length)
+      consola.info(`Workspaces in ${root}`)
+    // Each run is saved as soon as it ends, so a stopped eval keeps what it finished.
+    await pool(jobs, Number(flags.concurrency), async job => saveRun(await runJob(job, root, limits, !!flags.keep)))
+    consola.success(`Reports: ${await writeReports(CONFIGS)}`)
+  })
 
-    await writeFile(join(outDir, 'summary.md'), summarize(results, meta))
-    consola.success(`Results: ${join(outDir, 'summary.md')}`)
+cli
+  .command('report', 'Write the reports from the stored runs, without running anything')
+  .action(async () => {
+    consola.success(`Reports: ${await writeReports(CONFIGS)}`)
   })
 
 cli.help()

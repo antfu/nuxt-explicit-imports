@@ -1,0 +1,52 @@
+{
+  "config": "claude-code/claude-haiku-5-5",
+  "fingerprint": "f5053215c606c492",
+  "date": "2026-11-18T08:26:38.978Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "feature-deals-page",
+  "kind": "feature",
+  "fixture": "shop",
+  "arm": "auto",
+  "trial": 2,
+  "pass": false,
+  "typecheck": {
+    "ok": true,
+    "ms": 1572
+  },
+  "build": {
+    "ok": true,
+    "ms": 4286
+  },
+  "assertions": [
+    {
+      "name": "check ran to the end",
+      "ok": false,
+      "detail": "Error: Server did not start: TypeError: fetch failed"
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 10,
+    "toolCalls": {
+      "Bash": 8,
+      "Write": 1
+    },
+    "toolKinds": {
+      "explore": 7,
+      "edit": 2,
+      "verify": 3,
+      "other": 0
+    },
+    "inputTokens": 1325,
+    "outputTokens": 6272,
+    "cacheReadTokens": 256685,
+    "cacheWriteTokens": 18479,
+    "toolOutputChars": 18224,
+    "costUsd": 0.008145225,
+    "ms": 55980,
+    "apiMs": 35413
+  }
+}

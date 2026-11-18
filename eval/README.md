@@ -4,17 +4,49 @@ Does a coding agent work better on a Nuxt app with auto-imports on, or with expl
 
 ```bash
 pnpm eval --dry-run          # no agent: check the fixtures and tasks, free
-pnpm eval                    # 9 tasks x 2 arms x 5 trials = 90 agent runs
-pnpm eval --tasks bugfix-multihop --trials 1 --model claude-haiku-5-5
+pnpm eval                    # run every missing cell of the matrix
+pnpm eval --configs pi/gpt-5.3-codex --tasks bugfix-multihop --trials 1
+pnpm eval report             # rewrite the reports from the stored runs
 ```
 
-The agent uses `ANTHROPIC_AUTH_TOKEN` with `ANTHROPIC_BASE_URL` (a gateway), then `ANTHROPIC_API_KEY`, then your local Claude Code login. With only `AI_GATEWAY_API_KEY` set, it goes through the Vercel AI Gateway. Before the runs start, one short preflight call checks the auth, and the eval stops if it fails. Results go to `eval/results/<date>/`:
+## Matrix
+
+The eval is a matrix of cells: config x task x arm x trial. A config is a harness running one model, listed in `configs.ts`:
+
+| Config                          | Harness     | Model                                      |
+| ------------------------------- | ----------- | ------------------------------------------ |
+| `claude-code/claude-sonnet-5-5` | Claude Code | `claude-sonnet-5-5`                        |
+| `claude-code/claude-haiku-5-5`  | Claude Code | `claude-haiku-5-5`                         |
+| `pi/gpt-5.3-codex`              | pi          | `vercel-ai-gateway/openai/gpt-5.3-codex`   |
+| `pi/gemini-3.5-flash`           | pi          | `vercel-ai-gateway/google/gemini-3.5-flash` |
+
+Claude models run in Claude Code, through the Claude Agent SDK. Other models run in [pi](https://github.com/earendil-works/pi), one harness for every provider. So a gap between a Claude config and a pi config mixes the model and the harness. A gap between the two arms of one config does not.
+
+`pnpm eval` runs only the cells that have no current run. A cell is run again when:
+
+- it has no stored run,
+- its stored run is stale: the task's prompt, seed or check, or a fixture file, changed since (see `fingerprint()` in `store.ts`),
+- its stored run is broken: a harness error, or an agent error like a failed API call,
+- or `--force` is set.
+
+So adding a config, a task or trials runs just the new cells, and a stopped eval goes on where it stopped: each run is saved as soon as it ends.
+
+## Auth
+
+- Claude Code: `ANTHROPIC_AUTH_TOKEN` with `ANTHROPIC_BASE_URL` (a gateway), then `ANTHROPIC_API_KEY`, then your local Claude Code login. With only `AI_GATEWAY_API_KEY` set, it goes through the Vercel AI Gateway.
+- pi: `AI_GATEWAY_API_KEY`, for the Vercel AI Gateway.
+
+Before the runs start, one short preflight call per config checks the auth, and the eval stops if one fails.
+
+## Stored runs
+
+`eval/runs/` is committed. `eval/runs/README.md` compares every config, and each config folder has:
 
 - `summary.md`: pass rate, efficiency per arm and per task, tool usage and error counts
-- `results.json`: every run, with assertions and agent metrics
-- `diffs/`: what the agent changed in each run
-- `gates/`: typecheck and build logs of the runs where a gate failed
-- `tools/`: every tool call of each run, in order, with its input, its kinds and its output
+- `<task>/<arm>-<trial>.json`: the run, with assertions and agent metrics
+- `<task>/<arm>-<trial>.diff`: what the agent changed
+- `<task>/<arm>-<trial>.tools.json`: every tool call, in order, with its input, its kinds and its output
+- `<task>/<arm>-<trial>.gates.log`: typecheck and build logs, when a gate failed
 
 ## Arms
 
@@ -53,7 +85,9 @@ Bug-fix tasks seed the bug before the agent starts. A seed can be limited to one
 ## A run
 
 1. Copy the fixture arm to a temp dir outside the repo, apply the seed and commit it. `node_modules` holds symlinks to the repo's packages.
-2. Run the agent with the Claude Agent SDK: the Claude Code system prompt, all tools except web and sub-agents, and no user settings, CLAUDE.md or skills. Defaults: `claude-sonnet-5-5`, 40 turns, 10 minutes.
+2. Run the agent. Both harnesses append the same line to their own system prompt, and load no user settings, CLAUDE.md, AGENTS.md or skills. Defaults: 40 turns, 10 minutes.
+   - Claude Code: all tools except web and sub-agents.
+   - pi: its built-in tools (`read`, `bash`, `edit`, `write`), an empty config dir, and no extensions, prompt templates or MCP. pi has no turn limit, so the runner stops it after 40 turns.
 3. Score with hidden gates the agent never sees: `nuxt typecheck`, `nuxt build`, then the task's check against the built server (SSR HTML and API JSON).
 
 A run passes when typecheck, build and every assertion pass. What the agent says about its own work does not count.

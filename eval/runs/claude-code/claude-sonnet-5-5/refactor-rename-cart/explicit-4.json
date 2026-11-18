@@ -1,0 +1,85 @@
+{
+  "config": "claude-code/claude-sonnet-5-5",
+  "fingerprint": "4c31107eb27ebd20",
+  "date": "2026-11-18T07:17:38.042Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "refactor-rename-cart",
+  "kind": "refactor",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 4,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 5528
+  },
+  "build": {
+    "ok": true,
+    "ms": 9494
+  },
+  "assertions": [
+    {
+      "name": "old file removed",
+      "ok": true
+    },
+    {
+      "name": "new file exports useShoppingCart",
+      "ok": true
+    },
+    {
+      "name": "no useCart call or import left in app/",
+      "ok": true
+    },
+    {
+      "name": "base layer useCart untouched",
+      "ok": true
+    },
+    {
+      "name": "header badge shows 3",
+      "ok": true
+    },
+    {
+      "name": "/cart renders 2 cart items",
+      "ok": true
+    },
+    {
+      "name": "/cart subtotal is $41.48",
+      "ok": true
+    },
+    {
+      "name": "/checkout is not redirected",
+      "ok": true
+    },
+    {
+      "name": "/checkout renders the summary",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {
+    "bad-module-path": 6,
+    "other-ts": 2
+  },
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 6,
+    "toolCalls": {
+      "Bash": 5
+    },
+    "toolKinds": {
+      "explore": 5,
+      "edit": 3,
+      "verify": 2,
+      "other": 0
+    },
+    "inputTokens": 1268,
+    "outputTokens": 1038,
+    "cacheReadTokens": 119053,
+    "cacheWriteTokens": 7254,
+    "toolOutputChars": 6777,
+    "costUsd": 0.042956299999999996,
+    "ms": 58921,
+    "apiMs": 19604
+  }
+}

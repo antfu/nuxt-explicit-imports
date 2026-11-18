@@ -1,0 +1,11 @@
+diff --git a/app/components/UiBadge.vue b/app/components/UiBadge.vue
+new file mode 100644
+index 0000000..c293c4d
+--- /dev/null
++++ b/app/components/UiBadge.vue
+@@ -0,0 +1,5 @@
++<template>
++  <span class="ui-badge pill">
++    <slot />
++  </span>
++</template>

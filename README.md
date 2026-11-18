@@ -14,7 +14,7 @@ Move a Nuxt 4 app from auto-imports to explicit imports, step by step and withou
 Inspired by [nuxt-eslint-auto-explicit-import](https://github.com/antfu/nuxt-eslint-auto-explicit-import).
 
 > [!WARNING]
-> According to the [evals](./eval/README.md) we have so far, auto-imports are actually more efficient and cheaper for coding agents than explicit imports. In the [latest run](./eval/results/2026-11-18T06-33-34-500Z/summary.md), the explicit arm used about 16% more tokens and 17% more cost, and passed 43/45 runs against 45/45. We are still looking for cases that show otherwise. Keep this in mind when you use this library.
+> According to the [evals](./eval/runs/README.md) we have so far, auto-imports are actually more efficient and cheaper for coding agents than explicit imports. In the [Sonnet run](./eval/runs/claude-code/claude-sonnet-5-5/summary.md), the explicit arm used about 16% more tokens and 17% more cost, and passed 43/45 runs against 45/45. We are still looking for cases that show otherwise. Keep this in mind when you use this library.
 
 ## With an agent
 

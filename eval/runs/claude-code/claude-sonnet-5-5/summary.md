@@ -1,10 +1,14 @@
 # Auto-imports on/off eval
 
-- date: 2026-11-18T07:17:38.042Z
+- config: claude-code/claude-sonnet-5-5
+- harness: claude-code
 - model: claude-sonnet-5-5
-- trials: 5
+- runs: 90
+- stale runs left out: 0
+- trials per task and arm: 5
 - maxTurns: 40
 - timeoutMin: 10
+- last run: 2026-11-18T07:17:38.042Z
 
 ## Pass rate
 
