@@ -1,6 +1,6 @@
 import type { CartLine } from '#shared/types/cart'
-import { useState } from '#app'
 import { computed } from 'vue'
+import { useState } from '#imports'
 
 /**
  * Legacy in-memory cart, kept for older apps built on this layer.

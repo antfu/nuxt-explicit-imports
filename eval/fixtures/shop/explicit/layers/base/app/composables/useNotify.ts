@@ -1,4 +1,4 @@
-import { useState } from '#app'
+import { useState } from '#imports'
 
 export function useNotify() {
   const message = useState<string | null>('notify', () => null)

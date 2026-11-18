@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Product } from '#shared/types/product'
-import ProductPrice from '~/components/product/Price.vue'
-import UiCard from '#layers/ui/app/components/UiCard.vue'
 import { NuxtLink } from '#components'
+import UiCard from '#layers/ui/app/components/UiCard.vue'
+import ProductPrice from '~/components/product/Price.vue'
 
 defineProps<{ product: Product }>()
 </script>

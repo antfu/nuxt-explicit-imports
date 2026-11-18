@@ -1,7 +1,30 @@
-import type { AgentMetrics, ToolKind } from './types'
+import type { AgentMetrics, Arm, ToolKind } from './types'
 
 /** Appended to every harness's system prompt, so all agents get the same framing. */
-export const APPEND = 'You are working on a Nuxt 4 app in the current working directory. Only read and change files inside it.'
+const APPEND = 'You are working on a Nuxt 4 app in the current working directory. Only read and change files inside it.'
+
+/**
+ * Added after `APPEND` in one arm only. The `auto` arm is plain Nuxt, which is what a model expects by default.
+ * The `explicit` arm is not, so it says so, the way a project's AGENTS.md would.
+ */
+const ARM_NOTES: Record<Arm, string> = {
+  auto: '',
+  explicit: [
+    'This app has every Nuxt auto-import turned off: `imports.autoImport: false`, `components.dirs: []` and `nitro.imports.autoImport: false`.',
+    'Nothing is imported for you. Write an explicit import for every name you use, in scripts and for every component used in a template.',
+    'Import Vue APIs from `vue`, Nuxt composables and helpers from `#imports`, built-in components like `NuxtLink` from `#components`, server helpers from `h3`, and app, layer, shared and server code from its own file.',
+  ].join(' '),
+}
+
+/** The text appended to the system prompt in one arm. */
+export function systemAppend(arm: Arm): string {
+  return [APPEND, ARM_NOTES[arm]].filter(Boolean).join('\n')
+}
+
+/** The arm's note, for the run fingerprint. Empty in the `auto` arm. */
+export function armNote(arm: Arm): string {
+  return ARM_NOTES[arm]
+}
 
 /** Tool names in lower case, so Claude Code's `Read` and pi's `read` sort the same. */
 const TOOL_KINDS: Record<string, ToolKind> = {

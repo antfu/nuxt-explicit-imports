@@ -4,6 +4,7 @@ Does a coding agent work better on a Nuxt app with auto-imports on, or with expl
 
 ```bash
 pnpm eval --dry-run          # no agent: check the fixtures and tasks, free
+pnpm eval --plan             # print how many cells each config would run, run nothing
 pnpm eval                    # run every missing cell of the matrix
 pnpm eval --configs pi/gpt-5.3-codex --tasks bugfix-multihop --trials 1
 pnpm eval report             # rewrite the reports from the stored runs
@@ -25,7 +26,7 @@ Claude models run in Claude Code, through the Claude Agent SDK. Other models run
 `pnpm eval` runs only the cells that have no current run. A cell is run again when:
 
 - it has no stored run,
-- its stored run is stale: the task's prompt, seed or check, or a fixture file, changed since (see `fingerprint()` in `store.ts`),
+- its stored run is stale: the task's prompt, seed or check, the arm's system prompt note, or a fixture file, changed since (see `fingerprint()` in `store.ts`),
 - its stored run is broken: a harness error, or an agent error like a failed API call,
 - or `--force` is set.
 
@@ -53,7 +54,15 @@ Before the runs start, one short preflight call per config checks the auth, and 
 Each fixture in `fixtures/` comes in two arms. The source is the same, only the imports differ.
 
 - `auto`: plain Nuxt, auto-imports on.
-- `explicit`: the `auto` arm after `nuxt-explicit-imports migrate`, with `imports.autoImport: false`, `components.dirs: []` and `nitro.imports.autoImport: false`.
+- `explicit`: the same source with every import written out, and `imports.autoImport: false`, `components.dirs: []` and `nitro.imports.autoImport: false`.
+
+The `explicit` arm is written by hand, not by our codemod, so the eval does not depend on the codemod's output. Its imports follow one style:
+
+- type imports first, then `vue` and `h3`, then `#imports` and `#components`, then `#shared/`, `#server/` and `#layers/`, then `~/`
+- Nuxt composables and helpers from `#imports` (not `#app`), built-in components like `NuxtLink` from `#components`
+- app, layer, shared and server code from its own file, components as default imports of the `.vue` file
+
+`pnpm eval --dry-run` checks that the arms differ only in their imports and `nuxt.config.ts` files.
 
 Neither arm installs this module or its skill, so the eval measures the import style, not our tooling.
 
@@ -85,7 +94,9 @@ Bug-fix tasks seed the bug before the agent starts. A seed can be limited to one
 ## A run
 
 1. Copy the fixture arm to a temp dir outside the repo, apply the seed and commit it. `node_modules` holds symlinks to the repo's packages.
-2. Run the agent. Both harnesses append the same line to their own system prompt, and load no user settings, CLAUDE.md, AGENTS.md or skills. Defaults: 40 turns, 10 minutes.
+2. Run the agent. Both harnesses load no user settings, CLAUDE.md, AGENTS.md or skills. Defaults: 40 turns, 10 minutes. They append the same text to their own system prompt (see `systemAppend()` in `metrics.ts`):
+   - both arms: the app is a Nuxt 4 app in the current directory, and the agent works only inside it
+   - `explicit` only: every auto-import is off, and every name and every template component must be imported, from `vue`, `#imports`, `#components`, `h3` or its own file. The `auto` arm needs no note: it is plain Nuxt, which is what a model expects.
    - Claude Code: all tools except web and sub-agents.
    - pi: its built-in tools (`read`, `bash`, `edit`, `write`), an empty config dir, and no extensions, prompt templates or MCP. pi has no turn limit, so the runner stops it after 40 turns.
 3. Score with hidden gates the agent never sees: `nuxt typecheck`, `nuxt build`, then the task's check against the built server (SSR HTML and API JSON).
@@ -127,4 +138,4 @@ TypeScript and build errors are counted twice: in the agent's tool output while 
 - The fixture's `package.json` lists no dependencies, since the workspace links the repo's packages. Haiku often reads that as "nothing installed" and runs `npm install` into its workspace. That costs it tokens and time in both arms alike. Workspaces link each package on its own, so npm can never reach the repo's `node_modules`.
 - In the `explicit` arm, a missing component import passes typecheck and build: Nuxt does not use `strictTemplates`, and the component renders as nothing. Only the task checks catch it, by asserting on the rendered HTML. It shows up as a failed assertion, not in the taxonomy.
 - Sonnet passed all 60 runs of the first 6 tasks, in about 5 turns each. The last 3 tasks were added to make the tasks harder. Each one was checked with a hand-written solution in both arms.
-- To regenerate an `explicit` arm: copy `auto`, run `node dist/cli.mjs migrate --root <copy>`, then apply the `nuxt.config.ts` of the existing `explicit` arm. Check the diff by hand.
+- When you change a fixture, change both arms the same way. The dry run fails when they drift apart outside imports.

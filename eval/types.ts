@@ -53,6 +53,8 @@ export interface AgentOptions {
   model: string
   maxTurns: number
   timeoutMs: number
+  /** Appended to the harness's own system prompt. */
+  append: string
 }
 
 /** What a tool call was for. A Bash call that chains commands can be several. `explore`: read or search. `edit`: change files. `verify`: run typecheck, build or tests. */

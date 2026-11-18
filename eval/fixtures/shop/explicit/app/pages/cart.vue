@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { NuxtLink } from '#components'
 import CartItem from '~/components/cart/Item.vue'
 import CartSummary from '~/components/cart/Summary.vue'
-import { useProducts } from '~/composables/useProducts'
 import { useCart } from '~/composables/useCart'
-import { NuxtLink } from '#components'
+import { useProducts } from '~/composables/useProducts'
 
 const { data: products } = await useProducts()
 const { lines } = useCart()

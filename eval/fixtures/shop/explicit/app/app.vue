@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NuxtPage, NuxtLayout } from '#components'
+import { NuxtLayout, NuxtPage } from '#components'
 </script>
 
 <template>

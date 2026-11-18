@@ -9,12 +9,13 @@ import { consola } from 'consola'
 import { join } from 'pathe'
 import { CONFIGS, describeAuth, runAgent } from './configs'
 import { build, runCheck, typecheck } from './gates'
+import { systemAppend } from './metrics'
 import { writeReports } from './report'
 import { fingerprint, readRun, saveRun } from './store'
 import { TASKS } from './tasks'
 import { classify, mergeTaxonomy } from './taxonomy'
 import { ARMS } from './types'
-import { checkToolchain, createWorkspace, workspaceDiff } from './workspace'
+import { armDifferences, checkToolchain, createWorkspace, workspaceDiff } from './workspace'
 
 interface Flags {
   configs?: string
@@ -26,6 +27,7 @@ interface Flags {
   concurrency: number
   force?: boolean
   dryRun?: boolean
+  plan?: boolean
   keep?: boolean
 }
 
@@ -55,7 +57,11 @@ function pick<T extends string>(value: string | undefined, all: readonly T[], la
 /** One cheap agent call per config, so a bad key fails here and not in every run. */
 async function preflight(config: AgentConfig): Promise<boolean> {
   consola.info(`${config.id}: ${describeAuth(config)}`)
-  const probe = await runAgent(config, 'Reply with OK.', tmpdir(), { maxTurns: 1, timeoutMs: 60_000 })
+  const probe = await runAgent(config, 'Reply with OK.', tmpdir(), {
+    maxTurns: 1,
+    timeoutMs: 60_000,
+    append: systemAppend('auto'),
+  })
   if (probe.stop === 'success')
     return true
   consola.error(`${config.id}: preflight failed: ${probe.stop === 'timeout'
@@ -124,6 +130,7 @@ async function runJob(job: Job, root: string, limits: Limits, keep: boolean): Pr
       const { calls, ...metrics } = await runAgent(job.config, job.task.prompt, dir, {
         maxTurns: limits.maxTurns,
         timeoutMs: limits.timeoutMin * 60_000,
+        append: systemAppend(job.arm),
       })
       result.agent = metrics
       result.errorsDuringRun = mergeTaxonomy(...calls.map(c => classify(c.output)))
@@ -159,7 +166,8 @@ async function runJob(job: Job, root: string, limits: Limits, keep: boolean): Pr
 }
 
 /**
- * Dry run: on the untouched fixtures, the gates MUST pass and every task check MUST fail.
+ * Dry run: the two arms MUST differ only in imports. On the untouched fixtures, the gates MUST pass
+ * and every task check MUST fail.
  * Otherwise the fixture is broken or the task is already solved, and agent results would mean nothing.
  */
 function dryRunProblems(results: RunResult[]): string[] {
@@ -182,13 +190,19 @@ async function dryRun(tasks: Task[], arms: Arm[], root: string, limits: Limits, 
   const jobs: Job[] = tasks.flatMap(task => arms.map(arm => ({ task, arm, trial: 1 })))
   const results: RunResult[] = []
   await pool(jobs, Number(flags.concurrency), async job => void results.push((await runJob(job, root, limits, !!flags.keep)).result))
-  const problems = dryRunProblems(results)
+  const fixtures = [
+    ...new Set(tasks.map(t => t.fixture)),
+  ]
+  const problems = [
+    ...(await Promise.all(fixtures.map(armDifferences))).flat(),
+    ...dryRunProblems(results),
+  ]
   for (const problem of problems)
     consola.error(problem)
   if (problems.length)
     process.exitCode = 1
   else
-    consola.success(`Dry run OK: ${results.length} workspaces build, and no task is solved before the agent runs.`)
+    consola.success(`Dry run OK: the arms differ only in imports, ${results.length} workspaces build, and no task is solved before the agent runs.`)
 }
 
 const cli = cac('eval')
@@ -204,6 +218,7 @@ cli
   .option('--timeout <min>', 'Agent timeout per run, in minutes', { default: 10 })
   .option('--concurrency <n>', 'Runs in parallel', { default: 2 })
   .option('--force', 'Run the selected cells again, even when a current run is stored')
+  .option('--plan', 'Only print how many cells each config would run')
   .option('--dry-run', 'No agent: check the fixtures build and every task check fails before work')
   .option('--keep', 'Keep the workspaces in the temp dir')
   .action(async (flags: Flags) => {
@@ -225,6 +240,14 @@ cli
       }, (_, i) => ({ config, task, arm, trial: i + 1 })))))
     const jobs = await pending(all, !!flags.force)
     consola.info(`${all.length} cells selected, ${all.length - jobs.length} already stored, ${jobs.length} to run`)
+    if (flags.plan) {
+      for (const config of configs) {
+        const todo = jobs.filter(j => j.config === config)
+        const arms = ARMS.map(arm => `${arm} ${todo.filter(j => j.arm === arm).length}`).join(', ')
+        consola.log(`  ${config.id}: ${todo.length} (${arms})`)
+      }
+      return
+    }
 
     for (const config of configs.filter(c => jobs.some(j => j.config === c))) {
       if (!await preflight(config)) {

@@ -1,4 +1,4 @@
-import { defineEventHandler, getRouterParam, createError } from 'h3'
+import { createError, defineEventHandler, getRouterParam } from 'h3'
 import { findProduct } from '#server/utils/db'
 import { formatMoney } from '#server/utils/money'
 

@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs'
 import { cp, mkdir, readdir, readFile, symlink, writeFile } from 'node:fs/promises'
 import { promisify } from 'node:util'
 import { join } from 'pathe'
+import { glob } from 'tinyglobby'
 
 export const repoRoot = join(import.meta.dirname, '..')
 const exec = promisify(execFile)
@@ -75,4 +76,48 @@ export async function workspaceDiff(dir: string): Promise<string> {
   await exec('git', ['add', '-A'], { cwd: dir })
   const { stdout } = await exec('git', ['diff', '--cached'], { cwd: dir, maxBuffer: 64 * 1024 * 1024 })
   return stdout
+}
+
+/** A fixture file without its imports, and without a `<script setup>` that only held imports. */
+function withoutImports(source: string): string {
+  return source
+    .split('\n')
+    .filter(line => !line.startsWith('import '))
+    .join('\n')
+    .replace(/<script setup lang="ts">\s*<\/script>\s*/g, '')
+    .replace(/(<script setup lang="ts">\n)\n+/g, '$1')
+    .replace(/^\n+/, '')
+    .replace(/\n{3,}/g, '\n\n')
+}
+
+/**
+ * Files where the two arms of a fixture differ in more than imports. The arms MUST hold the same
+ * source, so the eval compares import styles and nothing else. `nuxt.config.ts` files differ by design.
+ */
+export async function armDifferences(fixture: string): Promise<string[]> {
+  const root = join(repoRoot, 'eval/fixtures', fixture)
+  const list = (arm: Arm): Promise<string[]> => glob('**/*', {
+    cwd: join(root, arm),
+    dot: true,
+    ignore: [
+      '**/node_modules/**',
+      '**/.nuxt/**',
+      '**/.output/**',
+      '**/nuxt.config.ts',
+    ],
+  })
+  const [auto, explicit] = await Promise.all([
+    list('auto'),
+    list('explicit'),
+  ])
+  const problems = [
+    ...auto.filter(f => !explicit.includes(f)).map(f => `${fixture}: ${f} is only in the auto arm`),
+    ...explicit.filter(f => !auto.includes(f)).map(f => `${fixture}: ${f} is only in the explicit arm`),
+  ]
+  for (const file of auto.filter(f => explicit.includes(f)).sort()) {
+    const [a, e] = await Promise.all(['auto', 'explicit'].map(arm => readFile(join(root, arm, file), 'utf8')))
+    if (withoutImports(a!) !== withoutImports(e!))
+      problems.push(`${fixture}: ${file} differs between the arms outside its imports`)
+  }
+  return problems
 }

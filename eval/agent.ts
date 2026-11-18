@@ -2,7 +2,7 @@ import type { ModelUsage, SDKMessage } from '@anthropic-ai/claude-agent-sdk'
 import type { AgentMetrics, AgentOptions } from './types'
 import process from 'node:process'
 import { query } from '@anthropic-ai/claude-agent-sdk'
-import { APPEND, emptyMetrics, recordCall, recordOutput, toolResultText } from './metrics'
+import { emptyMetrics, recordCall, recordOutput, toolResultText } from './metrics'
 import { withoutSecrets } from './secrets'
 
 const GATEWAY_URL = 'https://ai-gateway.vercel.sh'
@@ -90,7 +90,7 @@ export async function runClaudeCode(prompt: string, cwd: string, options: AgentO
         abortController: abort,
         settingSources: [],
         skills: [],
-        systemPrompt: { type: 'preset', preset: 'claude_code', append: APPEND },
+        systemPrompt: { type: 'preset', preset: 'claude_code', append: options.append },
         permissionMode: 'bypassPermissions',
         allowDangerouslySkipPermissions: true,
         disallowedTools: [

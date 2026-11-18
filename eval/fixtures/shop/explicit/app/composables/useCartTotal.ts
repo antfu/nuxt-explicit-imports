@@ -1,9 +1,9 @@
 import type { Product } from '#shared/types/product'
+import { computed } from 'vue'
+import { useNuxtData } from '#imports'
+import { sumBy } from '#shared/utils/math'
 import { useCart } from '~/composables/useCart'
 import { useDiscount } from '~/composables/useDiscount'
-import { useNuxtData } from '#app'
-import { computed } from 'vue'
-import { sumBy } from '#shared/utils/math'
 import { applyDiscount } from '~/utils/discount'
 
 /** Cart totals in cents, as shown to the customer. */

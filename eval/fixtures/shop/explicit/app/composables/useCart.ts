@@ -1,6 +1,6 @@
 import type { CartLine } from '#shared/types/cart'
-import { useCookie } from '#app'
 import { computed } from 'vue'
+import { useCookie } from '#imports'
 import { sumBy } from '#shared/utils/math'
 
 /** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */

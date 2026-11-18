@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useCartTotal } from '~/composables/useCartTotal'
-import { formatMoney } from '~/utils/money'
 import { formatDiscount } from '~/utils/discount'
+import { formatMoney } from '~/utils/money'
 
 const { subtotal, total, percent } = useCartTotal()
 </script>

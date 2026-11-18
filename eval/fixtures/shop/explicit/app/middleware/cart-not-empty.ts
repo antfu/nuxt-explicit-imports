@@ -1,4 +1,4 @@
-import { defineNuxtRouteMiddleware, navigateTo } from '#app'
+import { defineNuxtRouteMiddleware, navigateTo } from '#imports'
 import { useCart } from '~/composables/useCart'
 
 export default defineNuxtRouteMiddleware(() => {

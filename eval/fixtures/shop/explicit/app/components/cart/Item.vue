@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { CartLine } from '#shared/types/cart'
 import type { Product } from '#shared/types/product'
+import { computed } from 'vue'
 import UiButton from '#layers/ui/app/components/UiButton.vue'
 import { useCart } from '~/composables/useCart'
-import { computed } from 'vue'
 import { formatMoney } from '~/utils/money'
 
 const props = defineProps<{ line: CartLine, product?: Product }>()

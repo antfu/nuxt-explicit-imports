@@ -1,9 +1,9 @@
 import type { CartLine } from '#shared/types/cart'
-import { sumBy } from '#shared/utils/math'
 import { findProduct } from '#server/utils/db'
 import { computeDiscount } from '#server/utils/discount'
-import { discountPercent } from '#shared/utils/discount'
 import { formatMoney } from '#server/utils/money'
+import { discountPercent } from '#shared/utils/discount'
+import { sumBy } from '#shared/utils/math'
 
 export interface Quote {
   subtotal: string

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import CartBadge from '~/components/cart/Badge.vue'
 import { NuxtLink } from '#components'
+import CartBadge from '~/components/cart/Badge.vue'
 </script>
 
 <template>

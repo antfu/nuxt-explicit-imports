@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto'
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'pathe'
 import { glob } from 'tinyglobby'
+import { armNote } from './metrics'
 import { redact } from './secrets'
 import { repoRoot } from './workspace'
 
@@ -28,6 +29,12 @@ async function computeFingerprint(task: Task, arm: Arm): Promise<string> {
     prompt: task.prompt,
     seed: (task.seed ?? []).filter(seed => !seed.arm || seed.arm === arm),
     check: task.check.toString(),
+    // Only set in an arm with a note, so adding notes left the `auto` fingerprints as they were.
+    ...(armNote(arm)
+      ? {
+          note: armNote(arm),
+        }
+      : {}),
   }))
   const fixture = join(repoRoot, 'eval/fixtures', task.fixture, arm)
   const files = await glob('**/*', {
@@ -41,7 +48,7 @@ async function computeFingerprint(task: Task, arm: Arm): Promise<string> {
 }
 
 /**
- * What a run of this task and arm depends on: the prompt, the seed, the check's source and every fixture file.
+ * What a run of this task and arm depends on: the prompt, the arm's system prompt note, the seed, the check's source and every fixture file.
  * A stored run with another fingerprint is stale: the report leaves it out and `pnpm eval` runs it again.
  * Helpers the check calls are not part of it, so after changing one, rerun with `--force`.
  */

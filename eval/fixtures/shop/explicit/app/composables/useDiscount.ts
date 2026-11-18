@@ -1,5 +1,5 @@
-import { useCookie } from '#app'
 import { computed } from 'vue'
+import { useCookie } from '#imports'
 import { discountPercent } from '#shared/utils/discount'
 
 /** The active discount code, read from the `discount-code` cookie. */

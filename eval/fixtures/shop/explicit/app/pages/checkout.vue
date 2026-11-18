@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import FormInput from '#layers/ui/app/components/form/Input.vue'
-import CartSummary from '~/components/cart/Summary.vue'
+import { ref } from 'vue'
+import { definePageMeta } from '#imports'
+import { useNotify } from '#layers/base/app/composables/useNotify'
 import UiBadge from '#layers/ui/app/components/UiBadge.vue'
 import UiButton from '#layers/ui/app/components/UiButton.vue'
-import { definePageMeta } from '#app/composables/pages'
+import FormInput from '#layers/ui/app/components/form/Input.vue'
+import CartSummary from '~/components/cart/Summary.vue'
 import { useProducts } from '~/composables/useProducts'
-import { ref } from 'vue'
-import { useNotify } from '#layers/base/app/composables/useNotify'
 
 definePageMeta({ middleware: 'cart-not-empty' })
 
