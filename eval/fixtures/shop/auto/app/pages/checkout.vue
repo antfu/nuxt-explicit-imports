@@ -9,6 +9,9 @@ const { notify } = useNotify()
 <template>
   <div>
     <h1>Checkout</h1>
+    <UiBadge class="secure">
+      Secure checkout
+    </UiBadge>
     <FormInput v-model="email" label="Email" />
     <CartSummary />
     <UiButton id="place-order" @click="notify(`Order placed for ${email}`)">

@@ -4,7 +4,7 @@ Does a coding agent work better on a Nuxt app with auto-imports on, or with expl
 
 ```bash
 pnpm eval --dry-run          # no agent: check the fixtures and tasks, free
-pnpm eval                    # 6 tasks x 2 arms x 5 trials = 60 agent runs
+pnpm eval                    # 9 tasks x 2 arms x 5 trials = 90 agent runs
 pnpm eval --tasks bugfix-multihop --trials 1 --model claude-haiku-5-5
 ```
 
@@ -30,11 +30,11 @@ The only fixture, `shop`, is a small store of about 45 files: product, cart and 
 - Same names in different places: `formatMoney` in `app/utils` (`$19.99`) and `server/utils` (`19.99 USD`), and a ui layer `ProductCard` that the app's `components/product/Card.vue` overrides.
 - Layer overrides: the base layer has a legacy `useCart` with the same API as the app's (but in-memory state), and a `useTheme` that the app overrides.
 - Similar helpers: the cart rounds discounts down (`applyDiscount`), the base layer's `percentOf` and the server's `computeDiscount` round to nearest.
-- Components used only in templates, from the app and from the ui layer.
+- Components used only in templates, from the app and from the ui layer. `UiBadge` is used on the header, product and checkout pages.
 
 ## Tasks
 
-`tasks.ts` holds 6 tasks, 2 per kind. The prompt is the same in both arms and does not say which arm it is.
+`tasks.ts` holds 9 tasks: 4 features, 3 refactors, 2 bug fixes. The prompt is the same in both arms and does not say which arm it is.
 
 | Task                            | What makes it hard                                                                                   |
 | ------------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -42,6 +42,9 @@ The only fixture, `shop`, is a small store of about 45 files: product, cart and 
 | `feature-product-discount`      | Must find the cart's rounding helper, not the similar `percentOf`                                    |
 | `refactor-rename-cart`          | 9 files. In `auto`, a missed call still compiles and silently uses the base layer's legacy `useCart` |
 | `refactor-move-cart-components` | In `auto`, the component names change (`CartItem` -> `CheckoutItem`), a missed tag renders nothing   |
+| `feature-order-flow`            | API, store and page. The page must show the server's total (rounds to nearest), not recompute it with the UI's `applyDiscount` (rounds down): `$37.33`, not `$37.34` |
+| `feature-pill-badge`            | Override a ui layer component. In `explicit`, every import of the layer's `UiBadge` must change, a missed one silently keeps the old badge |
+| `refactor-extract-cart-layer`   | 8 files into a new layer. The cart must still win over the base layer's legacy `useCart`, and in `explicit` every import path changes |
 | `bugfix-multihop`               | The cause is a shared `clamp`, 4 calls away from the symptom, used by the app and the server         |
 | `bugfix-lost-override`          | The app's `useTheme` override no longer wins over the base layer                                     |
 
@@ -88,5 +91,5 @@ TypeScript and build errors are counted twice: in the agent's tool output while 
 ## Known limits
 
 - In the `explicit` arm, a missing component import passes typecheck and build: Nuxt does not use `strictTemplates`, and the component renders as nothing. Only the task checks catch it, by asserting on the rendered HTML. It shows up as a failed assertion, not in the taxonomy.
-- Sonnet passed all 12 runs of a smoke run (one trial per task and arm) in 3-5 turns. To see a gap, try a weaker model or more trials.
+- Sonnet passed all 60 runs of the first 6 tasks, in about 5 turns each. The last 3 tasks were added to make the tasks harder. Each one was checked with a hand-written solution in both arms.
 - To regenerate an `explicit` arm: copy `auto`, run `node dist/cli.mjs migrate --root <copy>`, then apply the `nuxt.config.ts` of the existing `explicit` arm. Check the diff by hand.

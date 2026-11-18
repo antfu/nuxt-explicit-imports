@@ -19,7 +19,8 @@ function cookies(lines: CartLine[] = [], code?: string): RequestInit {
   }
 }
 
-function quote(lines: CartLine[], code?: string): RequestInit {
+/** A `POST` with `{ lines, code }` as JSON, the body of the quote and order APIs. */
+function postCart(lines: CartLine[], code?: string): RequestInit {
   return {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
@@ -58,6 +59,21 @@ async function cartRendersEverywhere(ctx: CheckContext): Promise<void> {
   const checkout = await ctx.fetchText('/checkout', cookies(CART))
   ctx.assert('/checkout is not redirected', checkout.includes('<h1>Checkout</h1>'))
   ctx.assert('/checkout renders the summary', checkout.includes('id="cart-summary"'))
+}
+
+/** Every `ui-badge` element on a page, and how many of them carry `pill`. */
+function badges(html: string): { all: number, pill: number } {
+  const classes = [
+    ...html.matchAll(/class="([^"]*\bui-badge\b[^"]*)"/g),
+  ].map(m => m[1]!.split(/\s+/))
+  return { all: classes.length, pill: classes.filter(c => c.includes('pill')).length }
+}
+
+interface Order {
+  id?: unknown
+  subtotal?: unknown
+  discount?: unknown
+  total?: unknown
 }
 
 export const TASKS: Task[] = [
@@ -141,6 +157,109 @@ export const TASKS: Task[] = [
     },
   },
   {
+    id: 'feature-order-flow',
+    fixture: 'shop',
+    kind: 'feature',
+    prompt: [
+      'Add orders, from the API to a page:',
+      '- `POST /api/orders` takes `{ lines, code }` like `POST /api/cart/quote`, stores the order in server memory and returns `{ id, subtotal, discount, total }`. The amounts are what the server charges, in the same format as the quote API.',
+      '- `GET /api/orders/:id` returns the stored order in the same shape.',
+      '- A page at `/orders/:id` shows the order: one `<li class="order-line">` per cart line with the product name, and `<span id="order-total">` with the total the server charged, in the money format the rest of the UI uses.',
+      GATES,
+    ].join('\n'),
+    async check(ctx) {
+      // CART with SAVE10: the server rounds the discount to nearest (4.15), the UI's applyDiscount rounds down (4.14).
+      const order = await ctx.fetchJson('/api/orders', postCart(CART, 'SAVE10')) as Order
+      ctx.assert('POST returns an id', typeof order?.id === 'string' || typeof order?.id === 'number', JSON.stringify(order))
+      ctx.assert('POST total is 37.33 USD', order?.total === '37.33 USD', JSON.stringify(order))
+      ctx.assert('POST subtotal and discount', order?.subtotal === '41.48 USD' && order?.discount === '4.15 USD', JSON.stringify(order))
+      const other = await ctx.fetchJson('/api/orders', postCart(CART)) as Order
+      ctx.assert('a second order gets another id', other?.id !== undefined && other.id !== order?.id, JSON.stringify(other))
+      const id = encodeURIComponent(String(order?.id))
+      const stored = await ctx.fetchJson(`/api/orders/${id}`) as Order
+      ctx.assert('GET returns the stored order', stored?.total === '37.33 USD' && stored?.id === order?.id, JSON.stringify(stored))
+      const html = await ctx.fetchText(`/orders/${id}`)
+      ctx.assert('page shows 2 order lines', count(html, /class="order-line"/) === 2, `${count(html, /class="order-line"/)} found`)
+      ctx.assert('page lists Notebook and Pencil', html.includes('Notebook') && html.includes('Pencil'))
+      ctx.assert('#order-total is $37.33', textById(html, 'order-total') === '$37.33', textById(html, 'order-total'))
+    },
+  },
+  {
+    id: 'feature-pill-badge',
+    fixture: 'shop',
+    kind: 'feature',
+    prompt: [
+      'Every badge in the shop must render as a pill.',
+      'Override the ui layer\'s `UiBadge` in the app with `app/components/UiBadge.vue`, which renders `<span class="ui-badge pill">` around its slot. Do not change the ui layer.',
+      GATES,
+    ].join('\n'),
+    async check(ctx) {
+      ctx.assert('app/components/UiBadge.vue exists', await ctx.exists('app/components/UiBadge.vue'))
+      ctx.assert('ui layer badge untouched', !(await ctx.read('layers/ui/app/components/UiBadge.vue'))?.includes('pill'))
+      const pages: [string, RequestInit][] = [
+        [
+          '/',
+          cookies(CART),
+        ],
+        [
+          '/products/notebook',
+          cookies(CART),
+        ],
+        [
+          '/checkout',
+          cookies(CART),
+        ],
+      ]
+      for (const [path, init] of pages) {
+        const found = badges(await ctx.fetchText(path, init))
+        ctx.assert(`${path}: every badge is a pill`, found.all > 0 && found.pill === found.all, `${found.pill}/${found.all} pills`)
+      }
+      const home = await ctx.fetchText('/', cookies(CART))
+      ctx.assert('header badge still shows 3', badge(home) === '3', badge(home))
+    },
+  },
+  {
+    id: 'refactor-extract-cart-layer',
+    fixture: 'shop',
+    kind: 'refactor',
+    prompt: [
+      'Move the cart feature out of the app into a new layer at `layers/cart/`:',
+      '- the composables `useCart`, `useCartTotal` and `useDiscount`',
+      '- the components in `app/components/cart/`',
+      '- the utils in `app/utils/discount.ts`',
+      '- the `cart-not-empty` middleware',
+      'Keep their file names under `layers/cart/app/`. The app keeps its pages, layout, other components and `app/utils/money.ts`.',
+      'The cart must keep overriding the base layer\'s legacy `useCart`, and every page must work as before.',
+      GATES,
+    ].join('\n'),
+    async check(ctx) {
+      const moved = [
+        'composables/useCart.ts',
+        'composables/useCartTotal.ts',
+        'composables/useDiscount.ts',
+        'components/cart/Badge.vue',
+        'components/cart/Item.vue',
+        'components/cart/Summary.vue',
+        'utils/discount.ts',
+        'middleware/cart-not-empty.ts',
+      ]
+      const missing = (await Promise.all(moved.map(async f => await ctx.exists(`layers/cart/app/${f}`)
+        ? ''
+        : f))).filter(Boolean)
+      ctx.assert('every cart file is in layers/cart/app/', !missing.length, missing.join(', '))
+      const left = (await Promise.all(moved.map(async f => await ctx.exists(`app/${f}`)
+        ? f
+        : ''))).filter(Boolean)
+      ctx.assert('no cart file left in app/', !left.length, left.join(', '))
+      ctx.assert('base layer useCart untouched', (await ctx.read('layers/base/app/composables/useCart.ts'))?.includes('\'legacy-cart\'') ?? false)
+      await cartRendersEverywhere(ctx)
+      const save10 = await ctx.fetchText('/cart', cookies(CART, 'SAVE10'))
+      ctx.assert('SAVE10: /cart total is $37.34', textById(save10, 'cart-total') === '$37.34', textById(save10, 'cart-total'))
+      const empty = await ctx.fetchText('/checkout')
+      ctx.assert('empty cart: /checkout redirects to /cart', empty.includes('<h1>Cart</h1>') && !empty.includes('<h1>Checkout</h1>'))
+    },
+  },
+  {
     id: 'bugfix-multihop',
     fixture: 'shop',
     kind: 'bugfix',
@@ -160,9 +279,9 @@ export const TASKS: Task[] = [
       ctx.assert('no code: /cart total is $39.98', textById(plain, 'cart-total') === '$39.98', textById(plain, 'cart-total'))
       const save10 = await ctx.fetchText('/cart', cookies(lines, 'SAVE10'))
       ctx.assert('SAVE10: /cart total is $35.99', textById(save10, 'cart-total') === '$35.99', textById(save10, 'cart-total'))
-      const q1 = await ctx.fetchJson('/api/cart/quote', quote(lines)) as { total?: unknown }
+      const q1 = await ctx.fetchJson('/api/cart/quote', postCart(lines)) as { total?: unknown }
       ctx.assert('no code: quote total is 39.98 USD', q1?.total === '39.98 USD', JSON.stringify(q1))
-      const q2 = await ctx.fetchJson('/api/cart/quote', quote(lines, 'SAVE10')) as { total?: unknown }
+      const q2 = await ctx.fetchJson('/api/cart/quote', postCart(lines, 'SAVE10')) as { total?: unknown }
       ctx.assert('SAVE10: quote total is 35.98 USD', q2?.total === '35.98 USD', JSON.stringify(q2))
     },
   },

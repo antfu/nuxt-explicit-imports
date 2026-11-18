@@ -18,6 +18,9 @@ function addToCart() {
   <UiCard v-if="product">
     <h1>{{ product.name }}</h1>
     <ProductPrice id="price" :cents="product.priceCents" />
+    <UiBadge class="stock">
+      In stock
+    </UiBadge>
     <UiButton id="add-to-cart" @click="addToCart">
       Add to cart
     </UiButton>
