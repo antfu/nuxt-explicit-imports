@@ -2,7 +2,7 @@
   "name": "nuxt-explicit-imports",
   "type": "module",
   "version": "0.1.0",
-  "packageManager": "pnpm@12.18.0",
+  "packageManager": "pnpm@12.21.0",
   "description": "Migrate a Nuxt app away from auto-imports, step by step, with agent skills, a codemod and a warn mode",
   "author": "Anthony Fu <anthonyfu117@hotmail.com>",
   "license": "MIT",
