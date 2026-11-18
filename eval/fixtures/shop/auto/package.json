@@ -1,0 +1,9 @@
+{
+  "name": "eval-shop",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "typecheck": "nuxt typecheck"
+  }
+}
