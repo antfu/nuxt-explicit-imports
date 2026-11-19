@@ -1,0 +1,37 @@
+[
+  {
+    "id": "toolu_01J5AYNbQuVzn6wGivRyMLEL",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cat nuxt.config.ts; find app server shared layers -type f 2>/dev/null | grep -v node_modules; grep -rn \"cart\" app server shared layers --include=*.vue --include=*.ts -i 2>/dev/null | grep -i \"components/cart\\|Cart[A-Z]\" "
+    },
+    "output": "export default defineNuxtConfig({\n  compatibilityDate: '2026-01-01',\n  devtools: { enabled: false },\n  telemetry: false,\n  // Auto-imports are off: import every composable, util and component explicitly.\n  imports: { autoImport: false },\n  components: { dirs: [] },\n  nitro: { imports: { autoImport: false } },\n})\napp/app.vue\nlayers/ui/nuxt.config.ts\nlayers/base/nuxt.config.ts\nlayers/ui/app/components/UiCard.vue\nlayers/ui/app/components/UiBadge.vue\nlayers/ui/app/components/ProductCard.vue\nlayers/ui/app/components/UiButton.vue\nlayers/base/app/composables/useNotify.ts\nlayers/base/app/composables/useTheme.ts\nlayers/base/app/composables/useCart.ts\nlayers/base/app/utils/percent.ts\nlayers/ui/app/components/form/Input.vue\napp/middleware/cart-not-empty.ts\napp/composables/useProducts.ts\napp/composables/useCartTotal.ts\napp/composables/useTheme.ts\napp/composables/useCart.ts\napp/composables/useDiscount.ts\napp/utils/discount.ts\napp/utils/money.ts\napp/components/AppHeader.vue\napp/components/AppFooter.vue\napp/layouts/default.vue\napp/pages/index.vue\napp/pages/cart.vue\napp/pages/checkout.vue\nserver/utils/discount.ts\nserver/utils/money.ts\nserver/utils/quote.ts\nserver/utils/db.ts\nshared/types/product.ts\nshared/types/cart.ts\nshared/utils/slug.ts\nshared/utils/math.ts\nshared/utils/discount.ts\napp/components/product/Card.vue\napp/components/product/Grid.vue\napp/components/product/Price.vue\napp/components/cart/Item.vue\napp/components/cart/Badge.vue\napp/components/cart/Summary.vue\napp/pages/products/[slug].vue\nserver/api/products/index.get.ts\nserver/api/products/[slug].get.ts\nserver/api/cart/quote.post.ts\n(eval):1: no matches found: --include=*.vue"
+  },
+  {
+    "id": "toolu_016tnD2xNpKj8w4grF9fTPAV",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"components/cart\\|cart/\\(Item\\|Badge\\|Summary\\)\\|CartItem\\|CartBadge\\|CartSummary\" app layers server shared nuxt.config.ts tsconfig.json 2>/dev/null; for f in app/components/cart/*; do echo \"== $f\"; cat $f; done"
+    },
+    "output": "app/components/AppHeader.vue:3:import CartBadge from '~/components/cart/Badge.vue'\napp/components/AppHeader.vue:12:      Cart <CartBadge />\napp/pages/cart.vue:3:import CartItem from '~/components/cart/Item.vue'\napp/pages/cart.vue:4:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/cart.vue:16:      <CartItem\napp/pages/cart.vue:26:    <CartSummary />\napp/pages/checkout.vue:8:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/checkout.vue:25:    <CartSummary />\n== app/components/cart/Badge.vue\n<script setup lang=\"ts\">\nimport UiBadge from '#layers/ui/app/components/UiBadge.vue'\nimport { useCart } from '~/composables/useCart'\n\nconst { count } = useCart()\n</script>\n\n<template>\n  <UiBadge class=\"cart-badge\">\n    {{ count }}\n  </UiBadge>\n</template>\n== app/components/cart/Item.vue\n<script setup lang=\"ts\">\nimport type { CartLine } from '#shared/types/cart'\nimport type { Product } from '#shared/types/product'\nimport { computed } from 'vue'\nimport UiButton from '#layers/ui/app/components/UiButton.vue'\nimport { useCart } from '~/composables/useCart'\nimport { formatMoney } from '~/utils/money'\n\nconst props = defineProps<{ line: CartLine, product?: Product }>()\nconst { remove } = useCart()\nconst lineTotal = computed(() => formatMoney((props.product?.priceCents ?? 0) * props.line.qty))\n</script>\n\n<template>\n  <li class=\"cart-item\">\n    <span class=\"name\">{{ product?.name ?? line.slug }}</span>\n    <span class=\"qty\">x{{ line.qty }}</span>\n    <span class=\"line-total\">{{ lineTotal }}</span>\n    <UiButton @click=\"remove(line.slug)\">\n      Remove\n    </UiButton>\n  </li>\n</template>\n== app/components/cart/Summary.vue\n<script setup lang=\"ts\">\nimport { useCartTotal } from '~/composables/useCartTotal'\nimport { formatDiscount } from '~/utils/discount'\nimport { formatMoney } from '~/utils/money'\n\nconst { subtotal, total, percent } = useCartTotal()\n</script>\n\n<template>\n  <section id=\"cart-summary\">\n    <p>Subtotal: <span id=\"cart-subtotal\">{{ formatMoney(subtotal) }}</span></p>\n    <p v-if=\"percent\">\n      Discount: {{ formatDiscount(subtotal - total) }}\n    </p>\n    <p>Total: <span id=\"cart-total\">{{ formatMoney(total) }}</span></p>\n  </section>\n</template>"
+  },
+  {
+    "id": "toolu_018JQoX6T5QWvQrPQ1zRFR1y",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "mkdir -p app/components/checkout && git mv app/components/cart/Item.vue app/components/cart/Badge.vue app/components/cart/Summary.vue app/components/checkout/ && rmdir app/components/cart 2>/dev/null; sed -i '' 's#~/components/cart/#~/components/checkout/#' app/components/AppHeader.vue app/pages/cart.vue app/pages/checkout.vue && grep -rn \"components/cart\" . --exclude-dir=node_modules --exclude-dir=.nuxt --exclude-dir=.output; git status --short; npm run typecheck 2>&1 | tail -5; npm run build 2>&1 | tail -5"
+    },
+    "output": " M app/components/AppHeader.vue\nR  app/components/cart/Badge.vue -> app/components/checkout/Badge.vue\nR  app/components/cart/Item.vue -> app/components/checkout/Item.vue\nR  app/components/cart/Summary.vue -> app/components/checkout/Summary.vue\n M app/pages/cart.vue\n M app/pages/checkout.vue\n\n> typecheck\n> nuxt typecheck\n\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 67ms · modules 20ms · app 180ms · types 142ms · client 408ms · server 211ms · nitro 1.90s\n◆ ✨ Build complete in 2.93s!"
+  }
+]

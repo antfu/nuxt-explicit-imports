@@ -18,6 +18,8 @@ The eval is a matrix of cells: config x task x arm x trial. A config is a harnes
 | ------------------------------- | ----------- | ------------------------------------------ |
 | `claude-code/claude-sonnet-5-5` | Claude Code | `claude-sonnet-5-5`                        |
 | `claude-code/claude-haiku-5-5`  | Claude Code | `claude-haiku-5-5`                         |
+| `claude-code/claude-opus-5-5`   | Claude Code | `claude-opus-5-5`                          |
+| `pi/claude-haiku-5-5`           | pi          | `vercel-ai-gateway/anthropic/claude-haiku-5-5` |
 | `pi/gpt-5.3-codex`              | pi          | `vercel-ai-gateway/openai/gpt-5.3-codex`   |
 | `pi/gemini-3.5-flash`           | pi          | `vercel-ai-gateway/google/gemini-3.5-flash` |
 

@@ -1,0 +1,33 @@
+diff --git a/app/pages/products/[slug].vue b/app/pages/products/[slug].vue
+index e736df9..5f49d77 100644
+--- a/app/pages/products/[slug].vue
++++ b/app/pages/products/[slug].vue
+@@ -6,12 +6,18 @@ import UiBadge from '#layers/ui/app/components/UiBadge.vue'
+ import UiButton from '#layers/ui/app/components/UiButton.vue'
+ import UiCard from '#layers/ui/app/components/UiCard.vue'
+ import ProductPrice from '~/components/product/Price.vue'
++import { computed } from 'vue'
+ import { useCart } from '~/composables/useCart'
++import { useDiscount } from '~/composables/useDiscount'
++import { applyDiscount } from '~/utils/discount'
++import { formatMoney } from '~/utils/money'
+ 
+ const route = useRoute()
+ const { data: product } = await useFetch<Product & { price: string }>(`/api/products/${route.params.slug}`)
+ const { add } = useCart()
+ const { notify } = useNotify()
++const { percent } = useDiscount()
++const discounted = computed(() => formatMoney(applyDiscount(product.value?.priceCents ?? 0, percent.value)))
+ 
+ function addToCart() {
+   if (!product.value)
+@@ -25,6 +31,9 @@ function addToCart() {
+   <UiCard v-if="product">
+     <h1>{{ product.name }}</h1>
+     <ProductPrice id="price" :cents="product.priceCents" />
++    <p v-if="percent" id="discounted">
++      {{ discounted }}
++    </p>
+     <UiBadge class="stock">
+       In stock
+     </UiBadge>

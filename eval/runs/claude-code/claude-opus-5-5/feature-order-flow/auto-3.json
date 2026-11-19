@@ -1,0 +1,78 @@
+{
+  "config": "claude-code/claude-opus-5-5",
+  "fingerprint": "6e894cc0deeff69d",
+  "date": "2026-11-19T00:02:22.143Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "feature-order-flow",
+  "kind": "feature",
+  "fixture": "shop",
+  "arm": "auto",
+  "trial": 3,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1459
+  },
+  "build": {
+    "ok": true,
+    "ms": 2969
+  },
+  "assertions": [
+    {
+      "name": "POST returns an id",
+      "ok": true
+    },
+    {
+      "name": "POST total is 37.33 USD",
+      "ok": true
+    },
+    {
+      "name": "POST subtotal and discount",
+      "ok": true
+    },
+    {
+      "name": "a second order gets another id",
+      "ok": true
+    },
+    {
+      "name": "GET returns the stored order",
+      "ok": true
+    },
+    {
+      "name": "page shows 2 order lines",
+      "ok": true
+    },
+    {
+      "name": "page lists Notebook and Pencil",
+      "ok": true
+    },
+    {
+      "name": "#order-total is $37.33",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 8,
+    "toolCalls": {
+      "Bash": 7
+    },
+    "toolKinds": {
+      "explore": 4,
+      "edit": 3,
+      "verify": 1,
+      "other": 1
+    },
+    "inputTokens": 1401,
+    "outputTokens": 4906,
+    "cacheReadTokens": 191247,
+    "cacheWriteTokens": 14754,
+    "toolOutputChars": 16346,
+    "costUsd": 0.2157434,
+    "ms": 65559,
+    "apiMs": 56603
+  }
+}

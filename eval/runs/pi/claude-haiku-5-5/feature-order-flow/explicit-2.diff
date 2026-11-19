@@ -1,0 +1,203 @@
+diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
+new file mode 100644
+index 0000000..dab8638
+--- /dev/null
++++ b/app/pages/orders/[id].vue
+@@ -0,0 +1,27 @@
++<script setup lang="ts">
++import type { Order } from '#shared/types/order'
++import { useFetch, useRoute } from '#imports'
++import { formatServerMoney } from '~/utils/money'
++
++const route = useRoute()
++const { data: order } = await useFetch<Order>(`/api/orders/${route.params.id}`)
++</script>
++
++<template>
++  <div>
++    <template v-if="order">
++      <h1>Order</h1>
++      <ul>
++        <li v-for="line in order.lines" :key="line.slug" class="order-line">
++          {{ line.name }} × {{ line.qty }}
++        </li>
++      </ul>
++      <p>Subtotal: <span id="order-subtotal">{{ formatServerMoney(order.subtotal) }}</span></p>
++      <p>Discount: <span id="order-discount">{{ formatServerMoney(order.discount) }}</span></p>
++      <p>Total: <span id="order-total">{{ formatServerMoney(order.total) }}</span></p>
++    </template>
++    <p v-else>
++      Order not found.
++    </p>
++  </div>
++</template>
+diff --git a/app/utils/money.ts b/app/utils/money.ts
+index 6b7ed83..2a12118 100644
+--- a/app/utils/money.ts
++++ b/app/utils/money.ts
+@@ -2,3 +2,8 @@
+ export function formatMoney(cents: number): string {
+   return `$${(cents / 100).toFixed(2)}`
+ }
++
++/** Converts the server's `19.99 USD` text to the UI format: `$19.99`. */
++export function formatServerMoney(text: string): string {
++  return formatMoney(Math.round(Number.parseFloat(text) * 100))
++}
+diff --git a/server/api/orders.post.ts b/server/api/orders.post.ts
+new file mode 100644
+index 0000000..acc5dea
+--- /dev/null
++++ b/server/api/orders.post.ts
+@@ -0,0 +1,8 @@
++import type { OrderSummary } from '#shared/types/order'
++import { defineEventHandler, readBody } from 'h3'
++import { parseOrderBody, placeOrder } from '#server/utils/orders'
++
++export default defineEventHandler(async (event): Promise<OrderSummary> => {
++  const { lines, code } = parseOrderBody(await readBody(event))
++  return placeOrder(lines, code)
++})
+diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
+new file mode 100644
+index 0000000..e23f8ec
+--- /dev/null
++++ b/server/api/orders/[id].get.ts
+@@ -0,0 +1,10 @@
++import type { Order } from '#shared/types/order'
++import { createError, defineEventHandler, getRouterParam } from 'h3'
++import { getOrder } from '#server/utils/orders'
++
++export default defineEventHandler((event): Order => {
++  const order = getOrder(getRouterParam(event, 'id') ?? '')
++  if (!order)
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  return order
++})
+diff --git a/server/utils/orders.ts b/server/utils/orders.ts
+new file mode 100644
+index 0000000..0d5664f
+--- /dev/null
++++ b/server/utils/orders.ts
+@@ -0,0 +1,64 @@
++import type { CartLine } from '#shared/types/cart'
++import type { Order, OrderLine, OrderSummary } from '#shared/types/order'
++import { randomUUID } from 'node:crypto'
++import { createError } from 'h3'
++import { findProduct } from '#server/utils/db'
++import { formatMoney } from '#server/utils/money'
++import { priceLines } from '#server/utils/quote'
++
++interface StoredOrder {
++  id: string
++  lines: OrderLine[]
++  subtotal: number
++  discount: number
++  total: number
++}
++
++/** Orders live in server memory only; they are lost on restart. */
++const orders = new Map<string, StoredOrder>()
++
++/** Validates the request body and narrows it to cart lines and an optional code. */
++export function parseOrderBody(body: unknown): { lines: CartLine[], code?: string } {
++  const input = (body ?? {}) as { lines?: unknown, code?: unknown }
++  if (!Array.isArray(input.lines) || input.lines.length === 0)
++    throw createError({ statusCode: 400, statusMessage: 'lines must be a non-empty array' })
++  if (input.code !== undefined && input.code !== null && typeof input.code !== 'string')
++    throw createError({ statusCode: 400, statusMessage: 'code must be a string' })
++
++  const lines = input.lines.map((line: unknown) => {
++    const { slug, qty } = (line ?? {}) as { slug?: unknown, qty?: unknown }
++    if (typeof slug !== 'string' || !findProduct(slug))
++      throw createError({ statusCode: 400, statusMessage: `Unknown product: ${String(slug)}` })
++    if (typeof qty !== 'number' || !Number.isInteger(qty) || qty < 1)
++      throw createError({ statusCode: 400, statusMessage: 'qty must be a positive integer' })
++    return { slug, qty }
++  })
++  return { lines, code: typeof input.code === 'string' ? input.code : undefined }
++}
++
++export function placeOrder(lines: CartLine[], code?: string): OrderSummary {
++  const priced = priceLines(lines, code)
++  const stored: StoredOrder = {
++    id: randomUUID(),
++    lines: lines.map(line => ({ slug: line.slug, name: findProduct(line.slug)?.name ?? line.slug, qty: line.qty })),
++    subtotal: priced.subtotal,
++    discount: priced.discount,
++    total: priced.total,
++  }
++  orders.set(stored.id, stored)
++  return toSummary(stored)
++}
++
++export function getOrder(id: string): Order | undefined {
++  const stored = orders.get(id)
++  return stored && { ...toSummary(stored), lines: stored.lines }
++}
++
++function toSummary(order: StoredOrder): OrderSummary {
++  return {
++    id: order.id,
++    subtotal: formatMoney(order.subtotal),
++    discount: formatMoney(order.discount),
++    total: formatMoney(order.total),
++  }
++}
+diff --git a/server/utils/quote.ts b/server/utils/quote.ts
+index ace680e..170b1f8 100644
+--- a/server/utils/quote.ts
++++ b/server/utils/quote.ts
+@@ -11,12 +11,24 @@ export interface Quote {
+   total: string
+ }
+ 
+-export function computeQuote(lines: CartLine[], code?: string): Quote {
++/** The priced amounts in cents, as charged by the server. */
++export interface PricedCents {
++  subtotal: number
++  discount: number
++  total: number
++}
++
++export function priceLines(lines: CartLine[], code?: string): PricedCents {
+   const subtotal = sumBy(lines, line => (findProduct(line.slug)?.priceCents ?? 0) * line.qty)
+   const discount = computeDiscount(subtotal, discountPercent(code))
++  return { subtotal, discount, total: subtotal - discount }
++}
++
++export function computeQuote(lines: CartLine[], code?: string): Quote {
++  const priced = priceLines(lines, code)
+   return {
+-    subtotal: formatMoney(subtotal),
+-    discount: formatMoney(discount),
+-    total: formatMoney(subtotal - discount),
++    subtotal: formatMoney(priced.subtotal),
++    discount: formatMoney(priced.discount),
++    total: formatMoney(priced.total),
+   }
+ }
+diff --git a/shared/types/order.ts b/shared/types/order.ts
+new file mode 100644
+index 0000000..9c6b360
+--- /dev/null
++++ b/shared/types/order.ts
+@@ -0,0 +1,18 @@
++export interface OrderLine {
++  slug: string
++  name: string
++  qty: number
++}
++
++/** Response of `POST /api/orders`. Amounts use the server money format, like the quote API. */
++export interface OrderSummary {
++  id: string
++  subtotal: string
++  discount: string
++  total: string
++}
++
++/** Response of `GET /api/orders/:id`. */
++export interface Order extends OrderSummary {
++  lines: OrderLine[]
++}

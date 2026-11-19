@@ -1,0 +1,52 @@
+diff --git a/app/components/UiBadge.vue b/app/components/UiBadge.vue
+new file mode 100644
+index 0000000..c293c4d
+--- /dev/null
++++ b/app/components/UiBadge.vue
+@@ -0,0 +1,5 @@
++<template>
++  <span class="ui-badge pill">
++    <slot />
++  </span>
++</template>
+diff --git a/app/components/cart/Badge.vue b/app/components/cart/Badge.vue
+index bb15a42..1f28416 100644
+--- a/app/components/cart/Badge.vue
++++ b/app/components/cart/Badge.vue
+@@ -1,5 +1,5 @@
+ <script setup lang="ts">
+-import UiBadge from '#layers/ui/app/components/UiBadge.vue'
++import UiBadge from '~/components/UiBadge.vue'
+ import { useCart } from '~/composables/useCart'
+ 
+ const { count } = useCart()
+diff --git a/app/pages/checkout.vue b/app/pages/checkout.vue
+index 5075987..4ce207a 100644
+--- a/app/pages/checkout.vue
++++ b/app/pages/checkout.vue
+@@ -2,9 +2,9 @@
+ import { ref } from 'vue'
+ import { definePageMeta } from '#imports'
+ import { useNotify } from '#layers/base/app/composables/useNotify'
+-import UiBadge from '#layers/ui/app/components/UiBadge.vue'
+ import UiButton from '#layers/ui/app/components/UiButton.vue'
+ import FormInput from '#layers/ui/app/components/form/Input.vue'
++import UiBadge from '~/components/UiBadge.vue'
+ import CartSummary from '~/components/cart/Summary.vue'
+ import { useProducts } from '~/composables/useProducts'
+ 
+diff --git a/app/pages/products/[slug].vue b/app/pages/products/[slug].vue
+index e736df9..1cb0a75 100644
+--- a/app/pages/products/[slug].vue
++++ b/app/pages/products/[slug].vue
+@@ -2,9 +2,9 @@
+ import type { Product } from '#shared/types/product'
+ import { useFetch, useRoute } from '#imports'
+ import { useNotify } from '#layers/base/app/composables/useNotify'
+-import UiBadge from '#layers/ui/app/components/UiBadge.vue'
+ import UiButton from '#layers/ui/app/components/UiButton.vue'
+ import UiCard from '#layers/ui/app/components/UiCard.vue'
++import UiBadge from '~/components/UiBadge.vue'
+ import ProductPrice from '~/components/product/Price.vue'
+ import { useCart } from '~/composables/useCart'
+ 

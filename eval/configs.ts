@@ -20,6 +20,8 @@ export interface AgentConfig {
 export const CONFIGS: AgentConfig[] = [
   { id: 'claude-code/claude-sonnet-5-5', harness: 'claude-code', model: 'claude-sonnet-5-5' },
   { id: 'claude-code/claude-haiku-5-5', harness: 'claude-code', model: 'claude-haiku-5-5' },
+  { id: 'claude-code/claude-opus-5-5', harness: 'claude-code', model: 'claude-opus-5-5' },
+  { id: 'pi/claude-haiku-5-5', harness: 'pi', model: 'vercel-ai-gateway/anthropic/claude-haiku-5-5' },
   { id: 'pi/gpt-5.3-codex', harness: 'pi', model: 'vercel-ai-gateway/openai/gpt-5.3-codex' },
   { id: 'pi/gemini-3.5-flash', harness: 'pi', model: 'vercel-ai-gateway/google/gemini-3.5-flash' },
 ]

@@ -1,0 +1,63 @@
+{
+  "config": "pi/claude-haiku-5-5",
+  "fingerprint": "8267fe529e11cc26",
+  "date": "2026-11-19T00:23:55.253Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "feature-product-discount",
+  "kind": "feature",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 4,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1479
+  },
+  "build": {
+    "ok": true,
+    "ms": 3064
+  },
+  "assertions": [
+    {
+      "name": "SAVE10: #discounted is $18.00",
+      "ok": true
+    },
+    {
+      "name": "HALF: #discounted is $10.00",
+      "ok": true
+    },
+    {
+      "name": "no #discounted without a code",
+      "ok": true
+    },
+    {
+      "name": "#price still $19.99",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 5,
+    "toolCalls": {
+      "bash": 3,
+      "edit": 1
+    },
+    "toolKinds": {
+      "explore": 2,
+      "edit": 1,
+      "verify": 1,
+      "other": 0
+    },
+    "inputTokens": 12,
+    "outputTokens": 2837,
+    "cacheReadTokens": 25749,
+    "cacheWriteTokens": 9501,
+    "toolOutputChars": 12688,
+    "costUsd": 0.019194340000000004,
+    "ms": 19445,
+    "apiMs": 13930
+  }
+}

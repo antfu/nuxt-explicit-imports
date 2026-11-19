@@ -1,0 +1,149 @@
+diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
+new file mode 100644
+index 0000000..ad3c9c7
+--- /dev/null
++++ b/app/pages/orders/[id].vue
+@@ -0,0 +1,34 @@
++<script setup lang="ts">
++interface OrderResponse {
++  id: string
++  lines: { slug: string, name: string, qty: number }[]
++  subtotal: string
++  discount: string
++  total: string
++}
++
++const route = useRoute()
++const { data: order } = await useFetch<OrderResponse>(`/api/orders/${route.params.id}`)
++
++/** The API returns amounts as `19.99 USD`; the UI shows them as `$19.99`. */
++function toUiMoney(amount: string) {
++  return formatMoney(Math.round(Number.parseFloat(amount) * 100))
++}
++</script>
++
++<template>
++  <div v-if="order">
++    <h1>Order {{ order.id }}</h1>
++    <ul>
++      <li v-for="line in order.lines" :key="line.slug" class="order-line">
++        <span class="name">{{ line.name }}</span>
++        <span class="qty">x{{ line.qty }}</span>
++      </li>
++    </ul>
++    <section id="order-summary">
++      <p>Subtotal: <span id="order-subtotal">{{ toUiMoney(order.subtotal) }}</span></p>
++      <p>Discount: <span id="order-discount">{{ toUiMoney(order.discount) }}</span></p>
++      <p>Total: <span id="order-total">{{ toUiMoney(order.total) }}</span></p>
++    </section>
++  </div>
++</template>
+diff --git a/server/api/orders.post.ts b/server/api/orders.post.ts
+new file mode 100644
+index 0000000..d687644
+--- /dev/null
++++ b/server/api/orders.post.ts
+@@ -0,0 +1,8 @@
++import type { CartLine } from '#shared/types/cart'
++
++export default defineEventHandler(async (event) => {
++  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)
++  const lines = validateOrderLines(body?.lines)
++  const { id, subtotal, discount, total } = createOrder(lines, body?.code)
++  return { id, subtotal, discount, total }
++})
+diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
+new file mode 100644
+index 0000000..425d41a
+--- /dev/null
++++ b/server/api/orders/[id].get.ts
+@@ -0,0 +1,6 @@
++export default defineEventHandler((event) => {
++  const order = getOrder(getRouterParam(event, 'id') ?? '')
++  if (!order)
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  return order
++})
+diff --git a/server/utils/orders.ts b/server/utils/orders.ts
+new file mode 100644
+index 0000000..35116c4
+--- /dev/null
++++ b/server/utils/orders.ts
+@@ -0,0 +1,46 @@
++import type { CartLine } from '#shared/types/cart'
++
++export interface OrderLine {
++  slug: string
++  name: string
++  qty: number
++}
++
++export interface Order {
++  id: string
++  lines: OrderLine[]
++  subtotal: string
++  discount: string
++  total: string
++}
++
++/** Orders live in server memory only, keyed by id. */
++const orders = new Map<string, Order>()
++
++export function validateOrderLines(lines: unknown): CartLine[] {
++  if (!Array.isArray(lines) || lines.length === 0)
++    throw createError({ statusCode: 400, statusMessage: 'lines must be a non-empty array' })
++  return lines.map((line) => {
++    const { slug, qty } = (line ?? {}) as Partial<CartLine>
++    if (typeof slug !== 'string' || !findProduct(slug))
++      throw createError({ statusCode: 400, statusMessage: `Unknown product: ${String(slug)}` })
++    if (!Number.isInteger(qty) || (qty as number) < 1)
++      throw createError({ statusCode: 400, statusMessage: `Invalid qty for ${slug}` })
++    return { slug, qty: qty as number }
++  })
++}
++
++export function createOrder(lines: CartLine[], code?: string): Order {
++  const amounts = computeQuote(lines, code)
++  const order: Order = {
++    id: crypto.randomUUID(),
++    lines: lines.map(line => ({ slug: line.slug, name: findProduct(line.slug)!.name, qty: line.qty })),
++    ...amounts,
++  }
++  orders.set(order.id, order)
++  return order
++}
++
++export function getOrder(id: string): Order | undefined {
++  return orders.get(id)
++}
+diff --git a/server/utils/quote.ts b/server/utils/quote.ts
+index 5565c50..7548e05 100644
+--- a/server/utils/quote.ts
++++ b/server/utils/quote.ts
+@@ -6,12 +6,24 @@ export interface Quote {
+   total: string
+ }
+ 
+-export function computeQuote(lines: CartLine[], code?: string): Quote {
++export interface QuoteCents {
++  subtotal: number
++  discount: number
++  total: number
++}
++
++/** Authoritative amounts in cents. Used for quotes and orders alike. */
++export function computeQuoteCents(lines: CartLine[], code?: string): QuoteCents {
+   const subtotal = sumBy(lines, line => (findProduct(line.slug)?.priceCents ?? 0) * line.qty)
+   const discount = computeDiscount(subtotal, discountPercent(code))
++  return { subtotal, discount, total: subtotal - discount }
++}
++
++export function computeQuote(lines: CartLine[], code?: string): Quote {
++  const { subtotal, discount, total } = computeQuoteCents(lines, code)
+   return {
+     subtotal: formatMoney(subtotal),
+     discount: formatMoney(discount),
+-    total: formatMoney(subtotal - discount),
++    total: formatMoney(total),
+   }
+ }

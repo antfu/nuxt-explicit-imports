@@ -1,0 +1,71 @@
+[
+  {
+    "id": "toolu_01Wa1nVLZTiWAbhRvjmn3Q7m",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cat nuxt.config.ts package.json; find app -type f | sort; grep -rn -i \"cart\" app --include=*.vue --include=*.ts | grep -v \"^app/components/cart/.*:.*//\" | head -80"
+    },
+    "output": "export default defineNuxtConfig({\n  compatibilityDate: '2026-01-01',\n  devtools: { enabled: false },\n  telemetry: false,\n})\n{\n  \"name\": \"eval-shop\",\n  \"type\": \"module\",\n  \"private\": true,\n  \"scripts\": {\n    \"build\": \"nuxt build\",\n    \"typecheck\": \"nuxt typecheck\"\n  }\n}\napp/app.vue\napp/components/AppFooter.vue\napp/components/AppHeader.vue\napp/components/cart/Badge.vue\napp/components/cart/Item.vue\napp/components/cart/Summary.vue\napp/components/product/Card.vue\napp/components/product/Grid.vue\napp/components/product/Price.vue\napp/composables/useCart.ts\napp/composables/useCartTotal.ts\napp/composables/useDiscount.ts\napp/composables/useProducts.ts\napp/composables/useTheme.ts\napp/layouts/default.vue\napp/middleware/cart-not-empty.ts\napp/pages/cart.vue\napp/pages/checkout.vue\napp/pages/index.vue\napp/pages/products/[slug].vue\napp/utils/discount.ts\napp/utils/money.ts\n(eval):1: no matches found: --include=*.vue"
+  },
+  {
+    "id": "toolu_01Lm5hb6aE3KUsvqt4YRzqd8",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"Cart\\|cart/\\|resolveComponent\\|components/\" app | grep -v \"^app/composables\" "
+    },
+    "output": "app/middleware/cart-not-empty.ts:2:  const { count } = useCart()\napp/components/AppHeader.vue:7:      Cart <CartBadge />\napp/components/cart/Item.vue:2:import type { CartLine } from '#shared/types/cart'\napp/components/cart/Item.vue:5:const props = defineProps<{ line: CartLine, product?: Product }>()\napp/components/cart/Item.vue:6:const { remove } = useCart()\napp/components/cart/Summary.vue:2:const { subtotal, total, percent } = useCartTotal()\napp/pages/checkout.vue:16:    <CartSummary />\napp/components/cart/Badge.vue:2:const { count } = useCart()\napp/pages/products/[slug].vue:6:const { add } = useCart()\napp/pages/products/[slug].vue:9:function addToCart() {\napp/pages/products/[slug].vue:24:    <UiButton id=\"add-to-cart\" @click=\"addToCart\">\napp/pages/cart.vue:3:const { lines } = useCart()\napp/pages/cart.vue:8:    <h1>Cart</h1>\napp/pages/cart.vue:10:      <CartItem\napp/pages/cart.vue:20:    <CartSummary />"
+  },
+  {
+    "id": "toolu_01HE7KD4eRLs6AyjANvP47nk",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "ls -a; ls -R shared layers 2>/dev/null; grep -rn -i \"cart-badge\\|cart-item\\|cart-summary\\|LazyCart\\|UiButton\" --exclude-dir=node_modules --exclude-dir=.nuxt --exclude-dir=.output . ; cat app/components/cart/*.vue"
+    },
+    "output": ".\n..\n.git\n.gitignore\napp\nlayers\nnode_modules\nnuxt.config.ts\npackage.json\nserver\nshared\ntsconfig.json\nlayers:\nbase\nui\n\nlayers/base:\napp\nnuxt.config.ts\n\nlayers/base/app:\ncomposables\nutils\n\nlayers/base/app/composables:\nuseCart.ts\nuseNotify.ts\nuseTheme.ts\n\nlayers/base/app/utils:\npercent.ts\n\nlayers/ui:\napp\nnuxt.config.ts\n\nlayers/ui/app:\ncomponents\n\nlayers/ui/app/components:\nProductCard.vue\nUiBadge.vue\nUiButton.vue\nUiCard.vue\nform\n\nlayers/ui/app/components/form:\nInput.vue\n\nshared:\ntypes\nutils\n\nshared/types:\ncart.ts\nproduct.ts\n\nshared/utils:\ndiscount.ts\nmath.ts\nslug.ts\napp/components/cart/Badge.vue:6:  <UiBadge class=\"cart-badge\">\napp/components/cart/Summary.vue:6:  <section id=\"cart-summary\">\napp/components/cart/Item.vue:11:  <li class=\"cart-item\">\napp/components/cart/Item.vue:15:    <UiButton @click=\"remove(line.slug)\">\napp/components/cart/Item.vue:17:    </UiButton>\napp/pages/checkout.vue:17:    <UiButton id=\"place-order\" @click=\"notify(`Order placed for ${email}`)\">\napp/pages/checkout.vue:19:    </UiButton>\napp/pages/products/[slug].vue:24:    <UiButton id=\"add-to-cart\" @click=\"addToCart\">\napp/pages/products/[slug].vue:26:    </UiButton>\n<script setup lang=\"ts\">\nconst { count } = useCart()\n</script>\n\n<template>\n  <UiBadge class=\"cart-badge\">\n    {{ count }}\n  </UiBadge>\n</template>\n<script setup lang=\"ts\">\nimport type { CartLine } from '#shared/types/cart'\nimport type { Product } from '#shared/types/product'\n\nconst props = defineProps<{ line: CartLine, product?: Product }>()\nconst { remove } = useCart()\nconst lineTotal = computed(() => formatMoney((props.product?.priceCents ?? 0) * props.line.qty))\n</script>\n\n<template>\n  <li class=\"cart-item\">\n    <span class=\"name\">{{ product?.name ?? line.slug }}</span>\n    <span class=\"qty\">x{{ line.qty }}</span>\n    <span class=\"line-total\">{{ lineTotal }}</span>\n    <UiButton @click=\"remove(line.slug)\">\n      Remove\n    </UiButton>\n  </li>\n</template>\n<script setup lang=\"ts\">\nconst { subtotal, total, percent } = useCartTotal()\n</script>\n\n<template>\n  <section id=\"cart-summary\">\n    <p>Subtotal: <span id=\"cart-subtotal\">{{ formatMoney(subtotal) }}</span></p>\n    <p v-if=\"percent\">\n      Discount: {{ formatDiscount(subtotal - total) }}\n    </p>\n    <p>Total: <span id=\"cart-total\">{{ formatMoney(total) }}</span></p>\n  </section>\n</template>"
+  },
+  {
+    "id": "toolu_01YJNwAuyJb6wijqgY2ZLZ4Y",
+    "name": "Bash",
+    "kinds": [
+      "explore",
+      "edit"
+    ],
+    "input": {
+      "command": "cat layers/*/nuxt.config.ts; git mv app/components/cart app/components/checkout && \\\nsed -i '' 's/<CartBadge /<CheckoutBadge /' app/components/AppHeader.vue && \\\nsed -i '' 's/<CartSummary /<CheckoutSummary /' app/pages/checkout.vue app/pages/cart.vue && \\\nsed -i '' 's/<CartItem$/<CheckoutItem/' app/pages/cart.vue && git diff; cat app/pages/cart.vue"
+    },
+    "output": "export default defineNuxtConfig({})\nexport default defineNuxtConfig({})\ndiff --git a/app/components/AppHeader.vue b/app/components/AppHeader.vue\nindex 728b1bc..6f863e5 100644\n--- a/app/components/AppHeader.vue\n+++ b/app/components/AppHeader.vue\n@@ -4,7 +4,7 @@\n       Shop\n     </NuxtLink>\n     <NuxtLink to=\"/cart\">\n-      Cart <CartBadge />\n+      Cart <CheckoutBadge />\n     </NuxtLink>\n   </header>\n </template>\ndiff --git a/app/pages/cart.vue b/app/pages/cart.vue\nindex 11faf72..39133ae 100644\n--- a/app/pages/cart.vue\n+++ b/app/pages/cart.vue\n@@ -7,7 +7,7 @@ const { lines } = useCart()\n   <div>\n     <h1>Cart</h1>\n     <ul v-if=\"lines.length\">\n-      <CartItem\n+      <CheckoutItem\n         v-for=\"line in lines\"\n         :key=\"line.slug\"\n         :line=\"line\"\n@@ -17,7 +17,7 @@ const { lines } = useCart()\n     <p v-else id=\"cart-empty\">\n       Your cart is empty.\n     </p>\n-    <CartSummary />\n+    <CheckoutSummary />\n     <NuxtLink to=\"/checkout\">\n       Checkout\n     </NuxtLink>\ndiff --git a/app/pages/checkout.vue b/app/pages/checkout.vue\nindex aa4efb2..772641a 100644\n--- a/app/pages/checkout.vue\n+++ b/app/pages/checkout.vue\n@@ -13,7 +13,7 @@ const { notify } = useNotify()\n       Secure checkout\n     </UiBadge>\n     <FormInput v-model=\"email\" label=\"Email\" />\n-    <CartSummary />\n+    <CheckoutSummary />\n     <UiButton id=\"place-order\" @click=\"notify(`Order placed for ${email}`)\">\n       Place order\n     </UiButton>\n<script setup lang=\"ts\">\nconst { data: products } = await useProducts()\nconst { lines } = useCart()\n</script>\n\n<template>\n  <div>\n    <h1>Cart</h1>\n    <ul v-if=\"lines.length\">\n      <CheckoutItem\n        v-for=\"line in lines\"\n        :key=\"line.slug\"\n        :line=\"line\"\n        :product=\"products.find(p => p.slug === line.slug)\"\n      />\n    </ul>\n    <p v-else id=\"cart-empty\">\n      Your cart is empty.\n    </p>\n    <CheckoutSummary />\n    <NuxtLink to=\"/checkout\">\n      Checkout\n    </NuxtLink>\n  </div>\n</template>"
+  },
+  {
+    "id": "toolu_01YSpZGrJAFEXgJzmN9YDVbb",
+    "name": "Bash",
+    "kinds": [
+      "verify",
+      "explore"
+    ],
+    "input": {
+      "command": "npm run typecheck 2>&1 | tail -15 && npm run build 2>&1 | tail -8; grep -o '\"Cart[A-Za-z]*\"\\|\"Checkout[A-Za-z]*\"' .nuxt/components.d.ts | sort -u",
+      "timeout": 400000
+    },
+    "output": "> typecheck\n> nuxt typecheck\n\n  ├─ .output/server/chunks/virtual/precomputed.mjs (19.7 kB) (1.71 kB gzip)\n  ├─ .output/server/chunks/virtual/styles.mjs (1.44 kB) (427 B gzip)\n  ├─ .output/server/index.mjs (440 B) (234 B gzip)\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 69ms · modules 19ms · app 182ms · types 146ms · client 402ms · server 213ms · nitro 1.82s\n◆ ✨ Build complete in 2.85s!"
+  },
+  {
+    "id": "toolu_01HfPpkyAhWpKuTVyWyUBDj6",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rhn \"Checkout\\|'Cart\" .nuxt/components.d.ts | head; grep -rln \"CartBadge\\|CartItem\\|CartSummary\" app layers .nuxt/components.d.ts"
+    },
+    "output": "19:export const CheckoutBadge: typeof import(\"../app/components/checkout/Badge.vue\")['default']\n20:export const CheckoutItem: typeof import(\"../app/components/checkout/Item.vue\")['default']\n21:export const CheckoutSummary: typeof import(\"../app/components/checkout/Summary.vue\")['default']\n125:export const LazyCheckoutBadge: LazyComponent<typeof import(\"../app/components/checkout/Badge.vue\")['default']>\n126:export const LazyCheckoutItem: LazyComponent<typeof import(\"../app/components/checkout/Item.vue\")['default']>\n127:export const LazyCheckoutSummary: LazyComponent<typeof import(\"../app/components/checkout/Summary.vue\")['default']>"
+  }
+]

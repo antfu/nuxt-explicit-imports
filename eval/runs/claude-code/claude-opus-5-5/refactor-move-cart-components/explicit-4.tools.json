@@ -1,0 +1,49 @@
+[
+  {
+    "id": "toolu_01MmtRZESzzRNTcrBU1Zg2A8",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cat nuxt.config.ts; find app server shared -type f 2>/dev/null | grep -v node_modules; grep -rn \"cart\" --include=*.vue --include=*.ts app server shared nuxt.config.ts 2>/dev/null | grep -iv \"^\\s*$\""
+    },
+    "output": "export default defineNuxtConfig({\n  compatibilityDate: '2026-01-01',\n  devtools: { enabled: false },\n  telemetry: false,\n  // Auto-imports are off: import every composable, util and component explicitly.\n  imports: { autoImport: false },\n  components: { dirs: [] },\n  nitro: { imports: { autoImport: false } },\n})\napp/app.vue\napp/middleware/cart-not-empty.ts\napp/composables/useProducts.ts\napp/composables/useCartTotal.ts\napp/composables/useTheme.ts\napp/composables/useCart.ts\napp/composables/useDiscount.ts\napp/utils/discount.ts\napp/utils/money.ts\napp/components/AppHeader.vue\napp/components/AppFooter.vue\napp/layouts/default.vue\napp/pages/index.vue\napp/pages/cart.vue\napp/pages/checkout.vue\nserver/utils/discount.ts\nserver/utils/money.ts\nserver/utils/quote.ts\nserver/utils/db.ts\nshared/types/product.ts\nshared/types/cart.ts\nshared/utils/slug.ts\nshared/utils/math.ts\nshared/utils/discount.ts\napp/components/product/Card.vue\napp/components/product/Grid.vue\napp/components/product/Price.vue\napp/components/cart/Item.vue\napp/components/cart/Badge.vue\napp/components/cart/Summary.vue\napp/pages/products/[slug].vue\nserver/api/products/index.get.ts\nserver/api/products/[slug].get.ts\nserver/api/cart/quote.post.ts\n(eval):1: no matches found: --include=*.vue"
+  },
+  {
+    "id": "toolu_0136svjh3MkcXxPe8Ujfdv17",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"components/cart\\|Cart[A-Z][a-z]*\\b\\|cart/\" app server shared | grep -v \"^app/composables\"; echo ---; cat app/components/cart/*.vue"
+    },
+    "output": "app/components/AppHeader.vue:3:import CartBadge from '~/components/cart/Badge.vue'\napp/components/AppHeader.vue:12:      Cart <CartBadge />\napp/components/cart/Item.vue:2:import type { CartLine } from '#shared/types/cart'\napp/components/cart/Item.vue:9:const props = defineProps<{ line: CartLine, product?: Product }>()\napp/components/cart/Summary.vue:2:import { useCartTotal } from '~/composables/useCartTotal'\napp/components/cart/Summary.vue:6:const { subtotal, total, percent } = useCartTotal()\napp/pages/checkout.vue:8:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/checkout.vue:25:    <CartSummary />\napp/pages/cart.vue:3:import CartItem from '~/components/cart/Item.vue'\napp/pages/cart.vue:4:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/cart.vue:16:      <CartItem\napp/pages/cart.vue:26:    <CartSummary />\nserver/utils/quote.ts:1:import type { CartLine } from '#shared/types/cart'\nserver/utils/quote.ts:14:export function computeQuote(lines: CartLine[], code?: string): Quote {\nserver/api/cart/quote.post.ts:1:import type { CartLine } from '#shared/types/cart'\nserver/api/cart/quote.post.ts:6:  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)\nshared/types/cart.ts:1:export interface CartLine {\n---\n<script setup lang=\"ts\">\nimport UiBadge from '#layers/ui/app/components/UiBadge.vue'\nimport { useCart } from '~/composables/useCart'\n\nconst { count } = useCart()\n</script>\n\n<template>\n  <UiBadge class=\"cart-badge\">\n    {{ count }}\n  </UiBadge>\n</template>\n<script setup lang=\"ts\">\nimport type { CartLine } from '#shared/types/cart'\nimport type { Product } from '#shared/types/product'\nimport { computed } from 'vue'\nimport UiButton from '#layers/ui/app/components/UiButton.vue'\nimport { useCart } from '~/composables/useCart'\nimport { formatMoney } from '~/utils/money'\n\nconst props = defineProps<{ line: CartLine, product?: Product }>()\nconst { remove } = useCart()\nconst lineTotal = computed(() => formatMoney((props.product?.priceCents ?? 0) * props.line.qty))\n</script>\n\n<template>\n  <li class=\"cart-item\">\n    <span class=\"name\">{{ product?.name ?? line.slug }}</span>\n    <span class=\"qty\">x{{ line.qty }}</span>\n    <span class=\"line-total\">{{ lineTotal }}</span>\n    <UiButton @click=\"remove(line.slug)\">\n      Remove\n    </UiButton>\n  </li>\n</template>\n<script setup lang=\"ts\">\nimport { useCartTotal } from '~/composables/useCartTotal'\nimport { formatDiscount } from '~/utils/discount'\nimport { formatMoney } from '~/utils/money'\n\nconst { subtotal, total, percent } = useCartTotal()\n</script>\n\n<template>\n  <section id=\"cart-summary\">\n    <p>Subtotal: <span id=\"cart-subtotal\">{{ formatMoney(subtotal) }}</span></p>\n    <p v-if=\"percent\">\n      Discount: {{ formatDiscount(subtotal - total) }}\n    </p>\n    <p>Total: <span id=\"cart-total\">{{ formatMoney(total) }}</span></p>\n  </section>\n</template>"
+  },
+  {
+    "id": "toolu_015Cz6xon7ed8D4QjA24y6yq",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"components/cart\" . --exclude-dir=node_modules --exclude-dir=.nuxt --exclude-dir=.output --exclude-dir=.git"
+    },
+    "output": "app/components/AppHeader.vue:3:import CartBadge from '~/components/cart/Badge.vue'\napp/pages/checkout.vue:8:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/cart.vue:3:import CartItem from '~/components/cart/Item.vue'\napp/pages/cart.vue:4:import CartSummary from '~/components/cart/Summary.vue'"
+  },
+  {
+    "id": "toolu_016wFG2z8jXjNy8PphUpYto5",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "git mv app/components/cart app/components/checkout && sed -i '' 's#~/components/cart/#~/components/checkout/#' app/components/AppHeader.vue app/pages/checkout.vue app/pages/cart.vue && grep -rn \"components/c\" app && npm run typecheck 2>&1 | tail -5 && npm run build 2>&1 | tail -5",
+      "timeout": 600000
+    },
+    "output": "app/components/AppHeader.vue:3:import CartBadge from '~/components/checkout/Badge.vue'\napp/pages/cart.vue:3:import CartItem from '~/components/checkout/Item.vue'\napp/pages/cart.vue:4:import CartSummary from '~/components/checkout/Summary.vue'\napp/pages/checkout.vue:8:import CartSummary from '~/components/checkout/Summary.vue'\n\n> typecheck\n> nuxt typecheck\n\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 68ms · modules 19ms · app 180ms · types 141ms · client 414ms · server 210ms · nitro 1.84s\n◆ ✨ Build complete in 2.87s!"
+  }
+]

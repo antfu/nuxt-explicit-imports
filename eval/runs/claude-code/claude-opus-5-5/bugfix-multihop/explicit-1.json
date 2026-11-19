@@ -1,0 +1,62 @@
+{
+  "config": "claude-code/claude-opus-5-5",
+  "fingerprint": "ca1a67192beb4e80",
+  "date": "2026-11-19T00:14:53.232Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "bugfix-multihop",
+  "kind": "bugfix",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 1,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1426
+  },
+  "build": {
+    "ok": true,
+    "ms": 3055
+  },
+  "assertions": [
+    {
+      "name": "no code: /cart total is $39.98",
+      "ok": true
+    },
+    {
+      "name": "SAVE10: /cart total is $35.99",
+      "ok": true
+    },
+    {
+      "name": "no code: quote total is 39.98 USD",
+      "ok": true
+    },
+    {
+      "name": "SAVE10: quote total is 35.98 USD",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 5,
+    "toolCalls": {
+      "Bash": 4
+    },
+    "toolKinds": {
+      "explore": 4,
+      "edit": 1,
+      "verify": 2,
+      "other": 0
+    },
+    "inputTokens": 1263,
+    "outputTokens": 954,
+    "cacheReadTokens": 98480,
+    "cacheWriteTokens": 7344,
+    "toolOutputChars": 6188,
+    "costUsd": 0.08054800000000001,
+    "ms": 22341,
+    "apiMs": 17972
+  }
+}

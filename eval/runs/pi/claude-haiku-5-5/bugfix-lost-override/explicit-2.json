@@ -1,0 +1,56 @@
+{
+  "config": "pi/claude-haiku-5-5",
+  "fingerprint": "d1f8536c420f4b86",
+  "date": "2026-11-19T00:48:38.586Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "bugfix-lost-override",
+  "kind": "bugfix",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 2,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1424
+  },
+  "build": {
+    "ok": true,
+    "ms": 3148
+  },
+  "assertions": [
+    {
+      "name": "home renders theme-dark",
+      "ok": true
+    },
+    {
+      "name": "base layer theme untouched",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 7,
+    "toolCalls": {
+      "bash": 5,
+      "write": 1,
+      "edit": 1
+    },
+    "toolKinds": {
+      "explore": 4,
+      "edit": 3,
+      "verify": 2,
+      "other": 0
+    },
+    "inputTokens": 16,
+    "outputTokens": 2230,
+    "cacheReadTokens": 39458,
+    "cacheWriteTokens": 7803,
+    "toolOutputChars": 8361,
+    "costUsd": 0.020093479999999997,
+    "ms": 21015,
+    "apiMs": 15808
+  }
+}

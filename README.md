@@ -14,7 +14,7 @@ Move a Nuxt 4 app from auto-imports to explicit imports, step by step and withou
 Inspired by [nuxt-eslint-auto-explicit-import](https://github.com/antfu/nuxt-eslint-auto-explicit-import).
 
 > [!WARNING]
-> In our [evals](./eval/runs/README.md), coding agents did slightly **better with auto-imports** than with explicit imports: a bit fewer tokens and errors, and about the same pass rate. The gap is small and varies a lot between models and tasks, and it may not match real usage. We are still looking for cases that show otherwise.
+> In our [evals](./eval/runs/README.md), coding agents did slightly better with auto-imports than with explicit imports: explicit imports used more tokens for 4 of 6 agent setups and fewer for 2, hit more errors while working, and passed about as often. The gap is small and varies a lot between models and tasks, and the evals use a small fixture app, so it may not match real usage. We are still looking for cases that show otherwise.
 
 ## With an agent
 
