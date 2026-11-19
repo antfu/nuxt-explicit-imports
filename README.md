@@ -78,6 +78,45 @@ Strict mode sets `imports.autoImport: false` for `imports` and `nitro.imports.au
 
 Config files, tests, `.d.ts` files and generated output are skipped.
 
+## Evals
+
+<details>
+<summary>Do coding agents work better with auto-imports or explicit imports?</summary>
+
+We ran the same 9 tasks (features, refactors, bug fixes) on a small Nuxt store app twice: once with auto-imports on, once with explicit imports and auto-imports off. 6 agent setups, 5 trials each, 1,080 runs. Each run is checked by a hidden typecheck, build and assertions on the built server. Neither arm uses this module. See [`eval/`](./eval/README.md) and the [stored runs](./eval/runs/README.md).
+
+| Agent | Pass (auto / explicit) | Tokens | Cost | Errors hit (auto / explicit) |
+| --- | --- | --- | --- | --- |
+| Sonnet 5.5 (Claude Code) | 45/45 / 43/45 | +10% | +12% | 0 / 35 |
+| Haiku 5.5 (Claude Code) | 45/45 / 45/45 | +23% | +18% | 0 / 1 |
+| Opus 5.5 (Claude Code) | 45/45 / 45/45 | -17% | -7% | 1 / 0 |
+| Haiku 5.5 (pi) | 44/45 / 43/45 | +5% | +5% | 5 / 0 |
+| GPT-5.3 Codex (pi) | 43/45 / 42/45 | +10% | +1% | 0 / 80 |
+| Gemini 3.5 Flash (pi) | 40/45 / 39/45 | -3% | +1% | 0 / 1 |
+
+Tokens and cost are means per run, explicit compared to auto.
+
+**Against explicit imports:**
+
+- Agents hit more errors while working (117 against 6), mostly broken import paths after moving files. Typecheck catches them and the agents mostly fix them, so the cost is extra turns.
+- Refactors that move files into a new layer usually cost more, since every import path changes.
+- A forgotten component import passes typecheck and build, and the component renders as nothing.
+- 5 fewer passing runs out of 270. This is not significant.
+
+**For explicit imports:**
+
+- A rename that changes component names was cheaper in 3 of 6 setups, since a missed tag in auto renders nothing.
+- Opus used fewer tokens, and Opus and Haiku in pi hit almost no errors.
+
+**Caveats:**
+
+- The direction is not stable. It changes with the model, the harness and the task.
+- The fixture is small, and 5 trials per cell is few.
+- Agent time is not compared. For 4 of the 6 setups the two arms ran at different times, which skews it. In the two that ran together, there is no clear difference.
+- Not measured: readability for humans, tooling, and how clear the dependency graph is. Those are the usual reasons to prefer explicit imports.
+
+</details>
+
 ## License
 
 [MIT](./LICENSE) License © [Anthony Fu](https://github.com/antfu)
