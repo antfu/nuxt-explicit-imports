@@ -1,0 +1,174 @@
+[
+  {
+    "id": "toolu_01K7nxCR3V1YaZABE7r1fA6A",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cd \"$(pwd)\" && ls app/components/cart app/components/checkout 2>&1; find app -type f | head -100; rg -n \"cart\" --glob '!node_modules' --glob '!.nuxt' --glob '!.output' -i . | head -100"
+    },
+    "output": "ls: app/components/checkout: No such file or directory\napp/components/cart:\nBadge.vue\nItem.vue\nSummary.vue\napp/app.vue\napp/middleware/cart-not-empty.ts\napp/composables/useProducts.ts\napp/composables/useCartTotal.ts\napp/composables/useTheme.ts\napp/composables/useCart.ts\napp/composables/useDiscount.ts\napp/utils/discount.ts\napp/utils/money.ts\napp/components/product/Card.vue\napp/components/product/Grid.vue\napp/components/product/Price.vue\napp/components/AppHeader.vue\napp/components/AppFooter.vue\napp/components/cart/Item.vue\napp/components/cart/Badge.vue\napp/components/cart/Summary.vue\napp/layouts/default.vue\napp/pages/index.vue\napp/pages/cart.vue\napp/pages/products/[slug].vue\napp/pages/checkout.vue\n./shared/types/cart.ts:1:export interface CartLine {\n./server/api/cart/quote.post.ts:1:import type { CartLine } from '#shared/types/cart'\n./server/api/cart/quote.post.ts:4:  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)\n./server/utils/quote.ts:1:import type { CartLine } from '#shared/types/cart'\n./server/utils/quote.ts:9:export function computeQuote(lines: CartLine[], code?: string): Quote {\n./layers/base/app/composables/useCart.ts:1:import type { CartLine } from '#shared/types/cart'\n./layers/base/app/composables/useCart.ts:4: * Legacy in-memory cart, kept for older apps built on this layer.\n./layers/base/app/composables/useCart.ts:5: * Apps that persist the cart override it with their own `useCart`.\n./layers/base/app/composables/useCart.ts:7:export function useCart() {\n./layers/base/app/composables/useCart.ts:8:  const lines = useState<CartLine[]>('legacy-cart', () => [])\n./app/pages/checkout.vue:2:definePageMeta({ middleware: 'cart-not-empty' })\n./app/pages/checkout.vue:16:    <CartSummary />\n./app/pages/products/[slug].vue:6:const { add } = useCart()\n./app/pages/products/[slug].vue:9:function addToCart() {\n./app/pages/products/[slug].vue:13:  notify(`${product.value.name} added to the cart`)\n./app/pages/products/[slug].vue:24:    <UiButton id=\"add-to-cart\" @click=\"addToCart\">\n./app/pages/products/[slug].vue:25:      Add to cart\n./app/pages/cart.vue:3:const { lines } = useCart()\n./app/pages/cart.vue:8:    <h1>Cart</h1>\n./app/pages/cart.vue:10:      <CartItem\n./app/pages/cart.vue:17:    <p v-else id=\"cart-empty\">\n./app/pages/cart.vue:18:      Your cart is empty.\n./app/pages/cart.vue:20:    <CartSummary />\n./app/components/cart/Summary.vue:2:const { subtotal, total, percent } = useCartTotal()\n./app/components/cart/Summary.vue:6:  <section id=\"cart-summary\">\n./app/components/cart/Summary.vue:7:    <p>Subtotal: <span id=\"cart-subtotal\">{{ formatMoney(subtotal) }}</span></p>\n./app/components/cart/Summary.vue:11:    <p>Total: <span id=\"cart-total\">{{ formatMoney(total) }}</span></p>\n./app/components/AppHeader.vue:6:    <NuxtLink to=\"/cart\">\n./app/components/AppHeader.vue:7:      Cart <CartBadge />\n./app/components/cart/Badge.vue:2:const { count } = useCart()\n./app/components/cart/Badge.vue:6:  <UiBadge class=\"cart-badge\">\n./app/components/cart/Item.vue:2:import type { CartLine } from '#shared/types/cart'\n./app/components/cart/Item.vue:5:const props = defineProps<{ line: CartLine, product?: Product }>()\n./app/components/cart/Item.vue:6:const { remove } = useCart()\n./app/components/cart/Item.vue:11:  <li class=\"cart-item\">\n./app/middleware/cart-not-empty.ts:2:  const { count } = useCart()\n./app/middleware/cart-not-empty.ts:4:    return navigateTo('/cart')\n./app/composables/useCart.ts:1:import type { CartLine } from '#shared/types/cart'\n./app/composables/useCart.ts:3:/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\n./app/composables/useCart.ts:4:export function useCart() {\n./app/composables/useCart.ts:5:  const lines = useCookie<CartLine[]>('cart', { default: () => [] })\n./app/composables/useCartTotal.ts:3:/** Cart totals in cents, as shown to the customer. */\n./app/composables/useCartTotal.ts:4:export function useCartTotal() {\n./app/composables/useCartTotal.ts:5:  const { lines } = useCart()\n"
+  },
+  {
+    "id": "toolu_01CRbivYKCpeauBfgiFAeQRP",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cd \"$(pwd)\" && cat nuxt.config.ts; find layers -type f -not -path '*/node_modules/*'; rg -n \"Checkout|checkout|components\" --glob '!node_modules' --glob '!.nuxt' --glob '!.output' . | grep -v \"^./node_modules\"; cat app/pages/cart.vue app/pages/checkout.vue app/components/AppHeader.vue; cat package.json | head -30; ls"
+    },
+    "output": "export default defineNuxtConfig({\n  compatibilityDate: '2026-01-01',\n  devtools: { enabled: false },\n  telemetry: false,\n})\nlayers/ui/app/components/form/Input.vue\nlayers/ui/app/components/UiCard.vue\nlayers/ui/app/components/UiBadge.vue\nlayers/ui/app/components/ProductCard.vue\nlayers/ui/app/components/UiButton.vue\nlayers/ui/nuxt.config.ts\nlayers/base/app/composables/useNotify.ts\nlayers/base/app/composables/useTheme.ts\nlayers/base/app/composables/useCart.ts\nlayers/base/app/utils/percent.ts\nlayers/base/nuxt.config.ts\n./app/pages/checkout.vue:11:    <h1>Checkout</h1>\n./app/pages/checkout.vue:13:      Secure checkout\n./app/pages/cart.vue:21:    <NuxtLink to=\"/checkout\">\n./app/pages/cart.vue:22:      Checkout\n<script setup lang=\"ts\">\nconst { data: products } = await useProducts()\nconst { lines } = useCart()\n</script>\n\n<template>\n  <div>\n    <h1>Cart</h1>\n    <ul v-if=\"lines.length\">\n      <CartItem\n        v-for=\"line in lines\"\n        :key=\"line.slug\"\n        :line=\"line\"\n        :product=\"products.find(p => p.slug === line.slug)\"\n      />\n    </ul>\n    <p v-else id=\"cart-empty\">\n      Your cart is empty.\n    </p>\n    <CartSummary />\n    <NuxtLink to=\"/checkout\">\n      Checkout\n    </NuxtLink>\n  </div>\n</template>\n<script setup lang=\"ts\">\ndefinePageMeta({ middleware: 'cart-not-empty' })\n\nawait useProducts()\nconst email = ref('')\nconst { notify } = useNotify()\n</script>\n\n<template>\n  <div>\n    <h1>Checkout</h1>\n    <UiBadge class=\"secure\">\n      Secure checkout\n    </UiBadge>\n    <FormInput v-model=\"email\" label=\"Email\" />\n    <CartSummary />\n    <UiButton id=\"place-order\" @click=\"notify(`Order placed for ${email}`)\">\n      Place order\n    </UiButton>\n  </div>\n</template>\n<template>\n  <header class=\"app-header\">\n    <NuxtLink to=\"/\">\n      Shop\n    </NuxtLink>\n    <NuxtLink to=\"/cart\">\n      Cart <CartBadge />\n    </NuxtLink>\n  </header>\n</template>\n{\n  \"name\": \"eval-shop\",\n  \"type\": \"module\",\n  \"private\": true,\n  \"scripts\": {\n    \"build\": \"nuxt build\",\n    \"typecheck\": \"nuxt typecheck\"\n  }\n}\napp\nlayers\nnode_modules\nnuxt.config.ts\npackage.json\nserver\nshared\ntsconfig.json\n"
+  },
+  {
+    "id": "toolu_01PMYuhnWovc2oPXbe1tPX89",
+    "name": "bash",
+    "kinds": [
+      "verify",
+      "explore",
+      "edit"
+    ],
+    "input": {
+      "command": "cd \"$(pwd)\" && npm run build >/tmp/b0.log 2>&1; echo build=$?; tail -3 /tmp/b0.log; ls .output/server/index.mjs && (PORT=4321 node .output/server/index.mjs >/tmp/srv.log 2>&1 &) ; sleep 3; mkdir -p /tmp/before; cat app/pages/products/*.vue >/dev/null; for p in / /cart /checkout /products/$(ls server/api 2>/dev/null >/dev/null; echo x); do :; done; grep -rn \"slug\" server/api/*/ 2>/dev/null | head -3; ls server/api server/api/*"
+    },
+    "output": "build=0\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 101ms · modules 20ms · app 182ms · types 139ms · client 396ms · server 215ms · nitro 2.38s\n◆ ✨ Build complete in 3.43s!\n.output/server/index.mjs\nserver/api/products/[slug].get.ts:2:  const product = findProduct(getRouterParam(event, 'slug') ?? '')\nserver/api:\ncart\nproducts\n\nserver/api/cart:\nquote.post.ts\n\nserver/api/products:\n[slug].get.ts\nindex.get.ts\n"
+  },
+  {
+    "id": "toolu_01XdhZ8XdTjWc3i7DzxKWsbz",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cd \"$(pwd)\" && sleep 2; C=$(cat server/utils/*.ts | head -0); for p in / /cart /checkout /products/$(rg -o \"slug: '([^']+)'\" -r '$1' server/utils/ | head -1); do echo \"$p\"; done; rg -n \"slug\" server/utils | head -3; curl -s -o /dev/null -w \"%{http_code}\\n\" localhost:4321/"
+    },
+    "output": "head: illegal line count -- 0\n/\n/cart\n/checkout\n/products/\nserver/utils/db.ts:10:].map(([name, priceCents]) => ({ slug: slugify(name as string), name: name as string, priceCents: priceCents as number }))\nserver/utils/db.ts:16:export function findProduct(slug: string): Product | undefined {\nserver/utils/db.ts:17:  return products.find(p => p.slug === slug)\n200\n"
+  },
+  {
+    "id": "toolu_012UZuNbmsK3rLcHmuJ1vbYm",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cd \"$(pwd)\" && sed -n 1,12p server/utils/db.ts; cat app/composables/useCart.ts app/components/cart/*.vue"
+    },
+    "output": "import type { Product } from '#shared/types/product'\n\nconst products: Product[] = [\n  ['Notebook', 1999],\n  ['Pencil', 150],\n  ['Backpack', 4500],\n  ['Eraser', 99],\n  ['Sticky Notes', 350],\n  ['Stapler', 1250],\n].map(([name, priceCents]) => ({ slug: slugify(name as string), name: name as string, priceCents: priceCents as number }))\n\nexport function listProducts(): Product[] {\nimport type { CartLine } from '#shared/types/cart'\n\n/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\nexport function useCart() {\n  const lines = useCookie<CartLine[]>('cart', { default: () => [] })\n  const count = computed(() => sumBy(lines.value, line => line.qty))\n  function add(slug: string, qty = 1) {\n    const existing = lines.value.find(line => line.slug === slug)\n    lines.value = existing\n      ? lines.value.map(line => (line.slug === slug ? { ...line, qty: line.qty + qty } : line))\n      : [...lines.value, { slug, qty }]\n  }\n  function remove(slug: string) {\n    lines.value = lines.value.filter(line => line.slug !== slug)\n  }\n  return { lines, count, add, remove }\n}\n<script setup lang=\"ts\">\nconst { count } = useCart()\n</script>\n\n<template>\n  <UiBadge class=\"cart-badge\">\n    {{ count }}\n  </UiBadge>\n</template>\n<script setup lang=\"ts\">\nimport type { CartLine } from '#shared/types/cart'\nimport type { Product } from '#shared/types/product'\n\nconst props = defineProps<{ line: CartLine, product?: Product }>()\nconst { remove } = useCart()\nconst lineTotal = computed(() => formatMoney((props.product?.priceCents ?? 0) * props.line.qty))\n</script>\n\n<template>\n  <li class=\"cart-item\">\n    <span class=\"name\">{{ product?.name ?? line.slug }}</span>\n    <span class=\"qty\">x{{ line.qty }}</span>\n    <span class=\"line-total\">{{ lineTotal }}</span>\n    <UiButton @click=\"remove(line.slug)\">\n      Remove\n    </UiButton>\n  </li>\n</template>\n<script setup lang=\"ts\">\nconst { subtotal, total, percent } = useCartTotal()\n</script>\n\n<template>\n  <section id=\"cart-summary\">\n    <p>Subtotal: <span id=\"cart-subtotal\">{{ formatMoney(subtotal) }}</span></p>\n    <p v-if=\"percent\">\n      Discount: {{ formatDiscount(subtotal - total) }}\n    </p>\n    <p>Total: <span id=\"cart-total\">{{ formatMoney(total) }}</span></p>\n  </section>\n</template>\n"
+  },
+  {
+    "id": "toolu_01DAsXec58HNWjhAnXyyjURM",
+    "name": "bash",
+    "kinds": [
+      "edit",
+      "explore"
+    ],
+    "input": {
+      "command": "cd \"$(pwd)\" && cat > /tmp/snap.sh <<'EOF'\n#!/bin/bash\n# usage: snap.sh outdir\nout=$1; mkdir -p $out\nC='cart=[{\"slug\":\"notebook\",\"qty\":2},{\"slug\":\"backpack\",\"qty\":1}]'\nfor p in / /cart /checkout /products/notebook; do\n  n=$(echo $p | tr '/' '_')\n  curl -s \"localhost:4321$p\" -H \"Cookie: $C\" > $out/$n.html\n  curl -s \"localhost:4321$p\" > $out/${n}_empty.html\ndone\nEOF\nchmod +x /tmp/snap.sh; /tmp/snap.sh /tmp/before; wc -c /tmp/before/*; grep -o 'cart-[a-z-]*\\|checkout[a-z-]*' /tmp/before/_cart.html | sort | uniq -c"
+    },
+    "output": "    4143 /tmp/before/_.html\n    4143 /tmp/before/__empty.html\n    3628 /tmp/before/_cart.html\n    3247 /tmp/before/_cart_empty.html\n    3328 /tmp/before/_checkout.html\n      91 /tmp/before/_checkout_empty.html\n    2830 /tmp/before/_products_notebook.html\n    2830 /tmp/before/_products_notebook_empty.html\n   24240 total\n   1 cart-badge\n   2 cart-item\n   1 cart-subtotal\n   1 cart-summary\n   1 cart-total\n   1 checkout\n"
+  },
+  {
+    "id": "toolu_019RGL5eX7LyNDnwFjQ9g5Sd",
+    "name": "bash",
+    "kinds": [
+      "edit",
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "cd \"$(pwd)\" && pkill -f \".output/server/index.mjs\"; mkdir -p app/components/checkout && mv app/components/cart/Item.vue app/components/checkout/Item.vue && mv app/components/cart/Badge.vue app/components/checkout/Badge.vue && mv app/components/cart/Summary.vue app/components/checkout/Summary.vue && rmdir app/components/cart && sed -i 's/<CartItem/<CheckoutItem/; s/<CartSummary \\/>/<CheckoutSummary \\/>/' app/pages/cart.vue && sed -i 's/<CartSummary \\/>/<CheckoutSummary \\/>/' app/pages/checkout.vue && sed -i 's/<CartBadge \\/>/<CheckoutBadge \\/>/' app/components/AppHeader.vue && rg -n \"Cart(Item|Badge|Summary)|components/cart\" app shared layers server; npm run typecheck >/tmp/tc.log 2>&1; echo tc=$?; tail -5 /tmp/tc.log; npm run build >/tmp/b1.log 2>&1; echo build=$?; tail -2 /tmp/b1.log"
+    },
+    "output": "sed: 1: \"app/pages/cart.vue\n\": command a expects \\ followed by text\ntc=0\n\n> typecheck\n> nuxt typecheck\n\nbuild=0\nconfig 110ms · modules 28ms · app 263ms · types 250ms · client 479ms · server 274ms · nitro 2.12s\n◆ ✨ Build complete in 3.53s!\n"
+  },
+  {
+    "id": "toolu_01BKoX95uCVo19ymGrM34xzW",
+    "name": "edit",
+    "kinds": [
+      "edit"
+    ],
+    "input": {
+      "path": "app/pages/cart.vue",
+      "edits": [
+        {
+          "oldText": "      <CartItem",
+          "newText": "      <CheckoutItem"
+        },
+        {
+          "oldText": "    <CartSummary />",
+          "newText": "    <CheckoutSummary />"
+        }
+      ]
+    },
+    "output": "Successfully replaced 2 block(s) in app/pages/cart.vue."
+  },
+  {
+    "id": "toolu_017cdpGJJyQpvgP6yPs619Mw",
+    "name": "edit",
+    "kinds": [
+      "edit"
+    ],
+    "input": {
+      "path": "app/pages/checkout.vue",
+      "edits": [
+        {
+          "oldText": "    <CartSummary />",
+          "newText": "    <CheckoutSummary />"
+        }
+      ]
+    },
+    "output": "Successfully replaced 1 block(s) in app/pages/checkout.vue."
+  },
+  {
+    "id": "toolu_01XSXko6E5MKJNTDHJdTFwdj",
+    "name": "edit",
+    "kinds": [
+      "edit"
+    ],
+    "input": {
+      "path": "app/components/AppHeader.vue",
+      "edits": [
+        {
+          "oldText": "<CartBadge />",
+          "newText": "<CheckoutBadge />"
+        }
+      ]
+    },
+    "output": "Successfully replaced 1 block(s) in app/components/AppHeader.vue."
+  },
+  {
+    "id": "toolu_0124YVaHSw41RGoaju4ajZ2u",
+    "name": "bash",
+    "kinds": [
+      "explore",
+      "verify",
+      "edit"
+    ],
+    "input": {
+      "command": "cd \"$(pwd)\" && rg -n \"Cart(Item|Badge|Summary)|components/cart|cart/(Item|Badge|Summary)\" app shared layers server; find app/components; npm run typecheck >/tmp/tc.log 2>&1; echo tc=$?; npm run build >/tmp/b1.log 2>&1; echo build=$?; grep -i \"warn\" /tmp/b1.log | head; (PORT=4321 node .output/server/index.mjs >/tmp/srv.log 2>&1 &); sleep 3; /tmp/snap.sh /tmp/after; for f in /tmp/before/*; do n=$(basename $f); cmp -s $f /tmp/after/$n && echo \"same $n\" || echo \"DIFF $n\"; done; pkill -f \".output/server/index.mjs\""
+    },
+    "output": "app/components\napp/components/product\napp/components/product/Card.vue\napp/components/product/Grid.vue\napp/components/product/Price.vue\napp/components/checkout\napp/components/checkout/Item.vue\napp/components/checkout/Badge.vue\napp/components/checkout/Summary.vue\napp/components/AppHeader.vue\napp/components/AppFooter.vue\ntc=0\nbuild=0\nDIFF _.html\nDIFF __empty.html\nDIFF _cart.html\nDIFF _cart_empty.html\nDIFF _checkout.html\nsame _checkout_empty.html\nDIFF _products_notebook.html\nDIFF _products_notebook_empty.html\n"
+  },
+  {
+    "id": "toolu_01XtMJrtb1NEV5oTEgoPJSkv",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cd /tmp && diff <(sed 's/data-v-[a-z0-9]*//g; s/nuxt-[a-z0-9-]*//g' before/_cart.html) <(sed 's/data-v-[a-z0-9]*//g; s/nuxt-[a-z0-9-]*//g' after/_cart.html) | head -20; diff before/__empty.html after/__empty.html | head -10"
+    },
+    "output": "1c1\n< <!DOCTYPE html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><script type=\"importmap\">{\"imports\":{\"#entry\":\"/_nuxt/B9hafumk.js\"}}</script><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/B9hafumk.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/BeOvoWK3.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/DzyKE1Wi.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/DCGKHwsF.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/BH9s2aGc.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/RAh96tQb.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/CtlKeJFV.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/D_RemcQ-.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/Cx6bdTVW.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/C4RmMr_w.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/Damq4JWu.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/CIaB8oCl.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/D0hfeO08.js\"><script type=\"module\" src=\"/_nuxt/B9hafumk.js\" crossorigin></script><link rel=\"prefetch\" as=\"script\" crossorigin href=\"/_nuxt/D6TM1q59.js\"><link rel=\"prefetch\" as=\"style\" crossorigin href=\"/_nuxt/error-404.BaYo1M7_.css\"><link rel=\"prefetch\" as=\"script\" crossorigin href=\"/_nuxt/DiAXjSRt.js\"><link rel=\"prefetch\" as=\"style\" crossorigin href=\"/_nuxt/error-500.GMdtm3ss.css\"><link rel=\"prefetch\" as=\"script\" crossorigin href=\"/_nuxt/D-phUV5d.js\"></head><body><div id=\"__nuxt\"><div class=\"theme-dark\"><header class=\"app-header\"><a href=\"/\" class=\"\"> Shop </a><a aria-current=\"page\" href=\"/cart\" class=\"router-link-active router-link-exact-active\"> Cart <span class=\"ui-badge cart-badge\"><!--[-->3<!--]--></span></a></header><main><!--[--><div><h1>Cart</h1><ul><!--[--><li class=\"cart-item\"><span class=\"name\">Notebook</span><span class=\"qty\">x2</span><span class=\"line-total\">$39.98</span><button class=\"ui-button\" type=\"button\"><!--[--> Remove <!--]--></button></li><li class=\"cart-item\"><span class=\"name\">Backpack</span><span class=\"qty\">x1</span><span class=\"line-total\">$45.00</span><button class=\"ui-button\" type=\"button\"><!--[--> Remove <!--]--></button></li><!--]--></ul><section id=\"cart-summary\"><p>Subtotal: <span id=\"cart-subtotal\">$84.98</span></p><!----><p>Total: <span id=\"cart-total\">$84.98</span></p></section><a href=\"/checkout\" class=\"\"> Checkout </a></div><!--]--></main><footer class=\"app-footer\"><!----><p>Free shipping on every order.</p></footer></div></div><div id=\"teleports\"></div><script>window.__NUXT__={};window.__NUXT__.config={public:{},app:{baseURL:\"/\",buildId:\"feffe915-5e0f-41e1-9d67-9d304369dc7b\",buildAssetsDir:\"/_nuxt/\",cdnURL:\"\"}}</script><script type=\"application/json\" data-=\"\" data-ssr=\"true\" id=\"__NUXT_DATA__\">[[\"ShallowReactive\",1],{\"data\":2,\"state\":29,\"once\":33,\"_errors\":34,\"serverRendered\":36,\"path\":37},[\"ShallowReactive\",3],{\"products\":4},[5,9,13,17,21,25],{\"slug\":6,\"name\":7,\"priceCents\":8},\"notebook\",\"Notebook\",1999,{\"slug\":10,\"name\":11,\"priceCents\":12},\"pencil\",\"Pencil\",150,{\"slug\":14,\"name\":15,\"priceCents\":16},\"backpack\",\"Backpack\",4500,{\"slug\":18,\"name\":19,\"priceCents\":20},\"eraser\",\"Eraser\",99,{\"slug\":22,\"name\":23,\"priceCents\":24},\"sticky-notes\",\"Sticky Notes\",350,{\"slug\":26,\"name\":27,\"priceCents\":28},\"stapler\",\"Stapler\",1250,[\"Reactive\",30],{\"$stheme\":31,\"$snotify\":32},\"dark\",null,[\"Set\"],[\"ShallowReactive\",35],{\"products\":-1},true,\"\\u002Fcart\"]</script></body></html>\n\\ No newline at end of file\n---\n> <!DOCTYPE html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><script type=\"importmap\">{\"imports\":{\"#entry\":\"/_nuxt/C4sNGp9c.js\"}}</script><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/C4sNGp9c.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/BeOvoWK3.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/DzyKE1Wi.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/DCGKHwsF.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/CSPLXjV0.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/RAh96tQb.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/CtlKeJFV.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/D_RemcQ-.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/bpOJ0CNl.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/C4RmMr_w.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/Damq4JWu.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/CA2yxS_1.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/D0hfeO08.js\"><script type=\"module\" src=\"/_nuxt/C4sNGp9c.js\" crossorigin></script><link rel=\"prefetch\" as=\"script\" crossorigin href=\"/_nuxt/D6TM1q59.js\"><link rel=\"prefetch\" as=\"style\" crossorigin href=\"/_nuxt/error-404.BaYo1M7_.css\"><link rel=\"prefetch\" as=\"script\" crossorigin href=\"/_nuxt/DiAXjSRt.js\"><link rel=\"prefetch\" as=\"style\" crossorigin href=\"/_nuxt/error-500.GMdtm3ss.css\"><link rel=\"prefetch\" as=\"script\" crossorigin href=\"/_nuxt/D-phUV5d.js\"></head><body><div id=\"__nuxt\"><div class=\"theme-dark\"><header class=\"app-header\"><a href=\"/\" class=\"\"> Shop </a><a aria-current=\"page\" href=\"/cart\" class=\"router-link-active router-link-exact-active\"> Cart <span class=\"ui-badge cart-badge\"><!--[-->3<!--]--></span></a></header><main><!--[--><div><h1>Cart</h1><ul><!--[--><li class=\"cart-item\"><span class=\"name\">Notebook</span><span class=\"qty\">x2</span><span class=\"line-total\">$39.98</span><button class=\"ui-button\" type=\"button\"><!--[--> Remove <!--]--></button></li><li class=\"cart-item\"><span class=\"name\">Backpack</span><span class=\"qty\">x1</span><span class=\"line-total\">$45.00</span><button class=\"ui-button\" type=\"button\"><!--[--> Remove <!--]--></button></li><!--]--></ul><section id=\"cart-summary\"><p>Subtotal: <span id=\"cart-subtotal\">$84.98</span></p><!----><p>Total: <span id=\"cart-total\">$84.98</span></p></section><a href=\"/checkout\" class=\"\"> Checkout </a></div><!--]--></main><footer class=\"app-footer\"><!----><p>Free shipping on every order.</p></footer></div></div><div id=\"teleports\"></div><script>window.__NUXT__={};window.__NUXT__.config={public:{},app:{baseURL:\"/\",buildId:\"e6fd41c1-0897-454e-a1f6-de737f53c74a\",buildAssetsDir:\"/_nuxt/\",cdnURL:\"\"}}</script><script type=\"application/json\" data-=\"\" data-ssr=\"true\" id=\"__NUXT_DATA__\">[[\"ShallowReactive\",1],{\"data\":2,\"state\":29,\"once\":33,\"_errors\":34,\"serverRendered\":36,\"path\":37},[\"ShallowReactive\",3],{\"products\":4},[5,9,13,17,21,25],{\"slug\":6,\"name\":7,\"priceCents\":8},\"notebook\",\"Notebook\",1999,{\"slug\":10,\"name\":11,\"priceCents\":12},\"pencil\",\"Pencil\",150,{\"slug\":14,\"name\":15,\"priceCents\":16},\"backpack\",\"Backpack\",4500,{\"slug\":18,\"name\":19,\"priceCents\":20},\"eraser\",\"Eraser\",99,{\"slug\":22,\"name\":23,\"priceCents\":24},\"sticky-notes\",\"Sticky Notes\",350,{\"slug\":26,\"name\":27,\"priceCents\":28},\"stapler\",\"Stapler\",1250,[\"Reactive\",30],{\"$stheme\":31,\"$snotify\":32},\"dark\",null,[\"Set\"],[\"ShallowReactive\",35],{\"products\":-1},true,\"\\u002Fcart\"]</script></body></html>\n\\ No newline at end of file\n1c1\n< <!DOCTYPE html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><script type=\"importmap\">{\"imports\":{\"#entry\":\"/_nuxt/B9hafumk.js\"}}</script><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/B9hafumk.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/BeOvoWK3.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/DzyKE1Wi.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/DCGKHwsF.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/BH9s2aGc.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/RAh96tQb.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/CtlKeJFV.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/D_RemcQ-.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/KfqeKs_U.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/Dg6JWsig.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/Damq4JWu.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/D0hfeO08.js\"><script type=\"module\" src=\"/_nuxt/B9hafumk.js\" crossorigin></script><link rel=\"prefetch\" as=\"script\" crossorigin href=\"/_nuxt/D6TM1q59.js\"><link rel=\"prefetch\" as=\"style\" crossorigin href=\"/_nuxt/error-404.BaYo1M7_.css\"><link rel=\"prefetch\" as=\"script\" crossorigin href=\"/_nuxt/DiAXjSRt.js\"><link rel=\"prefetch\" as=\"style\" crossorigin href=\"/_nuxt/error-500.GMdtm3ss.css\"><link rel=\"prefetch\" as=\"script\" crossorigin href=\"/_nuxt/D-phUV5d.js\"></head><body><div id=\"__nuxt\"><div class=\"theme-dark\"><header class=\"app-header\"><a aria-current=\"page\" href=\"/\" class=\"router-link-active router-link-exact-active\"> Shop </a><a href=\"/cart\" class=\"\"> Cart <span class=\"ui-badge cart-badge\"><!--[-->0<!--]--></span></a></header><main><!--[--><div><h1>Shop</h1><section class=\"product-grid\"><!--[--><div class=\"ui-card\"><!--[--><article class=\"product-card\"><a href=\"/products/notebook\" class=\"\"><h2>Notebook</h2></a><p class=\"product-price\">$19.99</p><!--[--><!--]--></article><!--]--></div><div class=\"ui-card\"><!--[--><article class=\"product-card\"><a href=\"/products/pencil\" class=\"\"><h2>Pencil</h2></a><p class=\"product-price\">$1.50</p><!--[--><!--]--></article><!--]--></div><div class=\"ui-card\"><!--[--><article class=\"product-card\"><a href=\"/products/backpack\" class=\"\"><h2>Backpack</h2></a><p class=\"product-price\">$45.00</p><!--[--><!--]--></article><!--]--></div><div class=\"ui-card\"><!--[--><article class=\"product-card\"><a href=\"/products/eraser\" class=\"\"><h2>Eraser</h2></a><p class=\"product-price\">$0.99</p><!--[--><!--]--></article><!--]--></div><div class=\"ui-card\"><!--[--><article class=\"product-card\"><a href=\"/products/sticky-notes\" class=\"\"><h2>Sticky Notes</h2></a><p class=\"product-price\">$3.50</p><!--[--><!--]--></article><!--]--></div><div class=\"ui-card\"><!--[--><article class=\"product-card\"><a href=\"/products/stapler\" class=\"\"><h2>Stapler</h2></a><p class=\"product-price\">$12.50</p><!--[--><!--]--></article><!--]--></div><!--]--></section></div><!--]--></main><footer class=\"app-footer\"><!----><p>Free shipping on every order.</p></footer></div></div><div id=\"teleports\"></div><script>window.__NUXT__={};window.__NUXT__.config={public:{},app:{baseURL:\"/\",buildId:\"feffe915-5e0f-41e1-9d67-9d304369dc7b\",buildAssetsDir:\"/_nuxt/\",cdnURL:\"\"}}</script><script type=\"application/json\" data-nuxt-data=\"nuxt-app\" data-ssr=\"true\" id=\"__NUXT_DATA__\">[[\"ShallowReactive\",1],{\"data\":2,\"state\":29,\"once\":33,\"_errors\":34,\"serverRendered\":36,\"path\":37},[\"ShallowReactive\",3],{\"products\":4},[5,9,13,17,21,25],{\"slug\":6,\"name\":7,\"priceCents\":8},\"notebook\",\"Notebook\",1999,{\"slug\":10,\"name\":11,\"priceCents\":12},\"pencil\",\"Pencil\",150,{\"slug\":14,\"name\":15,\"priceCents\":16},\"backpack\",\"Backpack\",4500,{\"slug\":18,\"name\":19,\"priceCents\":20},\"eraser\",\"Eraser\",99,{\"slug\":22,\"name\":23,\"priceCents\":24},\"sticky-notes\",\"Sticky Notes\",350,{\"slug\":26,\"name\":27,\"priceCents\":28},\"stapler\",\"Stapler\",1250,[\"Reactive\",30],{\"$stheme\":31,\"$snotify\":32},\"dark\",null,[\"Set\"],[\"ShallowReactive\",35],{\"products\":-1},true,\"\\u002F\"]</script></body></html>\n\\ No newline at end of file\n---\n> <!DOCTYPE html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><script type=\"importmap\">{\"imports\":{\"#entry\":\"/_nuxt/C4sNGp9c.js\"}}</script><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/C4sNGp9c.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/BeOvoWK3.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/DzyKE1Wi.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/DCGKHwsF.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/CSPLXjV0.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/RAh96tQb.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/CtlKeJFV.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/D_RemcQ-.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/KfqeKs_U.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/Dg6JWsig.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/Damq4JWu.js\"><link rel=\"modulepreload\" as=\"script\" crossorigin href=\"/_nuxt/D0hfeO08.js\"><script type=\"module\" src=\"/_nuxt/C4sNGp9c.js\" crossorigin></script><link rel=\"prefetch\" as=\"script\" crossorigin href=\"/_nuxt/D6TM1q59.js\"><link rel=\"prefetch\" as=\"style\" crossorigin href=\"/_nuxt/error-404.BaYo1M7_.css\"><link rel=\"prefetch\" as=\"script\" crossorigin href=\"/_nuxt/DiAXjSRt.js\"><link rel=\"prefetch\" as=\"style\" crossorigin href=\"/_nuxt/error-500.GMdtm3ss.css\"><link rel=\"prefetch\" as=\"script\" crossorigin href=\"/_nuxt/D-phUV5d.js\"></head><body><div id=\"__nuxt\"><div class=\"theme-dark\"><header class=\"app-header\"><a aria-current=\"page\" href=\"/\" class=\"router-link-active router-link-exact-active\"> Shop </a><a href=\"/cart\" class=\"\"> Cart <span class=\"ui-badge cart-badge\"><!--[-->0<!--]--></span></a></header><main><!--[--><div><h1>Shop</h1><section class=\"product-grid\"><!--[--><div class=\"ui-card\"><!--[--><article class=\"product-card\"><a href=\"/products/notebook\" class=\"\"><h2>Notebook</h2></a><p class=\"product-price\">$19.99</p><!--[--><!--]--></article><!--]--></div><div class=\"ui-card\"><!--[--><article class=\"product-card\"><a href=\"/products/pencil\" class=\"\"><h2>Pencil</h2></a><p class=\"product-price\">$1.50</p><!--[--><!--]--></article><!--]--></div><div class=\"ui-card\"><!--[--><article class=\"product-card\"><a href=\"/products/backpack\" class=\"\"><h2>Backpack</h2></a><p class=\"product-price\">$45.00</p><!--[--><!--]--></article><!--]--></div><div class=\"ui-card\"><!--[--><article class=\"product-card\"><a href=\"/products/eraser\" class=\"\"><h2>Eraser</h2></a><p class=\"product-price\">$0.99</p><!--[--><!--]--></article><!--]--></div><div class=\"ui-card\"><!--[--><article class=\"product-card\"><a href=\"/products/sticky-notes\" class=\"\"><h2>Sticky Notes</h2></a><p class=\"product-price\">$3.50</p><!--[--><!--]--></article><!--]--></div><div class=\"ui-card\"><!--[--><article class=\"product-card\"><a href=\"/products/stapler\" class=\"\"><h2>Stapler</h2></a><p class=\"product-price\">$12.50</p><!--[--><!--]--></article><!--]--></div><!--]--></section></div><!--]--></main><footer class=\"app-footer\"><!----><p>Free shipping on every order.</p></footer></div></div><div id=\"teleports\"></div><script>window.__NUXT__={};window.__NUXT__.config={public:{},app:{baseURL:\"/\",buildId:\"e6fd41c1-0897-454e-a1f6-de737f53c74a\",buildAssetsDir:\"/_nuxt/\",cdnURL:\"\"}}</script><script type=\"application/json\" data-nuxt-data=\"nuxt-app\" data-ssr=\"true\" id=\"__NUXT_DATA__\">[[\"ShallowReactive\",1],{\"data\":2,\"state\":29,\"once\":33,\"_errors\":34,\"serverRendered\":36,\"path\":37},[\"ShallowReactive\",3],{\"products\":4},[5,9,13,17,21,25],{\"slug\":6,\"name\":7,\"priceCents\":8},\"notebook\",\"Notebook\",1999,{\"slug\":10,\"name\":11,\"priceCents\":12},\"pencil\",\"Pencil\",150,{\"slug\":14,\"name\":15,\"priceCents\":16},\"backpack\",\"Backpack\",4500,{\"slug\":18,\"name\":19,\"priceCents\":20},\"eraser\",\"Eraser\",99,{\"slug\":22,\"name\":23,\"priceCents\":24},\"sticky-notes\",\"Sticky Notes\",350,{\"slug\":26,\"name\":27,\"priceCents\":28},\"stapler\",\"Stapler\",1250,[\"Reactive\",30],{\"$stheme\":31,\"$snotify\":32},\"dark\",null,[\"Set\"],[\"ShallowReactive\",35],{\"products\":-1},true,\"\\u002F\"]</script></body></html>\n\\ No newline at end of file\n"
+  },
+  {
+    "id": "toolu_012K5B8rypWRU6namquSXUaA",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cd /tmp && n(){ sed -E 's#/_nuxt/[A-Za-z0-9_-]+\\.js#/_nuxt/X.js#g; s/buildId:\"[^\"]*\"/buildId:X/; s/\\._nuxt[^\"]*//g' \"$1\"; }; for f in before/*; do b=$(basename $f); diff -q <(n $f) <(n after/$b) >/dev/null && echo \"same $b\" || echo \"DIFF $b\"; done; grep -c 'cart-summary\\|cart-item\\|cart-badge' after/_cart.html after/_checkout.html"
+    },
+    "output": "same _.html\nsame __empty.html\nsame _cart.html\nsame _cart_empty.html\nsame _checkout.html\nsame _checkout_empty.html\nsame _products_notebook.html\nsame _products_notebook_empty.html\nafter/_cart.html:1\nafter/_checkout.html:1\n"
+  }
+]

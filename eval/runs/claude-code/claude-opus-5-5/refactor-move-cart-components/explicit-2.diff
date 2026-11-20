@@ -1,0 +1,51 @@
+diff --git a/app/components/AppHeader.vue b/app/components/AppHeader.vue
+index 2aca959..42158e4 100644
+--- a/app/components/AppHeader.vue
++++ b/app/components/AppHeader.vue
+@@ -1,6 +1,6 @@
+ <script setup lang="ts">
+ import { NuxtLink } from '#components'
+-import CartBadge from '~/components/cart/Badge.vue'
++import CartBadge from '~/components/checkout/Badge.vue'
+ </script>
+ 
+ <template>
+diff --git a/app/components/cart/Badge.vue b/app/components/checkout/Badge.vue
+similarity index 100%
+rename from app/components/cart/Badge.vue
+rename to app/components/checkout/Badge.vue
+diff --git a/app/components/cart/Item.vue b/app/components/checkout/Item.vue
+similarity index 100%
+rename from app/components/cart/Item.vue
+rename to app/components/checkout/Item.vue
+diff --git a/app/components/cart/Summary.vue b/app/components/checkout/Summary.vue
+similarity index 100%
+rename from app/components/cart/Summary.vue
+rename to app/components/checkout/Summary.vue
+diff --git a/app/pages/cart.vue b/app/pages/cart.vue
+index 2e2864b..f8acfca 100644
+--- a/app/pages/cart.vue
++++ b/app/pages/cart.vue
+@@ -1,7 +1,7 @@
+ <script setup lang="ts">
+ import { NuxtLink } from '#components'
+-import CartItem from '~/components/cart/Item.vue'
+-import CartSummary from '~/components/cart/Summary.vue'
++import CartItem from '~/components/checkout/Item.vue'
++import CartSummary from '~/components/checkout/Summary.vue'
+ import { useCart } from '~/composables/useCart'
+ import { useProducts } from '~/composables/useProducts'
+ 
+diff --git a/app/pages/checkout.vue b/app/pages/checkout.vue
+index 5075987..1bbcb6a 100644
+--- a/app/pages/checkout.vue
++++ b/app/pages/checkout.vue
+@@ -5,7 +5,7 @@ import { useNotify } from '#layers/base/app/composables/useNotify'
+ import UiBadge from '#layers/ui/app/components/UiBadge.vue'
+ import UiButton from '#layers/ui/app/components/UiButton.vue'
+ import FormInput from '#layers/ui/app/components/form/Input.vue'
+-import CartSummary from '~/components/cart/Summary.vue'
++import CartSummary from '~/components/checkout/Summary.vue'
+ import { useProducts } from '~/composables/useProducts'
+ 
+ definePageMeta({ middleware: 'cart-not-empty' })

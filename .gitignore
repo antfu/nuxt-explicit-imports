@@ -15,3 +15,5 @@ temp
 test/.tmp
 .nuxt
 .output
+eval/results
+eval/.tmp

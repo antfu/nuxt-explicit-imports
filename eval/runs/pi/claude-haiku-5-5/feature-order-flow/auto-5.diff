@@ -1,0 +1,196 @@
+diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
+new file mode 100644
+index 0000000..3cfd571
+--- /dev/null
++++ b/app/pages/orders/[id].vue
+@@ -0,0 +1,25 @@
++<script setup lang="ts">
++import type { OrderView } from '#shared/types/order'
++
++const route = useRoute()
++const { data: order, error } = await useFetch<OrderView>(`/api/orders/${route.params.id}`)
++if (error.value || !order.value)
++  throw createError({ statusCode: 404, statusMessage: 'Order not found', fatal: true })
++const total = computed(() => parseMoney(order.value!.total))
++const discount = computed(() => parseMoney(order.value!.discount))
++</script>
++
++<template>
++  <div v-if="order">
++    <h1>Order {{ order.id }}</h1>
++    <ul>
++      <li v-for="line in order.lines" :key="line.slug" class="order-line">
++        {{ line.name }} × {{ line.qty }}
++      </li>
++    </ul>
++    <p v-if="discount">
++      Discount: {{ formatDiscount(discount) }}
++    </p>
++    <p>Total: <span id="order-total">{{ formatMoney(total) }}</span></p>
++  </div>
++</template>
+diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
+new file mode 100644
+index 0000000..3f1fcf1
+--- /dev/null
++++ b/server/api/orders/[id].get.ts
+@@ -0,0 +1,7 @@
++export default defineEventHandler((event) => {
++  const id = getRouterParam(event, 'id') ?? ''
++  const order = getOrder(id)
++  if (!order)
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  return order
++})
+diff --git a/server/api/orders/index.post.ts b/server/api/orders/index.post.ts
+new file mode 100644
+index 0000000..7f2da02
+--- /dev/null
++++ b/server/api/orders/index.post.ts
+@@ -0,0 +1,6 @@
++import type { OrderRequest } from '#shared/types/order'
++
++export default defineEventHandler(async (event) => {
++  const body = await readBody<Partial<OrderRequest>>(event)
++  return createOrder(body?.lines ?? [], body?.code)
++})
+diff --git a/server/utils/orders.ts b/server/utils/orders.ts
+new file mode 100644
+index 0000000..bdad679
+--- /dev/null
++++ b/server/utils/orders.ts
+@@ -0,0 +1,59 @@
++import type { CartLine } from '#shared/types/cart'
++import type { OrderCreated, OrderView } from '#shared/types/order'
++
++interface StoredOrder {
++  id: string
++  lines: CartLine[]
++  names: string[]
++  subtotal: number
++  discount: number
++  total: number
++}
++
++/** In-memory order store. Orders are lost when the server restarts. */
++const orders = new Map<string, StoredOrder>()
++
++/** Validates the lines, prices them on the server and stores the order. Throws 400 on invalid input. */
++export function createOrder(lines: CartLine[], code?: string): OrderCreated {
++  if (!Array.isArray(lines) || lines.length === 0) {
++    throw createError({ statusCode: 400, statusMessage: 'Order needs at least one line' })
++  }
++  const names = lines.map((line) => {
++    const product = findProduct(line.slug)
++    if (!product) {
++      throw createError({ statusCode: 400, statusMessage: `Unknown product: ${line.slug}` })
++    }
++    if (!Number.isInteger(line.qty) || line.qty < 1) {
++      throw createError({ statusCode: 400, statusMessage: `Invalid quantity for ${line.slug}` })
++    }
++    return product.name
++  })
++  const priced = priceCart(lines, code)
++  const order: StoredOrder = {
++    id: crypto.randomUUID(),
++    lines: lines.map(line => ({ slug: line.slug, qty: line.qty })),
++    names,
++    ...priced,
++  }
++  orders.set(order.id, order)
++  return toCreated(order)
++}
++
++export function getOrder(id: string): OrderView | undefined {
++  const order = orders.get(id)
++  if (!order)
++    return undefined
++  return {
++    ...toCreated(order),
++    lines: order.lines.map((line, i) => ({ slug: line.slug, name: order.names[i]!, qty: line.qty })),
++  }
++}
++
++function toCreated(order: StoredOrder): OrderCreated {
++  return {
++    id: order.id,
++    subtotal: formatMoney(order.subtotal),
++    discount: formatMoney(order.discount),
++    total: formatMoney(order.total),
++  }
++}
+diff --git a/server/utils/quote.ts b/server/utils/quote.ts
+index 5565c50..f306acf 100644
+--- a/server/utils/quote.ts
++++ b/server/utils/quote.ts
+@@ -6,12 +6,24 @@ export interface Quote {
+   total: string
+ }
+ 
+-export function computeQuote(lines: CartLine[], code?: string): Quote {
++export interface PricedCart {
++  subtotal: number
++  discount: number
++  total: number
++}
++
++/** Authoritative pricing in cents, shared by quotes and orders. */
++export function priceCart(lines: CartLine[], code?: string): PricedCart {
+   const subtotal = sumBy(lines, line => (findProduct(line.slug)?.priceCents ?? 0) * line.qty)
+   const discount = computeDiscount(subtotal, discountPercent(code))
++  return { subtotal, discount, total: subtotal - discount }
++}
++
++export function computeQuote(lines: CartLine[], code?: string): Quote {
++  const priced = priceCart(lines, code)
+   return {
+-    subtotal: formatMoney(subtotal),
+-    discount: formatMoney(discount),
+-    total: formatMoney(subtotal - discount),
++    subtotal: formatMoney(priced.subtotal),
++    discount: formatMoney(priced.discount),
++    total: formatMoney(priced.total),
+   }
+ }
+diff --git a/shared/types/order.ts b/shared/types/order.ts
+new file mode 100644
+index 0000000..b9f1714
+--- /dev/null
++++ b/shared/types/order.ts
+@@ -0,0 +1,26 @@
++import type { CartLine } from './cart'
++
++/** Request body for `POST /api/orders`. Same shape as the cart quote request. */
++export interface OrderRequest {
++  lines: CartLine[]
++  code?: string
++}
++
++/** Response of `POST /api/orders`. Amounts are formatted by the server, like the quote API. */
++export interface OrderCreated {
++  id: string
++  subtotal: string
++  discount: string
++  total: string
++}
++
++export interface OrderLineView {
++  slug: string
++  name: string
++  qty: number
++}
++
++/** Response of `GET /api/orders/:id`. */
++export interface OrderView extends OrderCreated {
++  lines: OrderLineView[]
++}
+diff --git a/shared/utils/money.ts b/shared/utils/money.ts
+new file mode 100644
+index 0000000..800e757
+--- /dev/null
++++ b/shared/utils/money.ts
+@@ -0,0 +1,4 @@
++/** Parses a server amount such as `19.99 USD` into cents (`1999`). */
++export function parseMoney(text: string): number {
++  return Math.round(Number.parseFloat(text) * 100)
++}

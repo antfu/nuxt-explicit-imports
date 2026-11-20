@@ -1,0 +1,64 @@
+{
+  "config": "pi/gemini-3.5-flash",
+  "fingerprint": "8267fe529e11cc26",
+  "date": "2026-11-18T23:00:14.942Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "feature-product-discount",
+  "kind": "feature",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 1,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1434
+  },
+  "build": {
+    "ok": true,
+    "ms": 2910
+  },
+  "assertions": [
+    {
+      "name": "SAVE10: #discounted is $18.00",
+      "ok": true
+    },
+    {
+      "name": "HALF: #discounted is $10.00",
+      "ok": true
+    },
+    {
+      "name": "no #discounted without a code",
+      "ok": true
+    },
+    {
+      "name": "#price still $19.99",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 20,
+    "toolCalls": {
+      "bash": 8,
+      "read": 10,
+      "edit": 1
+    },
+    "toolKinds": {
+      "explore": 13,
+      "edit": 1,
+      "verify": 5,
+      "other": 0
+    },
+    "inputTokens": 99435,
+    "outputTokens": 7463,
+    "cacheReadTokens": 23515,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 26867,
+    "costUsd": 0.21984675000000004,
+    "ms": 56161,
+    "apiMs": 46638
+  }
+}

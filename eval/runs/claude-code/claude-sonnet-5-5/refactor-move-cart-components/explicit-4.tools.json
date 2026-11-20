@@ -1,0 +1,47 @@
+[
+  {
+    "id": "toolu_016Qfmxn5E8J2v7H5GwZNTjg",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "ls app/components/cart; grep -rn -i \"cart\" app --include=*.vue --include=*.ts -l; cat nuxt.config.ts"
+    },
+    "output": "Exit code 1\nBadge.vue\nItem.vue\nSummary.vue\n(eval):1: no matches found: --include=*.vue"
+  },
+  {
+    "id": "toolu_01RBqm7BAic3FYwbASfdi6kk",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn -i \"cart/\\|components/cart\" app server shared layers nuxt.config.ts 2>/dev/null; ls app/components"
+    },
+    "output": "app/components/AppHeader.vue:3:import CartBadge from '~/components/cart/Badge.vue'\napp/pages/checkout.vue:8:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/cart.vue:3:import CartItem from '~/components/cart/Item.vue'\napp/pages/cart.vue:4:import CartSummary from '~/components/cart/Summary.vue'\nAppFooter.vue\nAppHeader.vue\ncart\nproduct"
+  },
+  {
+    "id": "toolu_01Vm2eA7bFc2VkxonZr7pPK6",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "ls app/components/checkout 2>&1; grep -n \"import\" app/components/cart/*.vue"
+    },
+    "output": "ls: app/components/checkout: No such file or directory\napp/components/cart/Item.vue:2:import type { CartLine } from '#shared/types/cart'\napp/components/cart/Item.vue:3:import type { Product } from '#shared/types/product'\napp/components/cart/Item.vue:4:import { computed } from 'vue'\napp/components/cart/Item.vue:5:import UiButton from '#layers/ui/app/components/UiButton.vue'\napp/components/cart/Item.vue:6:import { useCart } from '~/composables/useCart'\napp/components/cart/Item.vue:7:import { formatMoney } from '~/utils/money'\napp/components/cart/Badge.vue:2:import UiBadge from '#layers/ui/app/components/UiBadge.vue'\napp/components/cart/Badge.vue:3:import { useCart } from '~/composables/useCart'\napp/components/cart/Summary.vue:2:import { useCartTotal } from '~/composables/useCartTotal'\napp/components/cart/Summary.vue:3:import { formatDiscount } from '~/utils/discount'\napp/components/cart/Summary.vue:4:import { formatMoney } from '~/utils/money'"
+  },
+  {
+    "id": "toolu_01Pyk45x2ydCqVZuvRuACR6b",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "verify"
+    ],
+    "input": {
+      "command": "git mv app/components/cart app/components/checkout && sed -i '' 's#components/cart/#components/checkout/#' app/components/AppHeader.vue app/pages/checkout.vue app/pages/cart.vue && npm run typecheck 2>&1 | tail -5 && npm run build 2>&1 | tail -5"
+    },
+    "output": "> typecheck\n> nuxt typecheck\n\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 68ms · modules 19ms · app 184ms · types 144ms · client 413ms · server 209ms · nitro 1.84s\n◆ ✨ Build complete in 2.88s!"
+  }
+]

@@ -1,0 +1,70 @@
+{
+  "config": "claude-code/claude-opus-5-5",
+  "fingerprint": "f3e9e8f3afb603c1",
+  "date": "2026-11-19T00:07:25.473Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "feature-pill-badge",
+  "kind": "feature",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 2,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1429
+  },
+  "build": {
+    "ok": true,
+    "ms": 3056
+  },
+  "assertions": [
+    {
+      "name": "app/components/UiBadge.vue exists",
+      "ok": true
+    },
+    {
+      "name": "ui layer badge untouched",
+      "ok": true
+    },
+    {
+      "name": "/: every badge is a pill",
+      "ok": true
+    },
+    {
+      "name": "/products/notebook: every badge is a pill",
+      "ok": true
+    },
+    {
+      "name": "/checkout: every badge is a pill",
+      "ok": true
+    },
+    {
+      "name": "header badge still shows 3",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 4,
+    "toolCalls": {
+      "Bash": 3
+    },
+    "toolKinds": {
+      "explore": 3,
+      "edit": 1,
+      "verify": 1,
+      "other": 0
+    },
+    "inputTokens": 1281,
+    "outputTokens": 973,
+    "cacheReadTokens": 75545,
+    "cacheWriteTokens": 6054,
+    "toolOutputChars": 3590,
+    "costUsd": 0.069963,
+    "ms": 21529,
+    "apiMs": 16856
+  }
+}

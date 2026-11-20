@@ -1,0 +1,55 @@
+{
+  "config": "claude-code/claude-sonnet-5-5",
+  "fingerprint": "d1f8536c420f4b86",
+  "date": "2026-11-18T22:15:44.075Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "bugfix-lost-override",
+  "kind": "bugfix",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 5,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1425
+  },
+  "build": {
+    "ok": true,
+    "ms": 3139
+  },
+  "assertions": [
+    {
+      "name": "home renders theme-dark",
+      "ok": true
+    },
+    {
+      "name": "base layer theme untouched",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 7,
+    "toolCalls": {
+      "Bash": 4,
+      "Edit": 2
+    },
+    "toolKinds": {
+      "explore": 3,
+      "edit": 3,
+      "verify": 2,
+      "other": 0
+    },
+    "inputTokens": 1265,
+    "outputTokens": 1247,
+    "cacheReadTokens": 117063,
+    "cacheWriteTokens": 6241,
+    "toolOutputChars": 3805,
+    "costUsd": 0.0423088,
+    "ms": 28034,
+    "apiMs": 19332
+  }
+}

@@ -1,0 +1,228 @@
+diff --git a/app/pages/checkout.vue b/app/pages/checkout.vue
+index aa4efb2..521764f 100644
+--- a/app/pages/checkout.vue
++++ b/app/pages/checkout.vue
+@@ -1,9 +1,35 @@
+ <script setup lang="ts">
++import type { Order } from '#shared/types/order'
++
+ definePageMeta({ middleware: 'cart-not-empty' })
+ 
+ await useProducts()
+ const email = ref('')
+ const { notify } = useNotify()
++const { lines } = useCart()
++const { code } = useDiscount()
++const placing = ref(false)
++
++async function placeOrder() {
++  if (placing.value)
++    return
++  placing.value = true
++  try {
++    const order = await $fetch<Order>('/api/orders', {
++      method: 'POST',
++      body: { lines: lines.value, code: code.value ?? undefined },
++    })
++    lines.value = []
++    notify(`Order placed for ${email.value}`)
++    await navigateTo(`/orders/${order.id}`)
++  }
++  catch {
++    notify('Could not place the order')
++  }
++  finally {
++    placing.value = false
++  }
++}
+ </script>
+ 
+ <template>
+@@ -14,7 +40,7 @@ const { notify } = useNotify()
+     </UiBadge>
+     <FormInput v-model="email" label="Email" />
+     <CartSummary />
+-    <UiButton id="place-order" @click="notify(`Order placed for ${email}`)">
++    <UiButton id="place-order" :disabled="placing" @click="placeOrder">
+       Place order
+     </UiButton>
+   </div>
+diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
+new file mode 100644
+index 0000000..295b384
+--- /dev/null
++++ b/app/pages/orders/[id].vue
+@@ -0,0 +1,26 @@
++<script setup lang="ts">
++import type { Order } from '#shared/types/order'
++
++const route = useRoute()
++const { data: order, error } = await useFetch<Order>(`/api/orders/${route.params.id}`)
++</script>
++
++<template>
++  <UiCard v-if="order">
++    <h1>Order {{ order.id }}</h1>
++    <ul>
++      <li v-for="(line, index) in order.lines" :key="index" class="order-line">
++        <span class="name">{{ line.name }}</span>
++        <span class="qty">x{{ line.qty }}</span>
++      </li>
++    </ul>
++    <p>Subtotal: <span id="order-subtotal">{{ formatMoney(parseServerMoney(order.subtotal)) }}</span></p>
++    <p v-if="parseServerMoney(order.discount)">
++      Discount: <span id="order-discount">{{ formatDiscount(parseServerMoney(order.discount)) }}</span>
++    </p>
++    <p>Total: <span id="order-total">{{ formatMoney(parseServerMoney(order.total)) }}</span></p>
++  </UiCard>
++  <p v-else-if="error" id="order-not-found">
++    Order not found.
++  </p>
++</template>
+diff --git a/app/utils/money.ts b/app/utils/money.ts
+index 6b7ed83..26e53dd 100644
+--- a/app/utils/money.ts
++++ b/app/utils/money.ts
+@@ -2,3 +2,8 @@
+ export function formatMoney(cents: number): string {
+   return `$${(cents / 100).toFixed(2)}`
+ }
++
++/** Parses the server API money format back to cents: `19.99 USD` -> `1999`. */
++export function parseServerMoney(text: string): number {
++  return Math.round(Number.parseFloat(text) * 100)
++}
+diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
+new file mode 100644
+index 0000000..425d41a
+--- /dev/null
++++ b/server/api/orders/[id].get.ts
+@@ -0,0 +1,6 @@
++export default defineEventHandler((event) => {
++  const order = getOrder(getRouterParam(event, 'id') ?? '')
++  if (!order)
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  return order
++})
+diff --git a/server/api/orders/index.post.ts b/server/api/orders/index.post.ts
+new file mode 100644
+index 0000000..937dfa6
+--- /dev/null
++++ b/server/api/orders/index.post.ts
+@@ -0,0 +1,6 @@
++export default defineEventHandler(async (event) => {
++  const body = await readBody<{ lines?: unknown, code?: unknown }>(event)
++  const lines = parseOrderLines(body?.lines)
++  const code = typeof body?.code === 'string' ? body.code : undefined
++  return createOrder(lines, code)
++})
+diff --git a/server/utils/orders.ts b/server/utils/orders.ts
+new file mode 100644
+index 0000000..7bb41c5
+--- /dev/null
++++ b/server/utils/orders.ts
+@@ -0,0 +1,48 @@
++import { randomUUID } from 'node:crypto'
++import type { CartLine } from '#shared/types/cart'
++import type { Order, OrderLine } from '#shared/types/order'
++
++interface StoredOrder {
++  id: string
++  lines: OrderLine[]
++  code?: string
++  amounts: QuoteCents
++}
++
++/** In-memory order store. Orders are lost when the server restarts. */
++const orders = new Map<string, StoredOrder>()
++
++/** Validates raw cart lines, throwing a 400 for anything that cannot be charged. */
++export function parseOrderLines(input: unknown): CartLine[] {
++  if (!Array.isArray(input) || input.length === 0)
++    throw createError({ statusCode: 400, statusMessage: 'Order must contain at least one line' })
++  return input.map((line) => {
++    const slug = line?.slug
++    const qty = line?.qty
++    if (typeof slug !== 'string' || !findProduct(slug))
++      throw createError({ statusCode: 400, statusMessage: `Unknown product: ${String(slug)}` })
++    if (!Number.isInteger(qty) || qty <= 0)
++      throw createError({ statusCode: 400, statusMessage: `Invalid quantity for ${slug}` })
++    return { slug, qty }
++  })
++}
++
++export function createOrder(lines: CartLine[], code?: string): Order {
++  const order: StoredOrder = {
++    id: randomUUID(),
++    lines: lines.map(line => ({ slug: line.slug, name: findProduct(line.slug)?.name ?? line.slug, qty: line.qty })),
++    code,
++    amounts: computeQuoteCents(lines, code),
++  }
++  orders.set(order.id, order)
++  return toOrderResponse(order)
++}
++
++export function getOrder(id: string): Order | undefined {
++  const order = orders.get(id)
++  return order && toOrderResponse(order)
++}
++
++function toOrderResponse(order: StoredOrder): Order {
++  return { id: order.id, lines: order.lines, ...formatQuote(order.amounts) }
++}
+diff --git a/server/utils/quote.ts b/server/utils/quote.ts
+index 5565c50..0b7b41e 100644
+--- a/server/utils/quote.ts
++++ b/server/utils/quote.ts
+@@ -6,12 +6,27 @@ export interface Quote {
+   total: string
+ }
+ 
+-export function computeQuote(lines: CartLine[], code?: string): Quote {
++/** Quote amounts in cents. */
++export interface QuoteCents {
++  subtotal: number
++  discount: number
++  total: number
++}
++
++export function computeQuoteCents(lines: CartLine[], code?: string): QuoteCents {
+   const subtotal = sumBy(lines, line => (findProduct(line.slug)?.priceCents ?? 0) * line.qty)
+   const discount = computeDiscount(subtotal, discountPercent(code))
++  return { subtotal, discount, total: subtotal - discount }
++}
++
++export function formatQuote(cents: QuoteCents): Quote {
+   return {
+-    subtotal: formatMoney(subtotal),
+-    discount: formatMoney(discount),
+-    total: formatMoney(subtotal - discount),
++    subtotal: formatMoney(cents.subtotal),
++    discount: formatMoney(cents.discount),
++    total: formatMoney(cents.total),
+   }
+ }
++
++export function computeQuote(lines: CartLine[], code?: string): Quote {
++  return formatQuote(computeQuoteCents(lines, code))
++}
+diff --git a/shared/types/order.ts b/shared/types/order.ts
+new file mode 100644
+index 0000000..b22ab35
+--- /dev/null
++++ b/shared/types/order.ts
+@@ -0,0 +1,14 @@
++export interface OrderLine {
++  slug: string
++  name: string
++  qty: number
++}
++
++/** An order as returned by `POST /api/orders` and `GET /api/orders/:id`. Amounts use the server money format. */
++export interface Order {
++  id: string
++  lines: OrderLine[]
++  subtotal: string
++  discount: string
++  total: string
++}

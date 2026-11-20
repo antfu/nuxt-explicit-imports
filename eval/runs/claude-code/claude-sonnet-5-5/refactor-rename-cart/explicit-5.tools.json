@@ -1,0 +1,38 @@
+[
+  {
+    "id": "toolu_01PYexKMfpswBPde7LUQDsGW",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"useCart\" . --exclude-dir=node_modules --exclude-dir=.nuxt --exclude-dir=.output --exclude-dir=.git; ls; ls app app/composables layers/* 2>/dev/null"
+    },
+    "output": "app/middleware/cart-not-empty.ts:2:import { useCart } from '~/composables/useCart'\napp/middleware/cart-not-empty.ts:5:  const { count } = useCart()\napp/composables/useCart.ts:6:/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\napp/composables/useCart.ts:7:export function useCart() {\napp/composables/useCartTotal.ts:5:import { useCart } from '~/composables/useCart'\napp/composables/useCartTotal.ts:10:export function useCartTotal() {\napp/composables/useCartTotal.ts:11:  const { lines } = useCart()\napp/components/cart/Summary.vue:2:import { useCartTotal } from '~/composables/useCartTotal'\napp/components/cart/Summary.vue:6:const { subtotal, total, percent } = useCartTotal()\napp/components/cart/Badge.vue:3:import { useCart } from '~/composables/useCart'\napp/components/cart/Badge.vue:5:const { count } = useCart()\napp/pages/cart.vue:5:import { useCart } from '~/composables/useCart'\napp/pages/cart.vue:9:const { lines } = useCart()\napp/components/cart/Item.vue:6:import { useCart } from '~/composables/useCart'\napp/components/cart/Item.vue:10:const { remove } = useCart()\napp/pages/products/[slug].vue:9:import { useCart } from '~/composables/useCart'\napp/pages/products/[slug].vue:13:const { add } = useCart()\nlayers/base/app/composables/useCart.ts:7: * Apps that persist the cart override it with their own `useCart`.\nlayers/base/app/composables/useCart.ts:9:export function useCart() {\napp\nlayers\nnode_modules\nnuxt.config.ts\npackage.json\nserver\nshared\ntsconfig.json\napp:\napp.vue\ncomponents\ncomposables\nlayouts\nmiddleware\npages\nutils\n\napp/composables:\nuseCart.ts\nuseCartTotal.ts\nuseDiscount.ts\nuseProducts.ts\nuseTheme.ts\n\nlayers/base:\napp\nnuxt.config.ts\n\nlayers/ui:\napp\nnuxt.config.ts"
+  },
+  {
+    "id": "toolu_01NcbGLPVVudvHo6Hveg61f4",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "cd app && git mv composables/useCart.ts composables/useShoppingCart.ts && sed -i '' 's/useCart\\b/useShoppingCart/g' composables/useShoppingCart.ts middleware/cart-not-empty.ts composables/useCartTotal.ts components/cart/Badge.vue pages/cart.vue components/cart/Item.vue 'pages/products/[slug].vue' && sed -i '' 's/legacy `useShoppingCart`/legacy `useCart`/' composables/useShoppingCart.ts && cd .. && grep -rn \"useCart\\b\" app; npm run typecheck 2>&1 | tail -5; npm run build 2>&1 | tail -4"
+    },
+    "output": "app/middleware/cart-not-empty.ts:2:import { useCart } from '~/composables/useCart'\napp/middleware/cart-not-empty.ts:5:  const { count } = useCart()\napp/composables/useCartTotal.ts:5:import { useCart } from '~/composables/useCart'\napp/composables/useCartTotal.ts:11:  const { lines } = useCart()\napp/composables/useShoppingCart.ts:6:/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\napp/composables/useShoppingCart.ts:7:export function useCart() {\napp/components/cart/Item.vue:6:import { useCart } from '~/composables/useCart'\napp/components/cart/Item.vue:10:const { remove } = useCart()\napp/components/cart/Badge.vue:3:import { useCart } from '~/composables/useCart'\napp/components/cart/Badge.vue:5:const { count } = useCart()\napp/pages/cart.vue:5:import { useCart } from '~/composables/useCart'\napp/pages/cart.vue:9:const { lines } = useCart()\napp/pages/products/[slug].vue:9:import { useCart } from '~/composables/useCart'\napp/pages/products/[slug].vue:13:const { add } = useCart()\napp/composables/useCartTotal.ts(15,58): error TS18046: 'line' is of type 'unknown'.\napp/composables/useCartTotal.ts(16,41): error TS18046: 'line' is of type 'unknown'.\napp/middleware/cart-not-empty.ts(2,25): error TS2307: Cannot find module '~/composables/useCart' or its corresponding type declarations.\napp/pages/cart.vue(5,25): error TS2307: Cannot find module '~/composables/useCart' or its corresponding type declarations.\napp/pages/products/[slug].vue(9,25): error TS2307: Cannot find module '~/composables/useCart' or its corresponding type declarations.\n  at async Module.bundle (/Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/@nuxt+vite-builder@4.6.4_06d61e6f686379e88cab4ca9e310266e/node_modules/@nuxt/vite-builder/dist/index.mjs:3674:7)\n  at async Object.bundle (/Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/nuxt@4.6.4_@babel+plugin-syntax-jsx@7.29.7_@babel+core@7.29.13_supports-color@10.2.2____6659b4a31574f666a266475557fef196/node_modules/nuxt/dist/index.mjs:10552:5)\n  at async build (/Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/nuxt@4.6.4_@babel+plugin-syntax-jsx@7.29.7_@babel+core@7.29.13_supports-color@10.2.2____6659b4a31574f666a266475557fef196/node_modules/nuxt/dist/index.mjs:10380:2)"
+  },
+  {
+    "id": "toolu_01JL8UKcYXKCJoa9fBHJHFQh",
+    "name": "Bash",
+    "kinds": [
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "cd app && perl -pi -e 's/\\buseCart\\b/useShoppingCart/g; s/composables\\/useCart\\x27/composables\\/useShoppingCart\\x27/g; s/legacy `useShoppingCart`/legacy `useCart`/' composables/useShoppingCart.ts middleware/cart-not-empty.ts composables/useCartTotal.ts components/cart/Badge.vue pages/cart.vue components/cart/Item.vue 'pages/products/[slug].vue' && cd .. && grep -rn \"useCart\\b\" app; npm run typecheck 2>&1 | tail -5; npm run build 2>&1 | tail -4"
+    },
+    "output": "app/composables/useShoppingCart.ts:6:/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\n\n> typecheck\n> nuxt typecheck\n\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 73ms · modules 19ms · app 196ms · types 147ms · client 414ms · server 213ms · nitro 1.85s\n◆ ✨ Build complete in 2.91s!"
+  }
+]

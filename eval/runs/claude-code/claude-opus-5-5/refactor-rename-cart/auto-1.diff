@@ -1,0 +1,90 @@
+diff --git a/app/components/cart/Badge.vue b/app/components/cart/Badge.vue
+index 98e427f..8ace94e 100644
+--- a/app/components/cart/Badge.vue
++++ b/app/components/cart/Badge.vue
+@@ -1,5 +1,5 @@
+ <script setup lang="ts">
+-const { count } = useCart()
++const { count } = useShoppingCart()
+ </script>
+ 
+ <template>
+diff --git a/app/components/cart/Item.vue b/app/components/cart/Item.vue
+index 29fd56a..e40e8ca 100644
+--- a/app/components/cart/Item.vue
++++ b/app/components/cart/Item.vue
+@@ -3,7 +3,7 @@ import type { CartLine } from '#shared/types/cart'
+ import type { Product } from '#shared/types/product'
+ 
+ const props = defineProps<{ line: CartLine, product?: Product }>()
+-const { remove } = useCart()
++const { remove } = useShoppingCart()
+ const lineTotal = computed(() => formatMoney((props.product?.priceCents ?? 0) * props.line.qty))
+ </script>
+ 
+diff --git a/app/composables/useCartTotal.ts b/app/composables/useCartTotal.ts
+index c4bf680..c249e34 100644
+--- a/app/composables/useCartTotal.ts
++++ b/app/composables/useCartTotal.ts
+@@ -2,7 +2,7 @@ import type { Product } from '#shared/types/product'
+ 
+ /** Cart totals in cents, as shown to the customer. */
+ export function useCartTotal() {
+-  const { lines } = useCart()
++  const { lines } = useShoppingCart()
+   const { percent } = useDiscount()
+   const { data: products } = useNuxtData<Product[]>('products')
+   const subtotal = computed(() => sumBy(lines.value, (line) => {
+diff --git a/app/composables/useCart.ts b/app/composables/useShoppingCart.ts
+similarity index 82%
+rename from app/composables/useCart.ts
+rename to app/composables/useShoppingCart.ts
+index 52a6b59..25ffb29 100644
+--- a/app/composables/useCart.ts
++++ b/app/composables/useShoppingCart.ts
+@@ -1,7 +1,7 @@
+ import type { CartLine } from '#shared/types/cart'
+ 
+-/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */
+-export function useCart() {
++/** The cart, persisted in the `cart` cookie. Replaces the base layer's legacy `useCart`. */
++export function useShoppingCart() {
+   const lines = useCookie<CartLine[]>('cart', { default: () => [] })
+   const count = computed(() => sumBy(lines.value, line => line.qty))
+   function add(slug: string, qty = 1) {
+diff --git a/app/middleware/cart-not-empty.ts b/app/middleware/cart-not-empty.ts
+index 0ce1e11..0068521 100644
+--- a/app/middleware/cart-not-empty.ts
++++ b/app/middleware/cart-not-empty.ts
+@@ -1,5 +1,5 @@
+ export default defineNuxtRouteMiddleware(() => {
+-  const { count } = useCart()
++  const { count } = useShoppingCart()
+   if (!count.value)
+     return navigateTo('/cart')
+ })
+diff --git a/app/pages/cart.vue b/app/pages/cart.vue
+index 11faf72..1805f53 100644
+--- a/app/pages/cart.vue
++++ b/app/pages/cart.vue
+@@ -1,6 +1,6 @@
+ <script setup lang="ts">
+ const { data: products } = await useProducts()
+-const { lines } = useCart()
++const { lines } = useShoppingCart()
+ </script>
+ 
+ <template>
+diff --git a/app/pages/products/[slug].vue b/app/pages/products/[slug].vue
+index e87ff42..5e3a670 100644
+--- a/app/pages/products/[slug].vue
++++ b/app/pages/products/[slug].vue
+@@ -3,7 +3,7 @@ import type { Product } from '#shared/types/product'
+ 
+ const route = useRoute()
+ const { data: product } = await useFetch<Product & { price: string }>(`/api/products/${route.params.slug}`)
+-const { add } = useCart()
++const { add } = useShoppingCart()
+ const { notify } = useNotify()
+ 
+ function addToCart() {

@@ -1,0 +1,115 @@
+diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
+new file mode 100644
+index 0000000..29341ad
+--- /dev/null
++++ b/app/pages/orders/[id].vue
+@@ -0,0 +1,31 @@
++<script setup lang="ts">
++import type { StoredOrder } from '#shared/types/order'
++
++const route = useRoute()
++const { data: products } = await useProducts()
++const { data: order } = await useFetch<StoredOrder>(`/api/orders/${route.params.id}`, { key: `order-${route.params.id}` })
++if (!order.value)
++  throw createError({ statusCode: 404, statusMessage: 'Order not found', fatal: true })
++
++/** The API sends money as `19.99 USD`; the UI shows `$19.99`. */
++const totalCents = computed(() => Math.round(Number.parseFloat(order.value?.total ?? '0') * 100))
++
++function nameOf(slug: string) {
++  return products.value.find(p => p.slug === slug)?.name ?? slug
++}
++</script>
++
++<template>
++  <div v-if="order">
++    <h1>Order {{ order.id }}</h1>
++    <ul>
++      <li v-for="line in order.lines" :key="line.slug" class="order-line">
++        <span class="name">{{ nameOf(line.slug) }}</span>
++        <span class="qty">x{{ line.qty }}</span>
++      </li>
++    </ul>
++    <p>Subtotal: <span id="order-subtotal">{{ order.subtotal }}</span></p>
++    <p>Discount: <span id="order-discount">{{ order.discount }}</span></p>
++    <p>Total: <span id="order-total">{{ formatMoney(totalCents) }}</span></p>
++  </div>
++</template>
+diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
+new file mode 100644
+index 0000000..e2f0d6e
+--- /dev/null
++++ b/server/api/orders/[id].get.ts
+@@ -0,0 +1,8 @@
++import type { StoredOrder } from '#shared/types/order'
++
++export default defineEventHandler((event): StoredOrder => {
++  const order = findOrder(getRouterParam(event, 'id') ?? '')
++  if (!order)
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  return order
++})
+diff --git a/server/api/orders/index.post.ts b/server/api/orders/index.post.ts
+new file mode 100644
+index 0000000..b8d30ba
+--- /dev/null
++++ b/server/api/orders/index.post.ts
+@@ -0,0 +1,17 @@
++import type { CartLine } from '#shared/types/cart'
++import type { Order } from '#shared/types/order'
++
++export default defineEventHandler(async (event): Promise<Order> => {
++  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)
++  const lines = body?.lines
++  if (!Array.isArray(lines) || !lines.length)
++    throw createError({ statusCode: 400, statusMessage: 'Order needs at least one line' })
++  for (const line of lines) {
++    if (!findProduct(line?.slug))
++      throw createError({ statusCode: 400, statusMessage: `Unknown product: ${line?.slug}` })
++    if (!Number.isInteger(line.qty) || line.qty < 1)
++      throw createError({ statusCode: 400, statusMessage: `Invalid quantity for ${line.slug}` })
++  }
++  const { id, subtotal, discount, total } = createOrder(lines, body?.code)
++  return { id, subtotal, discount, total }
++})
+diff --git a/server/utils/orders.ts b/server/utils/orders.ts
+new file mode 100644
+index 0000000..c553463
+--- /dev/null
++++ b/server/utils/orders.ts
+@@ -0,0 +1,15 @@
++import type { CartLine } from '#shared/types/cart'
++import type { StoredOrder } from '#shared/types/order'
++
++/** Orders live in server memory only; they are lost on restart. */
++const orders = new Map<string, StoredOrder>()
++
++export function createOrder(lines: CartLine[], code?: string): StoredOrder {
++  const order: StoredOrder = { id: crypto.randomUUID(), lines, ...computeQuote(lines, code) }
++  orders.set(order.id, order)
++  return order
++}
++
++export function findOrder(id: string): StoredOrder | undefined {
++  return orders.get(id)
++}
+diff --git a/shared/types/order.ts b/shared/types/order.ts
+new file mode 100644
+index 0000000..91834c6
+--- /dev/null
++++ b/shared/types/order.ts
+@@ -0,0 +1,14 @@
++import type { CartLine } from './cart'
++
++/** An order as returned by `POST /api/orders` and `GET /api/orders/:id`. Amounts are server-formatted, like the quote API. */
++export interface Order {
++  id: string
++  subtotal: string
++  discount: string
++  total: string
++}
++
++/** `GET /api/orders/:id` also includes the lines the order was placed with. */
++export interface StoredOrder extends Order {
++  lines: CartLine[]
++}

@@ -1,0 +1,48 @@
+[
+  {
+    "id": "toolu_01QWewuX5FiLud5GizsrnYBc",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "git ls-files | grep -v -E '^(public|node_modules)/'; cat server/api/cart/quote* 2>/dev/null"
+    },
+    "output": ".gitignore\napp/app.vue\napp/components/AppFooter.vue\napp/components/AppHeader.vue\napp/components/cart/Badge.vue\napp/components/cart/Item.vue\napp/components/cart/Summary.vue\napp/components/product/Card.vue\napp/components/product/Grid.vue\napp/components/product/Price.vue\napp/composables/useCart.ts\napp/composables/useCartTotal.ts\napp/composables/useDiscount.ts\napp/composables/useProducts.ts\napp/composables/useTheme.ts\napp/layouts/default.vue\napp/middleware/cart-not-empty.ts\napp/pages/cart.vue\napp/pages/checkout.vue\napp/pages/index.vue\napp/pages/products/[slug].vue\napp/utils/discount.ts\napp/utils/money.ts\nlayers/base/app/composables/useCart.ts\nlayers/base/app/composables/useNotify.ts\nlayers/base/app/composables/useTheme.ts\nlayers/base/app/utils/percent.ts\nlayers/base/nuxt.config.ts\nlayers/ui/app/components/ProductCard.vue\nlayers/ui/app/components/UiBadge.vue\nlayers/ui/app/components/UiButton.vue\nlayers/ui/app/components/UiCard.vue\nlayers/ui/app/components/form/Input.vue\nlayers/ui/nuxt.config.ts\nnuxt.config.ts\npackage.json\nserver/api/cart/quote.post.ts\nserver/api/products/[slug].get.ts\nserver/api/products/index.get.ts\nserver/utils/db.ts\nserver/utils/discount.ts\nserver/utils/money.ts\nserver/utils/quote.ts\nshared/types/cart.ts\nshared/types/product.ts\nshared/utils/discount.ts\nshared/utils/math.ts\nshared/utils/slug.ts\ntsconfig.json\nimport type { CartLine } from '#shared/types/cart'\nimport { defineEventHandler, readBody } from 'h3'\nimport { computeQuote } from '#server/utils/quote'\n\nexport default defineEventHandler(async (event) => {\n  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)\n  return computeQuote(body?.lines ?? [], body?.code)\n})"
+  },
+  {
+    "id": "toolu_01QFeXtLc4AqVuWCbcrX1myt",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cat server/utils/quote.ts server/utils/discount.ts server/utils/money.ts shared/utils/discount.ts shared/utils/math.ts app/utils/discount.ts app/composables/useCartTotal.ts layers/base/app/utils/percent.ts"
+    },
+    "output": "import type { CartLine } from '#shared/types/cart'\nimport { findProduct } from '#server/utils/db'\nimport { computeDiscount } from '#server/utils/discount'\nimport { formatMoney } from '#server/utils/money'\nimport { discountPercent } from '#shared/utils/discount'\nimport { sumBy } from '#shared/utils/math'\n\nexport interface Quote {\n  subtotal: string\n  discount: string\n  total: string\n}\n\nexport function computeQuote(lines: CartLine[], code?: string): Quote {\n  const subtotal = sumBy(lines, line => (findProduct(line.slug)?.priceCents ?? 0) * line.qty)\n  const discount = computeDiscount(subtotal, discountPercent(code))\n  return {\n    subtotal: formatMoney(subtotal),\n    discount: formatMoney(discount),\n    total: formatMoney(subtotal - discount),\n  }\n}\n/** Authoritative discount in cents, used for quotes and orders. Rounds to the nearest cent. */\nexport function computeDiscount(cents: number, percent: number): number {\n  return Math.round(cents * percent / 100)\n}\n/** Server-side money format for API responses: `1999` -> `19.99 USD`. */\nexport function formatMoney(cents: number): string {\n  return `${(cents / 100).toFixed(2)} USD`\n}\nimport { clamp } from '#shared/utils/math'\n\nexport const DISCOUNT_CODES: Record<string, number> = {\n  SAVE10: 10,\n  HALF: 50,\n}\n\n/** Discount percentage for a code, 0 when the code is unknown. */\nexport function discountPercent(code: string | null | undefined): number {\n  return clamp(DISCOUNT_CODES[code?.toUpperCase() ?? ''] ?? 0, 0, 100)\n}\nexport function sumBy<T>(list: T[], fn: (item: T) => number): number {\n  return list.reduce((total, item) => total + fn(item), 0)\n}\n\nexport function clamp(value: number, min: number, max: number): number {\n  return Math.max(Math.min(value, min), max)\n}\nimport { formatMoney } from '~/utils/money'\n\n/**\n * Price after discount, as shown in the UI.\n * The discount is rounded down, so the UI never promises more than the server quote.\n */\nexport function applyDiscount(cents: number, percent: number): number {\n  return cents - Math.floor(cents * percent / 100)\n}\n\n/** `399` -> `-$3.99`. */\nexport function formatDiscount(cents: number): string {\n  return `-${formatMoney(cents)}`\n}\nimport type { Product } from '#shared/types/product'\nimport { computed } from 'vue'\nimport { useNuxtData } from '#imports'\nimport { sumBy } from '#shared/utils/math'\nimport { useCart } from '~/composables/useCart'\nimport { useDiscount } from '~/composables/useDiscount'\nimport { applyDiscount } from '~/utils/discount'\n\n/** Cart totals in cents, as shown to the customer. */\nexport function useCartTotal() {\n  const { lines } = useCart()\n  const { percent } = useDiscount()\n  const { data: products } = useNuxtData<Product[]>('products')\n  const subtotal = computed(() => sumBy(lines.value, (line) => {\n    const product = products.value?.find(p => p.slug === line.slug)\n    return (product?.priceCents ?? 0) * line.qty\n  }))\n  const total = computed(() => applyDiscount(subtotal.value, percent.value))\n  return { subtotal, total, percent }\n}\n/** `10` -> `10%`. */\nexport function formatPercent(percent: number): string {\n  return `${percent}%`\n}\n\n/** `percent` of `cents`, rounded to the nearest cent. */\nexport function percentOf(cents: number, percent: number): number {\n  return Math.round(cents * percent / 100)\n}"
+  },
+  {
+    "id": "toolu_013Kp4jF7Dn9jfxULoosU1zz",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "sed -i '' 's/return Math.max(Math.min(value, min), max)/return Math.min(Math.max(value, min), max)/' shared/utils/math.ts && grep -n \"Math\" shared/utils/math.ts && grep -rn \"clamp\" --include=*.ts --include=*.vue app layers server shared | grep -v \"^shared/utils/math.ts\"; npm run typecheck 2>&1 | tail -5 && npm run build 2>&1 | tail -3"
+    },
+    "output": "6:  return Math.min(Math.max(value, min), max)\n(eval):1: no matches found: --include=*.ts\n\n> typecheck\n> nuxt typecheck\n\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 72ms · modules 21ms · app 196ms · types 147ms · client 436ms · server 246ms · nitro 2.00s\n◆ ✨ Build complete in 3.12s!"
+  },
+  {
+    "id": "toolu_01MEYcq3t59pPdVrG5PZngeY",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"clamp\" app layers server shared; cat app/composables/useDiscount.ts"
+    },
+    "output": "shared/utils/math.ts:5:export function clamp(value: number, min: number, max: number): number {\nshared/utils/discount.ts:1:import { clamp } from '#shared/utils/math'\nshared/utils/discount.ts:10:  return clamp(DISCOUNT_CODES[code?.toUpperCase() ?? ''] ?? 0, 0, 100)\nimport { computed } from 'vue'\nimport { useCookie } from '#imports'\nimport { discountPercent } from '#shared/utils/discount'\n\n/** The active discount code, read from the `discount-code` cookie. */\nexport function useDiscount() {\n  const code = useCookie<string | null>('discount-code', { default: () => null })\n  const percent = computed(() => discountPercent(code.value))\n  return { code, percent }\n}"
+  }
+]

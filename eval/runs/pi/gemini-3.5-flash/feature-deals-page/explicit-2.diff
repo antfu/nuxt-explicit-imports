@@ -1,0 +1,39 @@
+diff --git a/app/pages/deals.vue b/app/pages/deals.vue
+new file mode 100644
+index 0000000..d196a1e
+--- /dev/null
++++ b/app/pages/deals.vue
+@@ -0,0 +1,33 @@
++<script setup lang="ts">
++import { computed } from 'vue'
++import ProductCard from '~/components/product/Card.vue'
++import { useProducts } from '~/composables/useProducts'
++import { useDiscount } from '~/composables/useDiscount'
++import UiBadge from '#layers/ui/app/components/UiBadge.vue'
++import { formatPercent } from '#layers/base/app/utils/percent'
++
++const { data: products } = await useProducts()
++const { percent } = useDiscount()
++
++const dealProducts = computed(() => {
++  return products.value?.filter(product => product.priceCents < 500) ?? []
++})
++</script>
++
++<template>
++  <div>
++    <h1>Deals</h1>
++    <section class="product-grid">
++      <ProductCard
++        v-for="product in dealProducts"
++        :key="product.slug"
++        :product="product"
++      >
++        <UiBadge>Deal</UiBadge>
++        <p v-if="percent" id="deal-discount">
++          {{ formatPercent(percent) }}
++        </p>
++      </ProductCard>
++    </section>
++  </div>
++</template>

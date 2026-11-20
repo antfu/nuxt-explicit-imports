@@ -1,0 +1,63 @@
+{
+  "config": "claude-code/claude-haiku-5-5",
+  "fingerprint": "ca1a67192beb4e80",
+  "date": "2026-11-18T22:33:41.530Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "bugfix-multihop",
+  "kind": "bugfix",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 2,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1394
+  },
+  "build": {
+    "ok": true,
+    "ms": 2950
+  },
+  "assertions": [
+    {
+      "name": "no code: /cart total is $39.98",
+      "ok": true
+    },
+    {
+      "name": "SAVE10: /cart total is $35.99",
+      "ok": true
+    },
+    {
+      "name": "no code: quote total is 39.98 USD",
+      "ok": true
+    },
+    {
+      "name": "SAVE10: quote total is 35.98 USD",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 10,
+    "toolCalls": {
+      "Bash": 8,
+      "Edit": 1
+    },
+    "toolKinds": {
+      "explore": 6,
+      "edit": 1,
+      "verify": 2,
+      "other": 1
+    },
+    "inputTokens": 1269,
+    "outputTokens": 3676,
+    "cacheReadTokens": 182002,
+    "cacheWriteTokens": 12060,
+    "toolOutputChars": 9759,
+    "costUsd": 0.005292420000000001,
+    "ms": 28802,
+    "apiMs": 23124
+  }
+}

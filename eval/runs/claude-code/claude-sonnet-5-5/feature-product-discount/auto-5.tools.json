@@ -1,0 +1,35 @@
+[
+  {
+    "id": "toolu_01PWDEnov4ZwkiSDk61K3qPc",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "git ls-files | grep -v lock; grep -rni discount --include=*.vue --include=*.ts -l . --exclude-dir=node_modules --exclude-dir=.nuxt --exclude-dir=.output"
+    },
+    "output": ".gitignore\napp/app.vue\napp/components/AppFooter.vue\napp/components/AppHeader.vue\napp/components/cart/Badge.vue\napp/components/cart/Item.vue\napp/components/cart/Summary.vue\napp/components/product/Card.vue\napp/components/product/Grid.vue\napp/components/product/Price.vue\napp/composables/useCart.ts\napp/composables/useCartTotal.ts\napp/composables/useDiscount.ts\napp/composables/useProducts.ts\napp/composables/useTheme.ts\napp/layouts/default.vue\napp/middleware/cart-not-empty.ts\napp/pages/cart.vue\napp/pages/checkout.vue\napp/pages/index.vue\napp/pages/products/[slug].vue\napp/utils/discount.ts\napp/utils/money.ts\nlayers/base/app/composables/useCart.ts\nlayers/base/app/composables/useNotify.ts\nlayers/base/app/composables/useTheme.ts\nlayers/base/app/utils/percent.ts\nlayers/base/nuxt.config.ts\nlayers/ui/app/components/ProductCard.vue\nlayers/ui/app/components/UiBadge.vue\nlayers/ui/app/components/UiButton.vue\nlayers/ui/app/components/UiCard.vue\nlayers/ui/app/components/form/Input.vue\nlayers/ui/nuxt.config.ts\nnuxt.config.ts\npackage.json\nserver/api/cart/quote.post.ts\nserver/api/products/[slug].get.ts\nserver/api/products/index.get.ts\nserver/utils/db.ts\nserver/utils/discount.ts\nserver/utils/money.ts\nserver/utils/quote.ts\nshared/types/cart.ts\nshared/types/product.ts\nshared/utils/discount.ts\nshared/utils/math.ts\nshared/utils/slug.ts\ntsconfig.json\n(eval):1: no matches found: --include=*.vue"
+  },
+  {
+    "id": "toolu_0188ozxwAw3WXcD4UNXEwyRH",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cat app/composables/useDiscount.ts app/composables/useCartTotal.ts app/utils/discount.ts app/utils/money.ts shared/utils/discount.ts app/components/cart/Summary.vue app/components/cart/Item.vue app/pages/products/*.vue app/components/product/Price.vue"
+    },
+    "output": "/** The active discount code, read from the `discount-code` cookie. */\nexport function useDiscount() {\n  const code = useCookie<string | null>('discount-code', { default: () => null })\n  const percent = computed(() => discountPercent(code.value))\n  return { code, percent }\n}\nimport type { Product } from '#shared/types/product'\n\n/** Cart totals in cents, as shown to the customer. */\nexport function useCartTotal() {\n  const { lines } = useCart()\n  const { percent } = useDiscount()\n  const { data: products } = useNuxtData<Product[]>('products')\n  const subtotal = computed(() => sumBy(lines.value, (line) => {\n    const product = products.value?.find(p => p.slug === line.slug)\n    return (product?.priceCents ?? 0) * line.qty\n  }))\n  const total = computed(() => applyDiscount(subtotal.value, percent.value))\n  return { subtotal, total, percent }\n}\n/**\n * Price after discount, as shown in the UI.\n * The discount is rounded down, so the UI never promises more than the server quote.\n */\nexport function applyDiscount(cents: number, percent: number): number {\n  return cents - Math.floor(cents * percent / 100)\n}\n\n/** `399` -> `-$3.99`. */\nexport function formatDiscount(cents: number): string {\n  return `-${formatMoney(cents)}`\n}\n/** Money format for the UI: `1999` -> `$19.99`. */\nexport function formatMoney(cents: number): string {\n  return `$${(cents / 100).toFixed(2)}`\n}\nexport const DISCOUNT_CODES: Record<string, number> = {\n  SAVE10: 10,\n  HALF: 50,\n}\n\n/** Discount percentage for a code, 0 when the code is unknown. */\nexport function discountPercent(code: string | null | undefined): number {\n  return clamp(DISCOUNT_CODES[code?.toUpperCase() ?? ''] ?? 0, 0, 100)\n}\n<script setup lang=\"ts\">\nconst { subtotal, total, percent } = useCartTotal()\n</script>\n\n<template>\n  <section id=\"cart-summary\">\n    <p>Subtotal: <span id=\"cart-subtotal\">{{ formatMoney(subtotal) }}</span></p>\n    <p v-if=\"percent\">\n      Discount: {{ formatDiscount(subtotal - total) }}\n    </p>\n    <p>Total: <span id=\"cart-total\">{{ formatMoney(total) }}</span></p>\n  </section>\n</template>\n<script setup lang=\"ts\">\nimport type { CartLine } from '#shared/types/cart'\nimport type { Product } from '#shared/types/product'\n\nconst props = defineProps<{ line: CartLine, product?: Product }>()\nconst { remove } = useCart()\nconst lineTotal = computed(() => formatMoney((props.product?.priceCents ?? 0) * props.line.qty))\n</script>\n\n<template>\n  <li class=\"cart-item\">\n    <span class=\"name\">{{ product?.name ?? line.slug }}</span>\n    <span class=\"qty\">x{{ line.qty }}</span>\n    <span class=\"line-total\">{{ lineTotal }}</span>\n    <UiButton @click=\"remove(line.slug)\">\n      Remove\n    </UiButton>\n  </li>\n</template>\n<script setup lang=\"ts\">\nimport type { Product } from '#shared/types/product'\n\nconst route = useRoute()\nconst { data: product } = await useFetch<Product & { price: string }>(`/api/products/${route.params.slug}`)\nconst { add } = useCart()\nconst { notify } = useNotify()\n\nfunction addToCart() {\n  if (!product.value)\n    return\n  add(product.value.slug)\n  notify(`${product.value.name} added to the cart`)\n}\n</script>\n\n<template>\n  <UiCard v-if=\"product\">\n    <h1>{{ product.name }}</h1>\n    <ProductPrice id=\"price\" :cents=\"product.priceCents\" />\n    <UiBadge class=\"stock\">\n      In stock\n    </UiBadge>\n    <UiButton id=\"add-to-cart\" @click=\"addToCart\">\n      Add to cart\n    </UiButton>\n  </UiCard>\n</template>\n<script setup lang=\"ts\">\nconst props = defineProps<{ cents: number }>()\nconst text = computed(() => formatMoney(props.cents))\n</script>\n\n<template>\n  <p class=\"product-price\">\n    {{ text }}\n  </p>\n</template>"
+  },
+  {
+    "id": "toolu_01Wv6MeX4dEtGqL3vEUWkou3",
+    "name": "Bash",
+    "kinds": [
+      "verify"
+    ],
+    "input": {
+      "command": "python3 - <<'E'\np='app/pages/products/[slug].vue'\ns=open(p).read()\ns=s.replace(\"const { add } = useCart()\",\"const { add } = useCart()\\nconst { percent } = useDiscount()\",1)\ns=s.replace('    <UiBadge class=\"stock\">','    <p v-if=\"percent\" id=\"discounted\">\\n      {{ formatMoney(applyDiscount(product.priceCents, percent)) }}\\n    </p>\\n    <UiBadge class=\"stock\">',1)\nopen(p,'w').write(s)\nE\nnpm run typecheck 2>&1 | tail -5; npm run build 2>&1 | tail -3"
+    },
+    "output": "> typecheck\n> nuxt typecheck\n\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 444ms · modules 55ms · app 1.20s · types 1.07s · client 2.44s · server 660ms · nitro 4.64s\n◆ ✨ Build complete in 10.5s!"
+  }
+]

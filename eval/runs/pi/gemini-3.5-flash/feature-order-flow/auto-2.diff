@@ -1,0 +1,119 @@
+diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
+new file mode 100644
+index 0000000..65ed6fd
+--- /dev/null
++++ b/app/pages/orders/[id].vue
+@@ -0,0 +1,37 @@
++<script setup lang="ts">
++const route = useRoute()
++const orderId = route.params.id as string
++
++const { data: order } = await useFetch(`/api/orders/${orderId}`)
++const { data: products } = await useProducts()
++
++const getProductName = (slug: string) => {
++  const product = products.value?.find(p => p.slug === slug)
++  return product ? product.name : slug
++}
++
++const formattedTotal = computed(() => {
++  if (!order.value?.total) return ''
++  const numericValue = parseFloat(order.value.total)
++  if (isNaN(numericValue)) return order.value.total
++  return formatMoney(Math.round(numericValue * 100))
++})
++</script>
++
++<template>
++  <div>
++    <h1>Order Details</h1>
++    <div v-if="order">
++      <p>Order ID: {{ orderId }}</p>
++      <ul>
++        <li v-for="line in order.lines" :key="line.slug" class="order-line">
++          {{ getProductName(line.slug) }}
++        </li>
++      </ul>
++      <p>Total: <span id="order-total">{{ formattedTotal }}</span></p>
++    </div>
++    <p v-else>
++      Order not found.
++    </p>
++  </div>
++</template>
+diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
+new file mode 100644
+index 0000000..a1c4003
+--- /dev/null
++++ b/server/api/orders/[id].get.ts
+@@ -0,0 +1,8 @@
++export default defineEventHandler((event) => {
++  const id = getRouterParam(event, 'id') ?? ''
++  const order = getOrder(id)
++  if (!order) {
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  }
++  return order
++})
+diff --git a/server/api/orders/index.post.ts b/server/api/orders/index.post.ts
+new file mode 100644
+index 0000000..d0442a3
+--- /dev/null
++++ b/server/api/orders/index.post.ts
+@@ -0,0 +1,18 @@
++import type { CartLine } from '#shared/types/cart'
++
++export default defineEventHandler(async (event) => {
++  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)
++  const lines = body?.lines ?? []
++  const code = body?.code
++  
++  const quote = computeQuote(lines, code)
++  
++  const savedOrder = saveOrder({
++    lines,
++    subtotal: quote.subtotal,
++    discount: quote.discount,
++    total: quote.total,
++  })
++  
++  return savedOrder
++})
+diff --git a/server/utils/db.ts b/server/utils/db.ts
+index 04e58a5..12398c2 100644
+--- a/server/utils/db.ts
++++ b/server/utils/db.ts
+@@ -1,4 +1,13 @@
+ import type { Product } from '#shared/types/product'
++import type { CartLine } from '#shared/types/cart'
++
++export interface Order {
++  id: string
++  subtotal: string
++  discount: string
++  total: string
++  lines: CartLine[]
++}
+ 
+ const products: Product[] = [
+   ['Notebook', 1999],
+@@ -16,3 +25,19 @@ export function listProducts(): Product[] {
+ export function findProduct(slug: string): Product | undefined {
+   return products.find(p => p.slug === slug)
+ }
++
++const orders: Record<string, Order> = {}
++let nextOrderId = 1000
++
++export function saveOrder(orderData: Omit<Order, 'id'>): Order {
++  nextOrderId++
++  const id = String(nextOrderId)
++  const saved: Order = { ...orderData, id }
++  orders[id] = saved
++  return saved
++}
++
++export function getOrder(id: string): Order | undefined {
++  return orders[id]
++}
++

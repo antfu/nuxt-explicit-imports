@@ -1,0 +1,444 @@
+[
+  {
+    "id": "call_17015737681470864139",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "find . -maxdepth 4 -not -path '*/.*' -not -path '*/node_modules*'"
+    },
+    "output": ".\n./app\n./app/app.vue\n./app/middleware\n./app/middleware/cart-not-empty.ts\n./app/composables\n./app/composables/useProducts.ts\n./app/composables/useCartTotal.ts\n./app/composables/useTheme.ts\n./app/composables/useCart.ts\n./app/composables/useDiscount.ts\n./app/utils\n./app/utils/discount.ts\n./app/utils/money.ts\n./app/components\n./app/components/product\n./app/components/product/Card.vue\n./app/components/product/Grid.vue\n./app/components/product/Price.vue\n./app/components/AppHeader.vue\n./app/components/AppFooter.vue\n./app/components/cart\n./app/components/cart/Item.vue\n./app/components/cart/Badge.vue\n./app/components/cart/Summary.vue\n./app/layouts\n./app/layouts/default.vue\n./app/pages\n./app/pages/index.vue\n./app/pages/cart.vue\n./app/pages/products\n./app/pages/products/[slug].vue\n./app/pages/checkout.vue\n./layers\n./layers/ui\n./layers/ui/app\n./layers/ui/app/components\n./layers/ui/nuxt.config.ts\n./layers/base\n./layers/base/app\n./layers/base/app/composables\n./layers/base/app/utils\n./layers/base/nuxt.config.ts\n./server\n./server/utils\n./server/utils/discount.ts\n./server/utils/money.ts\n./server/utils/quote.ts\n./server/utils/db.ts\n./server/api\n./server/api/products\n./server/api/products/index.get.ts\n./server/api/products/[slug].get.ts\n./server/api/cart\n./server/api/cart/quote.post.ts\n./shared\n./shared/types\n./shared/types/product.ts\n./shared/types/cart.ts\n./shared/utils\n./shared/utils/slug.ts\n./shared/utils/math.ts\n./shared/utils/discount.ts\n./package.json\n./nuxt.config.ts\n./tsconfig.json\n"
+  },
+  {
+    "id": "call_12550929878833090885",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "nuxt.config.ts"
+    },
+    "output": "export default defineNuxtConfig({\n  compatibilityDate: '2026-01-01',\n  devtools: { enabled: false },\n  telemetry: false,\n  // Auto-imports are off: import every composable, util and component explicitly.\n  imports: { autoImport: false },\n  components: { dirs: [] },\n  nitro: { imports: { autoImport: false } },\n})\n"
+  },
+  {
+    "id": "call_13769672537358556913",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "layers/ui/nuxt.config.ts"
+    },
+    "output": "export default defineNuxtConfig({\n  components: { dirs: [] },\n})\n"
+  },
+  {
+    "id": "call_5207191944515474388",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "layers/base/nuxt.config.ts"
+    },
+    "output": "export default defineNuxtConfig({\n  components: { dirs: [] },\n})\n"
+  },
+  {
+    "id": "call_18370214271972059262",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "package.json"
+    },
+    "output": "{\n  \"name\": \"eval-shop\",\n  \"type\": \"module\",\n  \"private\": true,\n  \"scripts\": {\n    \"build\": \"nuxt build\",\n    \"typecheck\": \"nuxt typecheck\"\n  }\n}\n"
+  },
+  {
+    "id": "call_3802682113779978937",
+    "name": "bash",
+    "kinds": [
+      "verify"
+    ],
+    "input": {
+      "command": "npx nuxi typecheck"
+    },
+    "output": "(no output)"
+  },
+  {
+    "id": "call_13683582252644239520",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"layers/\" ."
+    },
+    "output": "./app/components/product/Card.vue:4:import UiCard from '#layers/ui/app/components/UiCard.vue'\n./app/components/AppFooter.vue:2:import { useNotify } from '#layers/base/app/composables/useNotify'\n./app/components/cart/Item.vue:5:import UiButton from '#layers/ui/app/components/UiButton.vue'\n./app/components/cart/Badge.vue:2:import UiBadge from '#layers/ui/app/components/UiBadge.vue'\n./app/pages/products/[slug].vue:4:import { useNotify } from '#layers/base/app/composables/useNotify'\n./app/pages/products/[slug].vue:5:import UiBadge from '#layers/ui/app/components/UiBadge.vue'\n./app/pages/products/[slug].vue:6:import UiButton from '#layers/ui/app/components/UiButton.vue'\n./app/pages/products/[slug].vue:7:import UiCard from '#layers/ui/app/components/UiCard.vue'\n./app/pages/checkout.vue:4:import { useNotify } from '#layers/base/app/composables/useNotify'\n./app/pages/checkout.vue:5:import UiBadge from '#layers/ui/app/components/UiBadge.vue'\n./app/pages/checkout.vue:6:import UiButton from '#layers/ui/app/components/UiButton.vue'\n./app/pages/checkout.vue:7:import FormInput from '#layers/ui/app/components/form/Input.vue'\n./.nuxt/tsconfig.node.json:100:    \"../layers/*/nuxt.config.*\",\n./.nuxt/tsconfig.node.json:101:    \"../layers/*/.config/nuxt.*\",\n./.nuxt/tsconfig.node.json:102:    \"../layers/*/modules/*.mjs\",\n./.nuxt/tsconfig.node.json:103:    \"../layers/*/modules/*.js\",\n./.nuxt/tsconfig.node.json:104:    \"../layers/*/modules/*.cjs\",\n./.nuxt/tsconfig.node.json:105:    \"../layers/*/modules/*.mts\",\n./.nuxt/tsconfig.node.json:106:    \"../layers/*/modules/*.ts\",\n./.nuxt/tsconfig.node.json:107:    \"../layers/*/modules/*.cts\",\n./.nuxt/tsconfig.node.json:108:    \"../layers/*/modules/*.tsx\",\n./.nuxt/tsconfig.node.json:109:    \"../layers/*/modules/*.jsx\",\n./.nuxt/tsconfig.node.json:110:    \"../layers/*/modules/*.vue\",\n./.nuxt/tsconfig.node.json:111:    \"../layers/*/modules/*/*.mjs\",\n./.nuxt/tsconfig.node.json:112:    \"../layers/*/modules/*/*.js\",\n./.nuxt/tsconfig.node.json:113:    \"../layers/*/modules/*/*.cjs\",\n./.nuxt/tsconfig.node.json:114:    \"../layers/*/modules/*/*.mts\",\n./.nuxt/tsconfig.node.json:115:    \"../layers/*/modules/*/*.ts\",\n./.nuxt/tsconfig.node.json:116:    \"../layers/*/modules/*/*.cts\",\n./.nuxt/tsconfig.node.json:117:    \"../layers/*/modules/*/*.tsx\",\n./.nuxt/tsconfig.node.json:118:    \"../layers/*/modules/*/*.jsx\",\n./.nuxt/tsconfig.node.json:119:    \"../layers/*/modules/*/*.vue\",\n./.nuxt/tsconfig.node.json:121:    \"../layers/*/nuxt.schema.*\"\n./.nuxt/tsconfig.node.json:132:    \"../layers/*/app/**/*\",\n./.nuxt/tsconfig.node.json:133:    \"../layers/*/modules/*/runtime/**/*\",\n./.nuxt/tsconfig.node.json:136:    \"../layers/*/server/**/*\",\n./.nuxt/tsconfig.node.json:137:    \"../layers/*/modules/*/runtime/server/**/*\",\n./.nuxt/tsconfig.node.json:138:    \"../layers/ui/server/**/*\",\n./.nuxt/tsconfig.node.json:139:    \"../layers/base/server/**/*\"\n./.nuxt/tsconfig.app.json:43:      \"#layers/ui\": [\n./.nuxt/tsconfig.app.json:44:        \"../layers/ui\"\n./.nuxt/tsconfig.app.json:46:      \"#layers/ui/*\": [\n./.nuxt/tsconfig.app.json:47:        \"../layers/ui/*\"\n./.nuxt/tsconfig.app.json:49:      \"#layers/base\": [\n./.nuxt/tsconfig.app.json:50:        \"../layers/base\"\n./.nuxt/tsconfig.app.json:52:      \"#layers/base/*\": [\n./.nuxt/tsconfig.app.json:53:        \"../layers/base/*\"\n./.nuxt/tsconfig.app.json:186:    \"../layers/*/app/**/*\",\n./.nuxt/tsconfig.app.json:187:    \"../layers/*/modules/*/runtime/**/*\",\n./.nuxt/tsconfig.app.json:190:    \"../layers/*/shared/**/*.d.ts\",\n./.nuxt/tsconfig.app.json:192:    \"../layers/*/*.d.ts\",\n./.nuxt/tsconfig.app.json:197:    \"../layers/*/app/**/*.vue\",\n./.nuxt/tsconfig.app.json:198:    \"../layers/*/modules/*/runtime/**/*.vue\"\n./.nuxt/tsconfig.app.json:207:    \"../layers/*/server/**/*\",\n./.nuxt/tsconfig.app.json:208:    \"../layers/*/modules/*/runtime/server/**/*\",\n./.nuxt/tsconfig.app.json:220:    \"../layers/*/nuxt.config.*\",\n./.nuxt/tsconfig.app.json:221:    \"../layers/*/.config/nuxt.*\",\n./.nuxt/tsconfig.app.json:222:    \"../layers/*/modules/*.mjs\",\n./.nuxt/tsconfig.app.json:223:    \"../layers/*/modules/*.js\",\n./.nuxt/tsconfig.app.json:224:    \"../layers/*/modules/*.cjs\",\n./.nuxt/tsconfig.app.json:225:    \"../layers/*/modules/*.mts\",\n./.nuxt/tsconfig.app.json:226:    \"../layers/*/modules/*.ts\",\n./.nuxt/tsconfig.app.json:227:    \"../layers/*/modules/*.cts\",\n./.nuxt/tsconfig.app.json:228:    \"../layers/*/modules/*.tsx\",\n./.nuxt/tsconfig.app.json:229:    \"../layers/*/modules/*.jsx\",\n./.nuxt/tsconfig.app.json:230:    \"../layers/*/modules/*.vue\",\n./.nuxt/tsconfig.app.json:231:    \"../layers/*/modules/*/*.mjs\",\n./.nuxt/tsconfig.app.json:232:    \"../layers/*/modules/*/*.js\",\n./.nuxt/tsconfig.app.json:233:    \"../layers/*/modules/*/*.cjs\",\n./.nuxt/tsconfig.app.json:234:    \"../layers/*/modules/*/*.mts\",\n./.nuxt/tsconfig.app.json:235:    \"../layers/*/modules/*/*.ts\",\n./.nuxt/tsconfig.app.json:236:    \"../layers/*/modules/*/*.cts\",\n./.nuxt/tsconfig.app.json:237:    \"../layers/*/modules/*/*.tsx\",\n./.nuxt/tsconfig.app.json:238:    \"../layers/*/modules/*/*.jsx\",\n./.nuxt/tsconfig.app.json:239:    \"../layers/*/modules/*/*.vue\",\n./.nuxt/tsconfig.app.json:240:    \"../layers/ui/server/**/*\",\n./.nuxt/tsconfig.app.json:241:    \"../layers/base/server/**/*\",\n./.nuxt/tsconfig.app.tsbuildinfo:1:{\"root\":[\"./nuxt.d.ts\",\"../app/app.vue\",\"../app/components/appfooter.vue\",\"../app/components/appheader.vue\",\"../app/components/cart/badge.vue\",\"../app/components/cart/item.vue\",\"../app/components/cart/summary.vue\",\"../app/components/product/card.vue\",\"../app/components/product/grid.vue\",\"../app/components/product/price.vue\",\"../app/composables/usecart.ts\",\"../app/composables/usecarttotal.ts\",\"../app/composables/usediscount.ts\",\"../app/composables/useproducts.ts\",\"../app/composables/usetheme.ts\",\"../app/layouts/default.vue\",\"../app/middleware/cart-not-empty.ts\",\"../app/pages/cart.vue\",\"../app/pages/checkout.vue\",\"../app/pages/index.vue\",\"../app/pages/products/[slug].vue\",\"../app/utils/discount.ts\",\"../app/utils/money.ts\",\"../layers/base/app/composables/usecart.ts\",\"../layers/base/app/composables/usenotify.ts\",\"../layers/base/app/composables/usetheme.ts\",\"../layers/base/app/utils/percent.ts\",\"../layers/ui/app/components/productcard.vue\",\"../layers/ui/app/components/uibadge.vue\",\"../layers/ui/app/components/uibutton.vue\",\"../layers/ui/app/components/uicard.vue\",\"../layers/ui/app/components/form/input.vue\"],\"version\":\"6.0.3\"}\n./.nuxt/tsconfig.server.json:110:      \"#layers/ui\": [\n./.nuxt/tsconfig.server.json:111:        \"../layers/ui\"\n./.nuxt/tsconfig.server.json:113:      \"#layers/ui/*\": [\n./.nuxt/tsconfig.server.json:114:        \"../layers/ui/*\"\n./.nuxt/tsconfig.server.json:116:      \"#layers/base\": [\n./.nuxt/tsconfig.server.json:117:        \"../layers/base\"\n./.nuxt/tsconfig.server.json:119:      \"#layers/base/*\": [\n./.nuxt/tsconfig.server.json:120:        \"../layers/base/*\"\n./.nuxt/tsconfig.server.json:156:    \"../layers/ui/server/**/*\",\n./.nuxt/tsconfig.server.json:157:    \"../layers/base/server/**/*\",\n./.nuxt/tsconfig.server.json:159:    \"../layers/ui/shared/**/*.d.ts\",\n./.nuxt/tsconfig.server.json:160:    \"../layers/base/shared/**/*.d.ts\",\n./.nuxt/tsconfig.json:43:      \"#layers/ui\": [\n./.nuxt/tsconfig.json:44:        \"../layers/ui\"\n./.nuxt/tsconfig.json:46:      \"#layers/ui/*\": [\n./.nuxt/tsconfig.json:47:        \"../layers/ui/*\"\n./.nuxt/tsconfig.json:49:      \"#layers/base\": [\n./.nuxt/tsconfig.json:50:        \"../layers/base\"\n./.nuxt/tsconfig.json:52:      \"#layers/base/*\": [\n./.nuxt/tsconfig.json:53:        \"../layers/base/*\"\n./.nuxt/tsconfig.json:186:    \"../layers/*/app/**/*\",\n./.nuxt/tsconfig.json:187:    \"../layers/*/modules/*/runtime/**/*\",\n./.nuxt/tsconfig.json:190:    \"../layers/*/shared/**/*.d.ts\",\n./.nuxt/tsconfig.json:192:    \"../layers/*/*.d.ts\",\n./.nuxt/tsconfig.json:197:    \"../layers/*/app/**/*.vue\",\n./.nuxt/tsconfig.json:198:    \"../layers/*/modules/*/runtime/**/*.vue\",\n./.nuxt/tsconfig.json:211:    \"../layers/*/nuxt.config.*\",\n./.nuxt/tsconfig.json:212:    \"../layers/*/.config/nuxt.*\",\n./.nuxt/tsconfig.json:213:    \"../layers/*/modules/*.mjs\",\n./.nuxt/tsconfig.json:214:    \"../layers/*/modules/*.js\",\n./.nuxt/tsconfig.json:215:    \"../layers/*/modules/*.cjs\",\n./.nuxt/tsconfig.json:216:    \"../layers/*/modules/*.mts\",\n./.nuxt/tsconfig.json:217:    \"../layers/*/modules/*.ts\",\n./.nuxt/tsconfig.json:218:    \"../layers/*/modules/*.cts\",\n./.nuxt/tsconfig.json:219:    \"../layers/*/modules/*.tsx\",\n./.nuxt/tsconfig.json:220:    \"../layers/*/modules/*.jsx\",\n./.nuxt/tsconfig.json:221:    \"../layers/*/modules/*.vue\",\n./.nuxt/tsconfig.json:222:    \"../layers/*/modules/*/*.mjs\",\n./.nuxt/tsconfig.json:223:    \"../layers/*/modules/*/*.js\",\n./.nuxt/tsconfig.json:224:    \"../layers/*/modules/*/*.cjs\",\n./.nuxt/tsconfig.json:225:    \"../layers/*/modules/*/*.mts\",\n./.nuxt/tsconfig.json:226:    \"../layers/*/modules/*/*.ts\",\n./.nuxt/tsconfig.json:227:    \"../layers/*/modules/*/*.cts\",\n./.nuxt/tsconfig.json:228:    \"../layers/*/modules/*/*.tsx\",\n./.nuxt/tsconfig.json:229:    \"../layers/*/modules/*/*.jsx\",\n./.nuxt/tsconfig.json:230:    \"../layers/*/modules/*/*.vue\",\n./.nuxt/tsconfig.json:233:    \"../layers/*/shared/**/*\",\n./.nuxt/tsconfig.json:236:    \"../layers/*/shared/**/*.vue\"\n./.nuxt/tsconfig.json:245:    \"../layers/*/server/**/*\",\n./.nuxt/tsconfig.json:246:    \"../layers/*/modules/*/runtime/server/**/*\",\n./.nuxt/tsconfig.json:247:    \"../layers/ui/server/**/*\",\n./.nuxt/tsconfig.json:248:    \"../layers/base/server/**/*\"\n./.nuxt/imports.d.ts:49:export { useNotify } from '../layers/base/app/composables/useNotify';\n./.nuxt/imports.d.ts:50:export { formatPercent, percentOf } from '../layers/base/app/utils/percent';\n./.nuxt/tsconfig.node.tsbuildinfo:1:{\"root\":[\"./nuxt.node.d.ts\",\"../nuxt.config.ts\",\"../layers/base/nuxt.config.ts\",\"../layers/ui/nuxt.config.ts\"],\"version\":\"6.0.3\"}\n./.nuxt/tsconfig.shared.json:43:      \"#layers/ui\": [\n./.nuxt/tsconfig.shared.json:44:        \"../layers/ui\"\n./.nuxt/tsconfig.shared.json:46:      \"#layers/ui/*\": [\n./.nuxt/tsconfig.shared.json:47:        \"../layers/ui/*\"\n./.nuxt/tsconfig.shared.json:49:      \"#layers/base\": [\n./.nuxt/tsconfig.shared.json:50:        \"../layers/base\"\n./.nuxt/tsconfig.shared.json:52:      \"#layers/base/*\": [\n./.nuxt/tsconfig.shared.json:53:        \"../layers/base/*\"\n./.nuxt/tsconfig.shared.json:172:    \"../layers/*/shared/**/*\",\n./.nuxt/tsconfig.shared.json:174:    \"../layers/*/*.d.ts\"\nBinary file ./.git/index matches\n"
+  },
+  {
+    "id": "call_7609606588569625077",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "find . -maxdepth 3 -not -path '*/.*' -not -path '*/node_modules*'"
+    },
+    "output": ".\n./app\n./app/app.vue\n./app/middleware\n./app/middleware/cart-not-empty.ts\n./app/composables\n./app/composables/useProducts.ts\n./app/composables/useCartTotal.ts\n./app/composables/useTheme.ts\n./app/composables/useCart.ts\n./app/composables/useDiscount.ts\n./app/utils\n./app/utils/discount.ts\n./app/utils/money.ts\n./app/components\n./app/components/product\n./app/components/AppHeader.vue\n./app/components/AppFooter.vue\n./app/components/cart\n./app/layouts\n./app/layouts/default.vue\n./app/pages\n./app/pages/index.vue\n./app/pages/cart.vue\n./app/pages/products\n./app/pages/checkout.vue\n./layers\n./layers/ui\n./layers/ui/app\n./layers/ui/nuxt.config.ts\n./layers/base\n./layers/base/app\n./layers/base/nuxt.config.ts\n./server\n./server/utils\n./server/utils/discount.ts\n./server/utils/money.ts\n./server/utils/quote.ts\n./server/utils/db.ts\n./server/api\n./server/api/products\n./server/api/cart\n./shared\n./shared/types\n./shared/types/product.ts\n./shared/types/cart.ts\n./shared/utils\n./shared/utils/slug.ts\n./shared/utils/math.ts\n./shared/utils/discount.ts\n./package.json\n./nuxt.config.ts\n./tsconfig.json\n"
+  },
+  {
+    "id": "call_2229338505272266575",
+    "name": "bash",
+    "kinds": [
+      "other"
+    ],
+    "input": {
+      "command": "npx nuxi info"
+    },
+    "output": "● Nuxt root directory: /private/var/folders/_8/zp56skl57rqcr1j0jjhv3r240000gn/T/nuxt-explicit-imports-eval/2026-11-18T22-05-33-346Z/pi-gemini-3-5-flash/refactor-extract-cart-layer-explicit-4\n  \n● Nuxt project info:\n  |                      |                                                                                |\n  | -------------------- | ------------------------------------------------------------------------------ |\n  | **Operating system** | `macOS 27.2.0`                                                                 |\n  | **CPU**              | `Apple M4 (10 cores)`                                                          |\n  | **Node.js version**  | `v24.16.0`                                                                     |\n  | **nuxt/cli version** | `4.0.3`                                                                        |\n  | **Package manager**  | `unknown`                                                                      |\n  | **Nuxt version**     | `4.6.4`                                                                        |\n  | **Nitro version**    | `2.13.6`                                                                       |\n  | **Builder**          | `vite@8.3.8`                                                                   |\n  | **Config**           | `compatibilityDate`, `components`, `devtools`, `imports`, `nitro`, `telemetry` |\n  | **Modules**          | `-`                                                                            |\n  \n● 👉 Read documentation: https://nuxt.com\n● 👉 Report an issue: https://github.com/nuxt/nuxt/issues/new?template=bug-report.yml\n● 👉 Suggest an improvement: https://github.com/nuxt/nuxt/discussions/new\n"
+  },
+  {
+    "id": "call_11943021462038183597",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "layers/base/app/composables/useCart.ts"
+    },
+    "output": "import type { CartLine } from '#shared/types/cart'\nimport { computed } from 'vue'\nimport { useState } from '#imports'\n\n/**\n * Legacy in-memory cart, kept for older apps built on this layer.\n * Apps that persist the cart override it with their own `useCart`.\n */\nexport function useCart() {\n  const lines = useState<CartLine[]>('legacy-cart', () => [])\n  const count = computed(() => lines.value.length)\n  function add(slug: string, qty = 1) {\n    lines.value = [...lines.value, { slug, qty }]\n  }\n  function remove(slug: string) {\n    lines.value = lines.value.filter(line => line.slug !== slug)\n  }\n  return { lines, count, add, remove }\n}\n"
+  },
+  {
+    "id": "call_9581658659922101258",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/composables/useCart.ts"
+    },
+    "output": "import type { CartLine } from '#shared/types/cart'\nimport { computed } from 'vue'\nimport { useCookie } from '#imports'\nimport { sumBy } from '#shared/utils/math'\n\n/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\nexport function useCart() {\n  const lines = useCookie<CartLine[]>('cart', { default: () => [] })\n  const count = computed(() => sumBy(lines.value, line => line.qty))\n  function add(slug: string, qty = 1) {\n    const existing = lines.value.find(line => line.slug === slug)\n    lines.value = existing\n      ? lines.value.map(line => (line.slug === slug ? { ...line, qty: line.qty + qty } : line))\n      : [...lines.value, { slug, qty }]\n  }\n  function remove(slug: string) {\n    lines.value = lines.value.filter(line => line.slug !== slug)\n  }\n  return { lines, count, add, remove }\n}\n"
+  },
+  {
+    "id": "call_9760573365811880517",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"extends\" ."
+    },
+    "output": "./.nuxt/types/nitro-nuxt.d.ts:14:  interface NitroRuntimeConfig extends RuntimeConfig {}\n./.nuxt/types/nitro-nuxt.d.ts:15:  interface NitroRuntimeConfigApp extends RuntimeConfigApp {}\n./.nuxt/types/nitro-nuxt.d.ts:16:  interface NitroRouteConfig extends RouteRuleConfigExtensions {}\n./.nuxt/types/nitro-nuxt.d.ts:43:  interface NitroRuntimeConfig extends RuntimeConfig {}\n./.nuxt/types/nitro-nuxt.d.ts:44:  interface NitroRuntimeConfigApp extends RuntimeConfigApp {}\n./.nuxt/types/nitro-nuxt.d.ts:45:  interface NitroRouteConfig extends RouteRuleConfigExtensions {}\n./.nuxt/types/runtime-config.d.ts:19:  interface RuntimeConfig extends SharedRuntimeConfig {}\n./.nuxt/types/runtime-config.d.ts:20:  interface PublicRuntimeConfig extends SharedPublicRuntimeConfig {}\n./.nuxt/types/runtime-config.d.ts:23:  interface RuntimeConfig extends SharedRuntimeConfig {}\n./.nuxt/types/runtime-config.d.ts:24:  interface PublicRuntimeConfig extends SharedPublicRuntimeConfig {}\n./.nuxt/types/nitro-routes.d.ts:4:  type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T\n./.nuxt/types/nitro-config.d.ts:11:  interface AppConfig extends UserAppConfig {}\n./.nuxt/types/nitro-internal-api.d.ts:6:  interface ServerRoutes extends InternalApi {}\n./.nuxt/types/nitro-internal-api.d.ts:10:  interface ServerRoutes extends InternalApi {}\n./.nuxt/types/shared-app.config.d.ts:7:type IsAny<T> = 0 extends 1 & T ? true : false\n./.nuxt/types/shared-app.config.d.ts:9:type IsMergeable<T> = T extends readonly any[] | ((...args: any[]) => any) ? false : T extends Record<string, any> ? true : false\n./.nuxt/types/shared-app.config.d.ts:11:type MergedAppConfig<Resolved extends Record<string, unknown>, Custom extends Record<string, unknown>> = {\n./.nuxt/types/shared-app.config.d.ts:12:  [K in keyof (Resolved & Custom)]: K extends keyof Custom\n./.nuxt/types/shared-app.config.d.ts:13:    ? unknown extends Custom[K]\n./.nuxt/types/shared-app.config.d.ts:15:      : IsAny<Custom[K]> extends true\n./.nuxt/types/shared-app.config.d.ts:17:        : IsMergeable<Custom[K]> extends true\n./.nuxt/types/shared-app.config.d.ts:18:            ? IsMergeable<Resolved[K]> extends true\n./.nuxt/types/shared-app.config.d.ts:26:  interface SharedAppConfig extends MergedAppConfig<typeof inlineConfig, CustomAppConfig> { }\n./.nuxt/types/shared-app.config.d.ts:29:  interface SharedAppConfig extends MergedAppConfig<typeof inlineConfig, CustomAppConfig> { }\n./.nuxt/types/components.d.ts:236:  export interface GlobalComponents extends _GlobalComponents { }\n./.nuxt/types/layouts.d.ts:8:  export type LayoutKey = keyof NuxtLayouts extends never ? string : keyof NuxtLayouts\n./.nuxt/types/app.config.d.ts:7:  const defineAppConfig: <C extends AppConfigInput> (config: C) => C\n./.nuxt/types/app.config.d.ts:14:type IsAny<T> = 0 extends 1 & T ? true : false\n./.nuxt/types/app.config.d.ts:16:type IsMergeable<T> = T extends readonly any[] | ((...args: any[]) => any) ? false : T extends Record<string, any> ? true : false\n./.nuxt/types/app.config.d.ts:18:type MergedAppConfig<Resolved extends Record<string, unknown>, Custom extends Record<string, unknown>> = {\n./.nuxt/types/app.config.d.ts:19:  [K in keyof (Resolved & Custom)]: K extends keyof Custom\n./.nuxt/types/app.config.d.ts:20:    ? unknown extends Custom[K]\n./.nuxt/types/app.config.d.ts:22:      : IsAny<Custom[K]> extends true\n./.nuxt/types/app.config.d.ts:24:        : IsMergeable<Custom[K]> extends true\n./.nuxt/types/app.config.d.ts:25:            ? IsMergeable<Resolved[K]> extends true\n./.nuxt/types/app.config.d.ts:33:  interface AppConfig extends MergedAppConfig<ResolvedAppConfig, CustomAppConfig> { }\n./.nuxt/types/app.config.d.ts:36:  interface AppConfig extends MergedAppConfig<ResolvedAppConfig, CustomAppConfig> { }\n./.nuxt/types/shared-server-routes.d.ts:18:export type ValidInput<Path_, Method extends AnyHTTPMethod = 'GET'>\n./.nuxt/types/shared-server-routes.d.ts:21:export type Response<Path_, Method extends AnyHTTPMethod = 'GET'>\n./.nuxt/types/shared-server-routes.d.ts:26:export type ResponseHeaders<Path_, Method extends AnyHTTPMethod = 'GET'> = TypedFetchResponseHeaders<AugmentedServerRoutes, Path_, Method>\n./.nuxt/types/shared-server-routes.d.ts:28:export type ErrorBody<Path_, Method extends AnyHTTPMethod = 'GET'> = TypedFetchErrorBody<AugmentedServerRoutes, Path_, Method>\n./.nuxt/types/shared-server-routes.d.ts:30:export type RequestBody<Path_, Method extends AnyHTTPMethod = 'GET', Fallback = BodyInit | null> = TypedFetchRequestBody<AugmentedServerRoutes, Path_, Method, Fallback>\n./.nuxt/types/shared-server-routes.d.ts:32:export type RequestQuery<Path_, Method extends AnyHTTPMethod = 'GET', Fallback = Record<string, unknown>> = TypedFetchRequestQuery<AugmentedServerRoutes, Path_, Method, Fallback>\n./.nuxt/types/shared-server-routes.d.ts:34:export type RequestHeaders<Path_, Method extends AnyHTTPMethod = 'GET', Fallback = HeadersInit> = TypedFetchRequestHeaders<AugmentedServerRoutes, Path_, Method, Fallback>\n./.nuxt/types/shared-server-routes.d.ts:36:export type Requires<Path_, Method extends AnyHTTPMethod, Field extends 'body' | 'query' | 'headers'> = TypedFetchRequires<AugmentedServerRoutes, Path_, Method, Field>\n./.nuxt/types/plugins.d.ts:4:type Decorate<T extends Record<string, any>> = { [K in keyof T as K extends string ? `$${K}` : never]: T[K] }\n./.nuxt/types/plugins.d.ts:6:type InjectionType<A extends Plugin> = A extends {default: Plugin<infer T>} ? Decorate<T> : unknown\n./.nuxt/types/plugins.d.ts:23:  interface NuxtApp extends NuxtAppInjections { }\n./.nuxt/types/plugins.d.ts:31:  interface ComponentCustomProperties extends NuxtAppInjections { }\n./.nuxt/schema/nuxt.schema.d.ts:8:  interface NuxtConfig extends Omit<NuxtCustomSchema, 'appConfig'> {}\n./.nuxt/schema/nuxt.schema.d.ts:9:  interface NuxtOptions extends Omit<NuxtCustomSchema, 'appConfig'> {}\n./.nuxt/schema/nuxt.schema.d.ts:10:  interface CustomAppConfig extends _CustomAppConfig {}\n./.nuxt/schema/nuxt.schema.d.ts:14:  interface NuxtConfig extends Omit<NuxtCustomSchema, 'appConfig'> {}\n./.nuxt/schema/nuxt.schema.d.ts:15:  interface NuxtOptions extends Omit<NuxtCustomSchema, 'appConfig'> {}\n./.nuxt/schema/nuxt.schema.d.ts:16:  interface CustomAppConfig extends _CustomAppConfig {}\n./.nuxt/server-routes.d.ts:85:export type ValidInput<Path_, Method extends AnyHTTPMethod = 'GET'>\n./.nuxt/server-routes.d.ts:88:export type Response<Path_, Method extends AnyHTTPMethod = 'GET'>\n./.nuxt/server-routes.d.ts:89:  = Path_ extends keyof Exact\n./.nuxt/server-routes.d.ts:90:    ? Uppercase<Method> extends keyof Exact[Path_]\n./.nuxt/server-routes.d.ts:91:      ? 'response' extends keyof Exact[Path_][Uppercase<Method>]\n./.nuxt/server-routes.d.ts:99:export type ResponseHeaders<Path_, Method extends AnyHTTPMethod = 'GET'> = TypedFetchResponseHeaders<AugmentedServerRoutes, Path_, Method>\n./.nuxt/server-routes.d.ts:101:export type ErrorBody<Path_, Method extends AnyHTTPMethod = 'GET'> = TypedFetchErrorBody<AugmentedServerRoutes, Path_, Method>\n./.nuxt/server-routes.d.ts:103:export type RequestBody<Path_, Method extends AnyHTTPMethod = 'GET', Fallback = BodyInit | null> = TypedFetchRequestBody<AugmentedServerRoutes, Path_, Method, Fallback>\n./.nuxt/server-routes.d.ts:105:export type RequestQuery<Path_, Method extends AnyHTTPMethod = 'GET', Fallback = Record<string, unknown>> = TypedFetchRequestQuery<AugmentedServerRoutes, Path_, Method, Fallback>\n./.nuxt/server-routes.d.ts:107:export type RequestHeaders<Path_, Method extends AnyHTTPMethod = 'GET', Fallback = HeadersInit> = TypedFetchRequestHeaders<AugmentedServerRoutes, Path_, Method, Fallback>\n./.nuxt/server-routes.d.ts:109:export type Requires<Path_, Method extends AnyHTTPMethod, Field extends 'body' | 'query' | 'headers'> = TypedFetchRequires<AugmentedServerRoutes, Path_, Method, Field>\n"
+  },
+  {
+    "id": "call_5223271642234857836",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/components/product/Card.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport type { Product } from '#shared/types/product'\nimport { NuxtLink } from '#components'\nimport UiCard from '#layers/ui/app/components/UiCard.vue'\nimport ProductPrice from '~/components/product/Price.vue'\n\ndefineProps<{ product: Product }>()\n</script>\n\n<template>\n  <UiCard>\n    <article class=\"product-card\">\n      <NuxtLink :to=\"`/products/${product.slug}`\">\n        <h2>{{ product.name }}</h2>\n      </NuxtLink>\n      <ProductPrice :cents=\"product.priceCents\" />\n      <slot />\n    </article>\n  </UiCard>\n</template>\n"
+  },
+  {
+    "id": "call_5097905028299795110",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "offset": 1,
+      "path": ".nuxt/tsconfig.json",
+      "limit": 100
+    },
+    "output": "{\n  \"compilerOptions\": {\n    \"paths\": {\n      \"@nuxt/devtools\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/@nuxt+devtools@3.4.4_@nuxt+schema@4.6.4_confbox@0.3.2_db0@0.3.4_dotenv@17.4.2_giget@3.3_0a2bd7adfdc173494267482431424939/node_modules/@nuxt/devtools\"\n      ],\n      \"@nuxt/schema\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/@nuxt+schema@4.6.4/node_modules/@nuxt/schema\"\n      ],\n      \"nuxt\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/nuxt@4.6.4_@babel+plugin-syntax-jsx@7.29.7_@babel+core@7.29.13_supports-color@10.2.2____6659b4a31574f666a266475557fef196/node_modules/nuxt\"\n      ],\n      \"@unhead/vue\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/@unhead+vue@3.4.3_@oxc-project+types@0.157.0_esbuild@0.28.2_lightningcss@1.33.0_oxc-par_410c6912b7831c755287c9b27e1382ed/node_modules/@unhead/vue\"\n      ],\n      \"vue\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/vue@3.5.45_typescript@6.0.3/node_modules/vue\"\n      ],\n      \"@vue/runtime-core\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/@vue+runtime-core@3.5.45/node_modules/@vue/runtime-core\"\n      ],\n      \"@vue/compiler-sfc\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/@vue+compiler-sfc@3.5.45/node_modules/@vue/compiler-sfc\"\n      ],\n      \"vue-router\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/vue-router@5.5.1_@vue+compiler-sfc@3.5.45_esbuild@0.28.2_rolldown@1.2.18_rollup@4.68.3__6ca7734ade9bdccef99d5101f2f5bb89/node_modules/vue-router\"\n      ],\n      \"vue-router/auto-routes\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/vue-router@5.5.1_@vue+compiler-sfc@3.5.45_esbuild@0.28.2_rolldown@1.2.18_rollup@4.68.3__6ca7734ade9bdccef99d5101f2f5bb89/node_modules/vue-router/vue-router-auto-routes.d.mts\"\n      ],\n      \"vite/client\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/vite@8.3.8_@types+node@26.6.6_esbuild@0.28.2_jiti@2.7.0_terser@5.51.2_tsx@4.23.15_yaml@2.9.1/node_modules/vite/client.d.ts\"\n      ],\n      \"defu\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/defu@6.1.7/node_modules/defu\"\n      ],\n      \"consola\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/consola@3.4.2/node_modules/consola\"\n      ],\n      \"ofetch\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/ofetch@1.5.1/node_modules/ofetch\"\n      ],\n      \"#layers/ui\": [\n        \"../layers/ui\"\n      ],\n      \"#layers/ui/*\": [\n        \"../layers/ui/*\"\n      ],\n      \"#layers/base\": [\n        \"../layers/base\"\n      ],\n      \"#layers/base/*\": [\n        \"../layers/base/*\"\n      ],\n      \"nuxt/schema\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/@nuxt+schema@4.6.4/node_modules/@nuxt/schema\"\n      ],\n      \"~\": [\n        \"../app\"\n      ],\n      \"~/*\": [\n        \"../app/*\"\n      ],\n      \"@\": [\n        \"../app\"\n      ],\n      \"@/*\": [\n        \"../app/*\"\n      ],\n      \"~~\": [\n        \"..\"\n      ],\n      \"~~/*\": [\n        \"../*\"\n      ],\n      \"@@\": [\n        \"..\"\n      ],\n      \"@@/*\": [\n        \"../*\"\n      ],\n      \"#shared\": [\n        \"../shared\"\n      ],\n      \"#shared/*\": [\n        \"../shared/*\"\n      ],\n      \"#server\": [\n        \"../server\"\n      ],\n      \"#server/*\": [\n        \"../server/*\"\n      ],\n      \"#app\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/nuxt@4.6.4_@babel+plugin-syntax-jsx@7.29.7_@babel+core@7.29.13_supports-color@10.2.2____6659b4a31574f666a266475557fef196/node_modules/nuxt/dist/app\"\n      ],\n      \"#app/*\": [\n        \"../../../../../../../../../../../Users/antfu/i/nuxt-explicit-imports/node_modules/.pnpm/nuxt@4.6.4_@babel+plugin-syntax-jsx@7.29.7_@babel+core@7.29.13_supports-color@10.2.2____6659b4a31574f666a266475557fef196/node_modules/nuxt/dist/app/*\"\n      ],\n      \"nuxt/app\": [\n\n[155 more lines in file. Use offset=101 to continue.]"
+  },
+  {
+    "id": "call_9604549285892447067",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/components/cart/Badge.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport UiBadge from '#layers/ui/app/components/UiBadge.vue'\nimport { useCart } from '~/composables/useCart'\n\nconst { count } = useCart()\n</script>\n\n<template>\n  <UiBadge class=\"cart-badge\">\n    {{ count }}\n  </UiBadge>\n</template>\n"
+  },
+  {
+    "id": "call_18371519192742537807",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "find layers/base -maxdepth 4"
+    },
+    "output": "layers/base\nlayers/base/app\nlayers/base/app/composables\nlayers/base/app/composables/useNotify.ts\nlayers/base/app/composables/useTheme.ts\nlayers/base/app/composables/useCart.ts\nlayers/base/app/utils\nlayers/base/app/utils/percent.ts\nlayers/base/nuxt.config.ts\n"
+  },
+  {
+    "id": "call_17694412321638080219",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "layers/base/app/composables/useNotify.ts"
+    },
+    "output": "import { useState } from '#imports'\n\nexport function useNotify() {\n  const message = useState<string | null>('notify', () => null)\n  function notify(text: string) {\n    message.value = text\n  }\n  return { message, notify }\n}\n"
+  },
+  {
+    "id": "call_8426688447802296765",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "layers/base/app/composables/useTheme.ts"
+    },
+    "output": "import { useState } from '#imports'\n\nexport function useTheme() {\n  return useState('theme', () => 'light')\n}\n"
+  },
+  {
+    "id": "call_5235623328441653629",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "layers/base/app/utils/percent.ts"
+    },
+    "output": "/** `10` -> `10%`. */\nexport function formatPercent(percent: number): string {\n  return `${percent}%`\n}\n\n/** `percent` of `cents`, rounded to the nearest cent. */\nexport function percentOf(cents: number, percent: number): number {\n  return Math.round(cents * percent / 100)\n}\n"
+  },
+  {
+    "id": "call_7060480735832361601",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "find layers/ui -maxdepth 4"
+    },
+    "output": "layers/ui\nlayers/ui/app\nlayers/ui/app/components\nlayers/ui/app/components/form\nlayers/ui/app/components/form/Input.vue\nlayers/ui/app/components/UiCard.vue\nlayers/ui/app/components/UiBadge.vue\nlayers/ui/app/components/ProductCard.vue\nlayers/ui/app/components/UiButton.vue\nlayers/ui/nuxt.config.ts\n"
+  },
+  {
+    "id": "call_16508075081310576857",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "layers/ui/app/components/ProductCard.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport type { Product } from '#shared/types/product'\n\ndefineProps<{ product: Product }>()\n</script>\n\n<template>\n  <article class=\"ui-product-card\">\n    {{ product.name }}\n  </article>\n</template>\n"
+  },
+  {
+    "id": "call_12373143229428476412",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/components/cart/Item.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport type { CartLine } from '#shared/types/cart'\nimport type { Product } from '#shared/types/product'\nimport { computed } from 'vue'\nimport UiButton from '#layers/ui/app/components/UiButton.vue'\nimport { useCart } from '~/composables/useCart'\nimport { formatMoney } from '~/utils/money'\n\nconst props = defineProps<{ line: CartLine, product?: Product }>()\nconst { remove } = useCart()\nconst lineTotal = computed(() => formatMoney((props.product?.priceCents ?? 0) * props.line.qty))\n</script>\n\n<template>\n  <li class=\"cart-item\">\n    <span class=\"name\">{{ product?.name ?? line.slug }}</span>\n    <span class=\"qty\">x{{ line.qty }}</span>\n    <span class=\"line-total\">{{ lineTotal }}</span>\n    <UiButton @click=\"remove(line.slug)\">\n      Remove\n    </UiButton>\n  </li>\n</template>\n"
+  },
+  {
+    "id": "call_9984079996031028258",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/components/cart/Summary.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport { useCartTotal } from '~/composables/useCartTotal'\nimport { formatDiscount } from '~/utils/discount'\nimport { formatMoney } from '~/utils/money'\n\nconst { subtotal, total, percent } = useCartTotal()\n</script>\n\n<template>\n  <section id=\"cart-summary\">\n    <p>Subtotal: <span id=\"cart-subtotal\">{{ formatMoney(subtotal) }}</span></p>\n    <p v-if=\"percent\">\n      Discount: {{ formatDiscount(subtotal - total) }}\n    </p>\n    <p>Total: <span id=\"cart-total\">{{ formatMoney(total) }}</span></p>\n  </section>\n</template>\n"
+  },
+  {
+    "id": "call_9974663765447474017",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/composables/useCartTotal.ts"
+    },
+    "output": "import type { Product } from '#shared/types/product'\nimport { computed } from 'vue'\nimport { useNuxtData } from '#imports'\nimport { sumBy } from '#shared/utils/math'\nimport { useCart } from '~/composables/useCart'\nimport { useDiscount } from '~/composables/useDiscount'\nimport { applyDiscount } from '~/utils/discount'\n\n/** Cart totals in cents, as shown to the customer. */\nexport function useCartTotal() {\n  const { lines } = useCart()\n  const { percent } = useDiscount()\n  const { data: products } = useNuxtData<Product[]>('products')\n  const subtotal = computed(() => sumBy(lines.value, (line) => {\n    const product = products.value?.find(p => p.slug === line.slug)\n    return (product?.priceCents ?? 0) * line.qty\n  }))\n  const total = computed(() => applyDiscount(subtotal.value, percent.value))\n  return { subtotal, total, percent }\n}\n"
+  },
+  {
+    "id": "call_14453549625393869535",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/composables/useDiscount.ts"
+    },
+    "output": "import { computed } from 'vue'\nimport { useCookie } from '#imports'\nimport { discountPercent } from '#shared/utils/discount'\n\n/** The active discount code, read from the `discount-code` cookie. */\nexport function useDiscount() {\n  const code = useCookie<string | null>('discount-code', { default: () => null })\n  const percent = computed(() => discountPercent(code.value))\n  return { code, percent }\n}\n"
+  },
+  {
+    "id": "call_12654084241292968718",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/utils/discount.ts"
+    },
+    "output": "import { formatMoney } from '~/utils/money'\n\n/**\n * Price after discount, as shown in the UI.\n * The discount is rounded down, so the UI never promises more than the server quote.\n */\nexport function applyDiscount(cents: number, percent: number): number {\n  return cents - Math.floor(cents * percent / 100)\n}\n\n/** `399` -> `-$3.99`. */\nexport function formatDiscount(cents: number): string {\n  return `-${formatMoney(cents)}`\n}\n"
+  },
+  {
+    "id": "call_4165369259070438827",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/utils/money.ts"
+    },
+    "output": "/** Money format for the UI: `1999` -> `$19.99`. */\nexport function formatMoney(cents: number): string {\n  return `$${(cents / 100).toFixed(2)}`\n}\n"
+  },
+  {
+    "id": "call_14391071861668852976",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/middleware/cart-not-empty.ts"
+    },
+    "output": "import { defineNuxtRouteMiddleware, navigateTo } from '#imports'\nimport { useCart } from '~/composables/useCart'\n\nexport default defineNuxtRouteMiddleware(() => {\n  const { count } = useCart()\n  if (!count.value)\n    return navigateTo('/cart')\n})\n"
+  },
+  {
+    "id": "call_9495124781667509632",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"useCart\" app/"
+    },
+    "output": "app/middleware/cart-not-empty.ts:2:import { useCart } from '~/composables/useCart'\napp/middleware/cart-not-empty.ts:5:  const { count } = useCart()\napp/composables/useCartTotal.ts:5:import { useCart } from '~/composables/useCart'\napp/composables/useCartTotal.ts:10:export function useCartTotal() {\napp/composables/useCartTotal.ts:11:  const { lines } = useCart()\napp/composables/useCart.ts:6:/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\napp/composables/useCart.ts:7:export function useCart() {\napp/components/cart/Item.vue:6:import { useCart } from '~/composables/useCart'\napp/components/cart/Item.vue:10:const { remove } = useCart()\napp/components/cart/Badge.vue:3:import { useCart } from '~/composables/useCart'\napp/components/cart/Badge.vue:5:const { count } = useCart()\napp/components/cart/Summary.vue:2:import { useCartTotal } from '~/composables/useCartTotal'\napp/components/cart/Summary.vue:6:const { subtotal, total, percent } = useCartTotal()\napp/pages/cart.vue:5:import { useCart } from '~/composables/useCart'\napp/pages/cart.vue:9:const { lines } = useCart()\napp/pages/products/[slug].vue:9:import { useCart } from '~/composables/useCart'\napp/pages/products/[slug].vue:13:const { add } = useCart()\n"
+  },
+  {
+    "id": "call_12385212787244609776",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"useCartTotal\" app/"
+    },
+    "output": "app/composables/useCartTotal.ts:10:export function useCartTotal() {\napp/components/cart/Summary.vue:2:import { useCartTotal } from '~/composables/useCartTotal'\napp/components/cart/Summary.vue:6:const { subtotal, total, percent } = useCartTotal()\n"
+  },
+  {
+    "id": "call_6667381331084942894",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"useDiscount\" app/"
+    },
+    "output": "app/composables/useCartTotal.ts:6:import { useDiscount } from '~/composables/useDiscount'\napp/composables/useCartTotal.ts:12:  const { percent } = useDiscount()\napp/composables/useDiscount.ts:6:export function useDiscount() {\n"
+  },
+  {
+    "id": "call_5224633633586569182",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"discount\" app/ --exclude-dir=components/cart"
+    },
+    "output": "app/composables/useCartTotal.ts:7:import { applyDiscount } from '~/utils/discount'\napp/composables/useDiscount.ts:3:import { discountPercent } from '#shared/utils/discount'\napp/composables/useDiscount.ts:5:/** The active discount code, read from the `discount-code` cookie. */\napp/composables/useDiscount.ts:7:  const code = useCookie<string | null>('discount-code', { default: () => null })\napp/composables/useDiscount.ts:8:  const percent = computed(() => discountPercent(code.value))\napp/utils/discount.ts:4: * Price after discount, as shown in the UI.\napp/utils/discount.ts:5: * The discount is rounded down, so the UI never promises more than the server quote.\napp/components/cart/Summary.vue:3:import { formatDiscount } from '~/utils/discount'\n"
+  },
+  {
+    "id": "call_4583895271808674445",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"components/cart\" app/"
+    },
+    "output": "app/components/AppHeader.vue:3:import CartBadge from '~/components/cart/Badge.vue'\napp/pages/cart.vue:3:import CartItem from '~/components/cart/Item.vue'\napp/pages/cart.vue:4:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/checkout.vue:8:import CartSummary from '~/components/cart/Summary.vue'\n"
+  },
+  {
+    "id": "call_14284775667171603565",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/components/AppHeader.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport { NuxtLink } from '#components'\nimport CartBadge from '~/components/cart/Badge.vue'\n</script>\n\n<template>\n  <header class=\"app-header\">\n    <NuxtLink to=\"/\">\n      Shop\n    </NuxtLink>\n    <NuxtLink to=\"/cart\">\n      Cart <CartBadge />\n    </NuxtLink>\n  </header>\n</template>\n"
+  },
+  {
+    "id": "call_5003008037097899296",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/pages/cart.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport { NuxtLink } from '#components'\nimport CartItem from '~/components/cart/Item.vue'\nimport CartSummary from '~/components/cart/Summary.vue'\nimport { useCart } from '~/composables/useCart'\nimport { useProducts } from '~/composables/useProducts'\n\nconst { data: products } = await useProducts()\nconst { lines } = useCart()\n</script>\n\n<template>\n  <div>\n    <h1>Cart</h1>\n    <ul v-if=\"lines.length\">\n      <CartItem\n        v-for=\"line in lines\"\n        :key=\"line.slug\"\n        :line=\"line\"\n        :product=\"products.find(p => p.slug === line.slug)\"\n      />\n    </ul>\n    <p v-else id=\"cart-empty\">\n      Your cart is empty.\n    </p>\n    <CartSummary />\n    <NuxtLink to=\"/checkout\">\n      Checkout\n    </NuxtLink>\n  </div>\n</template>\n"
+  },
+  {
+    "id": "call_16292853055010980195",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/pages/checkout.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport { ref } from 'vue'\nimport { definePageMeta } from '#imports'\nimport { useNotify } from '#layers/base/app/composables/useNotify'\nimport UiBadge from '#layers/ui/app/components/UiBadge.vue'\nimport UiButton from '#layers/ui/app/components/UiButton.vue'\nimport FormInput from '#layers/ui/app/components/form/Input.vue'\nimport CartSummary from '~/components/cart/Summary.vue'\nimport { useProducts } from '~/composables/useProducts'\n\ndefinePageMeta({ middleware: 'cart-not-empty' })\n\nawait useProducts()\nconst email = ref('')\nconst { notify } = useNotify()\n</script>\n\n<template>\n  <div>\n    <h1>Checkout</h1>\n    <UiBadge class=\"secure\">\n      Secure checkout\n    </UiBadge>\n    <FormInput v-model=\"email\" label=\"Email\" />\n    <CartSummary />\n    <UiButton id=\"place-order\" @click=\"notify(`Order placed for ${email}`)\">\n      Place order\n    </UiButton>\n  </div>\n</template>\n"
+  },
+  {
+    "id": "call_15657287105363967316",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/pages/products/[slug].vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport type { Product } from '#shared/types/product'\nimport { useFetch, useRoute } from '#imports'\nimport { useNotify } from '#layers/base/app/composables/useNotify'\nimport UiBadge from '#layers/ui/app/components/UiBadge.vue'\nimport UiButton from '#layers/ui/app/components/UiButton.vue'\nimport UiCard from '#layers/ui/app/components/UiCard.vue'\nimport ProductPrice from '~/components/product/Price.vue'\nimport { useCart } from '~/composables/useCart'\n\nconst route = useRoute()\nconst { data: product } = await useFetch<Product & { price: string }>(`/api/products/${route.params.slug}`)\nconst { add } = useCart()\nconst { notify } = useNotify()\n\nfunction addToCart() {\n  if (!product.value)\n    return\n  add(product.value.slug)\n  notify(`${product.value.name} added to the cart`)\n}\n</script>\n\n<template>\n  <UiCard v-if=\"product\">\n    <h1>{{ product.name }}</h1>\n    <ProductPrice id=\"price\" :cents=\"product.priceCents\" />\n    <UiBadge class=\"stock\">\n      In stock\n    </UiBadge>\n    <UiButton id=\"add-to-cart\" @click=\"addToCart\">\n      Add to cart\n    </UiButton>\n  </UiCard>\n</template>\n"
+  },
+  {
+    "id": "call_11646966711391575099",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"layers/base/app/composables/useCart\" ."
+    },
+    "output": "Binary file ./.git/index matches\n"
+  },
+  {
+    "id": "call_16840639875044301907",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"useCart\" layers/base"
+    },
+    "output": "layers/base/app/composables/useCart.ts:7: * Apps that persist the cart override it with their own `useCart`.\nlayers/base/app/composables/useCart.ts:9:export function useCart() {\n"
+  },
+  {
+    "id": "call_3209312477809545990",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"useCart\" . --exclude-dir=.nuxt"
+    },
+    "output": "./app/middleware/cart-not-empty.ts:2:import { useCart } from '~/composables/useCart'\n./app/middleware/cart-not-empty.ts:5:  const { count } = useCart()\n./app/composables/useCartTotal.ts:5:import { useCart } from '~/composables/useCart'\n./app/composables/useCartTotal.ts:10:export function useCartTotal() {\n./app/composables/useCartTotal.ts:11:  const { lines } = useCart()\n./app/composables/useCart.ts:6:/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\n./app/composables/useCart.ts:7:export function useCart() {\n./app/components/cart/Item.vue:6:import { useCart } from '~/composables/useCart'\n./app/components/cart/Item.vue:10:const { remove } = useCart()\n./app/components/cart/Badge.vue:3:import { useCart } from '~/composables/useCart'\n./app/components/cart/Badge.vue:5:const { count } = useCart()\n./app/components/cart/Summary.vue:2:import { useCartTotal } from '~/composables/useCartTotal'\n./app/components/cart/Summary.vue:6:const { subtotal, total, percent } = useCartTotal()\n./app/pages/cart.vue:5:import { useCart } from '~/composables/useCart'\n./app/pages/cart.vue:9:const { lines } = useCart()\n./app/pages/products/[slug].vue:9:import { useCart } from '~/composables/useCart'\n./app/pages/products/[slug].vue:13:const { add } = useCart()\n./layers/base/app/composables/useCart.ts:7: * Apps that persist the cart override it with their own `useCart`.\n./layers/base/app/composables/useCart.ts:9:export function useCart() {\nBinary file ./.git/index matches\n"
+  }
+]

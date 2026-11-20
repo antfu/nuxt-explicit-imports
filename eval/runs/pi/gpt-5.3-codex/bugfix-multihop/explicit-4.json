@@ -1,0 +1,64 @@
+{
+  "config": "pi/gpt-5.3-codex",
+  "fingerprint": "ca1a67192beb4e80",
+  "date": "2026-11-18T22:54:51.222Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "bugfix-multihop",
+  "kind": "bugfix",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 4,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1414
+  },
+  "build": {
+    "ok": true,
+    "ms": 2906
+  },
+  "assertions": [
+    {
+      "name": "no code: /cart total is $39.98",
+      "ok": true
+    },
+    {
+      "name": "SAVE10: /cart total is $35.99",
+      "ok": true
+    },
+    {
+      "name": "no code: quote total is 39.98 USD",
+      "ok": true
+    },
+    {
+      "name": "SAVE10: quote total is 35.98 USD",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 24,
+    "toolCalls": {
+      "bash": 6,
+      "read": 37,
+      "edit": 1
+    },
+    "toolKinds": {
+      "explore": 40,
+      "edit": 1,
+      "verify": 3,
+      "other": 0
+    },
+    "inputTokens": 13805,
+    "outputTokens": 2560,
+    "cacheReadTokens": 119680,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 26836,
+    "costUsd": 0.08094275,
+    "ms": 64328,
+    "apiMs": 57713
+  }
+}

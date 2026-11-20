@@ -1,0 +1,26 @@
+diff --git a/app/pages/products/[slug].vue b/app/pages/products/[slug].vue
+index e87ff42..0b1a19a 100644
+--- a/app/pages/products/[slug].vue
++++ b/app/pages/products/[slug].vue
+@@ -5,6 +5,11 @@ const route = useRoute()
+ const { data: product } = await useFetch<Product & { price: string }>(`/api/products/${route.params.slug}`)
+ const { add } = useCart()
+ const { notify } = useNotify()
++const { percent } = useDiscount()
++// Same computation and formatting as the cart (useCartTotal + CartSummary).
++const discountedPrice = computed(() => product.value && percent.value
++  ? formatMoney(applyDiscount(product.value.priceCents, percent.value))
++  : null)
+ 
+ function addToCart() {
+   if (!product.value)
+@@ -18,6 +23,9 @@ function addToCart() {
+   <UiCard v-if="product">
+     <h1>{{ product.name }}</h1>
+     <ProductPrice id="price" :cents="product.priceCents" />
++    <p v-if="discountedPrice" id="discounted">
++      {{ discountedPrice }}
++    </p>
+     <UiBadge class="stock">
+       In stock
+     </UiBadge>

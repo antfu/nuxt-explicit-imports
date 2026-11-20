@@ -1,0 +1,147 @@
+diff --git a/app/pages/checkout.vue b/app/pages/checkout.vue
+index aa4efb2..2607390 100644
+--- a/app/pages/checkout.vue
++++ b/app/pages/checkout.vue
+@@ -3,7 +3,21 @@ definePageMeta({ middleware: 'cart-not-empty' })
+ 
+ await useProducts()
+ const email = ref('')
++const { lines } = useCart()
++const { code } = useDiscount()
+ const { notify } = useNotify()
++
++async function placeOrder() {
++  const order = await $fetch<{ id: string }>('/api/orders', {
++    method: 'POST',
++    body: {
++      lines: lines.value,
++      code: code.value ?? undefined,
++    },
++  })
++  notify(`Order placed for ${email.value}`)
++  await navigateTo(`/orders/${order.id}`)
++}
+ </script>
+ 
+ <template>
+@@ -14,7 +28,7 @@ const { notify } = useNotify()
+     </UiBadge>
+     <FormInput v-model="email" label="Email" />
+     <CartSummary />
+-    <UiButton id="place-order" @click="notify(`Order placed for ${email}`)">
++    <UiButton id="place-order" @click="placeOrder">
+       Place order
+     </UiButton>
+   </div>
+diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
+new file mode 100644
+index 0000000..706b678
+--- /dev/null
++++ b/app/pages/orders/[id].vue
+@@ -0,0 +1,33 @@
++<script setup lang="ts">
++import type { Product } from '#shared/types/product'
++
++const route = useRoute()
++const { lines } = useCart()
++
++await useProducts()
++const { data: products } = useNuxtData<Product[]>('products')
++const { data: order } = await useFetch<{ total: string }>(`/api/orders/${route.params.id}`)
++
++function toUiMoney(serverMoney: string): string {
++  const dollars = Number.parseFloat(serverMoney)
++  if (!Number.isFinite(dollars))
++    return serverMoney
++  return formatMoney(Math.round(dollars * 100))
++}
++
++function productName(slug: string): string {
++  return products.value?.find(product => product.slug === slug)?.name ?? slug
++}
++</script>
++
++<template>
++  <div>
++    <h1>Order</h1>
++    <ul>
++      <li v-for="line in lines" :key="line.slug" class="order-line">
++        {{ productName(line.slug) }}
++      </li>
++    </ul>
++    <p>Total: <span id="order-total">{{ order ? toUiMoney(order.total) : '' }}</span></p>
++  </div>
++</template>
+diff --git a/server/api/orders.post.ts b/server/api/orders.post.ts
+new file mode 100644
+index 0000000..6bcf022
+--- /dev/null
++++ b/server/api/orders.post.ts
+@@ -0,0 +1,6 @@
++import type { CartLine } from '#shared/types/cart'
++
++export default defineEventHandler(async (event) => {
++  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)
++  return createOrder(body?.lines ?? [], body?.code)
++})
+diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
+new file mode 100644
+index 0000000..c420e80
+--- /dev/null
++++ b/server/api/orders/[id].get.ts
+@@ -0,0 +1,14 @@
++export default defineEventHandler((event) => {
++  const id = getRouterParam(event, 'id') ?? ''
++  const order = getOrder(id)
++
++  if (!order)
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++
++  return {
++    id: order.id,
++    subtotal: order.subtotal,
++    discount: order.discount,
++    total: order.total,
++  }
++})
+diff --git a/server/utils/orders.ts b/server/utils/orders.ts
+new file mode 100644
+index 0000000..253805b
+--- /dev/null
++++ b/server/utils/orders.ts
+@@ -0,0 +1,35 @@
++import type { CartLine } from '#shared/types/cart'
++import type { Quote } from './quote'
++
++export interface OrderSummary extends Quote {
++  id: string
++}
++
++export interface StoredOrder extends OrderSummary {
++  lines: CartLine[]
++  code?: string
++}
++
++const orders = new Map<string, StoredOrder>()
++
++export function createOrder(lines: CartLine[], code?: string): OrderSummary {
++  const id = crypto.randomUUID()
++  const quote = computeQuote(lines, code)
++  const order: StoredOrder = {
++    id,
++    lines: lines.map(line => ({ ...line })),
++    code,
++    ...quote,
++  }
++  orders.set(id, order)
++  return {
++    id,
++    subtotal: order.subtotal,
++    discount: order.discount,
++    total: order.total,
++  }
++}
++
++export function getOrder(id: string): StoredOrder | undefined {
++  return orders.get(id)
++}

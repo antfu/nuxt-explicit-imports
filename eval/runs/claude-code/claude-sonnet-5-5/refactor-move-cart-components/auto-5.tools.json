@@ -1,0 +1,37 @@
+[
+  {
+    "id": "toolu_01HkdhwPVXYpGB3GbYxK9VQV",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "ls app/components/cart app/components/checkout 2>&1; grep -rniE \"cart\" app nuxt.config.* --include=* -l | grep -v node_modules"
+    },
+    "output": "ls: app/components/checkout: No such file or directory\napp/components/cart:\nBadge.vue\nItem.vue\nSummary.vue\n(eval):1: no matches found: --include=*"
+  },
+  {
+    "id": "toolu_01Tb83BwLsAAAR9WHBWeZ9zh",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rnE \"Cart|cart/\" app nuxt.config.ts | grep -v \"^app/components/cart/.*<template\" ; ls app/components"
+    },
+    "output": "app/middleware/cart-not-empty.ts:2:  const { count } = useCart()\napp/composables/useCart.ts:1:import type { CartLine } from '#shared/types/cart'\napp/composables/useCart.ts:3:/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\napp/composables/useCart.ts:4:export function useCart() {\napp/composables/useCart.ts:5:  const lines = useCookie<CartLine[]>('cart', { default: () => [] })\napp/composables/useCartTotal.ts:3:/** Cart totals in cents, as shown to the customer. */\napp/composables/useCartTotal.ts:4:export function useCartTotal() {\napp/composables/useCartTotal.ts:5:  const { lines } = useCart()\napp/components/AppHeader.vue:7:      Cart <CartBadge />\napp/components/cart/Badge.vue:2:const { count } = useCart()\napp/components/cart/Summary.vue:2:const { subtotal, total, percent } = useCartTotal()\napp/components/cart/Item.vue:2:import type { CartLine } from '#shared/types/cart'\napp/components/cart/Item.vue:5:const props = defineProps<{ line: CartLine, product?: Product }>()\napp/components/cart/Item.vue:6:const { remove } = useCart()\napp/pages/cart.vue:3:const { lines } = useCart()\napp/pages/cart.vue:8:    <h1>Cart</h1>\napp/pages/cart.vue:10:      <CartItem\napp/pages/cart.vue:20:    <CartSummary />\napp/pages/products/[slug].vue:6:const { add } = useCart()\napp/pages/products/[slug].vue:9:function addToCart() {\napp/pages/products/[slug].vue:24:    <UiButton id=\"add-to-cart\" @click=\"addToCart\">\napp/pages/checkout.vue:16:    <CartSummary />\nAppFooter.vue\nAppHeader.vue\ncart\nproduct"
+  },
+  {
+    "id": "toolu_0128K51fmfZTuGYrhPDWosFf",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "git mv app/components/cart app/components/checkout\nsed -i '' 's/<CartBadge/<CheckoutBadge/' app/components/AppHeader.vue\nsed -i '' 's/<CartItem/<CheckoutItem/;s/<CartSummary/<CheckoutSummary/' app/pages/cart.vue app/pages/checkout.vue\ngrep -rn \"Cart\\(Item\\|Badge\\|Summary\\)\" app; npm run typecheck 2>&1 | tail -5; npm run build 2>&1 | tail -5"
+    },
+    "output": "> typecheck\n> nuxt typecheck\n\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 401ms · modules 55ms · app 545ms · types 1.05s · client 1.37s · server 380ms · nitro 4.09s\n◆ ✨ Build complete in 7.90s!"
+  }
+]

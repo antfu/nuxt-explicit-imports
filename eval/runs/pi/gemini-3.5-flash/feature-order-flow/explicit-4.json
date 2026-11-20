@@ -1,0 +1,81 @@
+{
+  "config": "pi/gemini-3.5-flash",
+  "fingerprint": "37d4d8c7cddfcb39",
+  "date": "2026-11-18T23:12:41.819Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "feature-order-flow",
+  "kind": "feature",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 4,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1460
+  },
+  "build": {
+    "ok": true,
+    "ms": 2947
+  },
+  "assertions": [
+    {
+      "name": "POST returns an id",
+      "ok": true
+    },
+    {
+      "name": "POST total is 37.33 USD",
+      "ok": true
+    },
+    {
+      "name": "POST subtotal and discount",
+      "ok": true
+    },
+    {
+      "name": "a second order gets another id",
+      "ok": true
+    },
+    {
+      "name": "GET returns the stored order",
+      "ok": true
+    },
+    {
+      "name": "page shows 2 order lines",
+      "ok": true
+    },
+    {
+      "name": "page lists Notebook and Pencil",
+      "ok": true
+    },
+    {
+      "name": "#order-total is $37.33",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "error_max_turns",
+    "turns": 41,
+    "toolCalls": {
+      "bash": 11,
+      "read": 22,
+      "edit": 3,
+      "write": 4
+    },
+    "toolKinds": {
+      "explore": 29,
+      "edit": 7,
+      "verify": 4,
+      "other": 0
+    },
+    "inputTokens": 190329,
+    "outputTokens": 17542,
+    "cacheReadTokens": 270558,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 34415,
+    "costUsd": 0.4839552,
+    "ms": 129739,
+    "apiMs": 118567
+  }
+}

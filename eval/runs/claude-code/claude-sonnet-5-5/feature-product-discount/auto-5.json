@@ -1,0 +1,62 @@
+{
+  "config": "claude-code/claude-sonnet-5-5",
+  "fingerprint": "69c045dd25c64b1d",
+  "date": "2026-11-18T07:17:38.042Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "feature-product-discount",
+  "kind": "feature",
+  "fixture": "shop",
+  "arm": "auto",
+  "trial": 5,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1745
+  },
+  "build": {
+    "ok": true,
+    "ms": 6329
+  },
+  "assertions": [
+    {
+      "name": "SAVE10: #discounted is $18.00",
+      "ok": true
+    },
+    {
+      "name": "HALF: #discounted is $10.00",
+      "ok": true
+    },
+    {
+      "name": "no #discounted without a code",
+      "ok": true
+    },
+    {
+      "name": "#price still $19.99",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 4,
+    "toolCalls": {
+      "Bash": 3
+    },
+    "toolKinds": {
+      "explore": 2,
+      "edit": 0,
+      "verify": 1,
+      "other": 0
+    },
+    "inputTokens": 1266,
+    "outputTokens": 732,
+    "cacheReadTokens": 74948,
+    "cacheWriteTokens": 6018,
+    "toolOutputChars": 5246,
+    "costUsd": 0.0323918,
+    "ms": 38714,
+    "apiMs": 16464
+  }
+}

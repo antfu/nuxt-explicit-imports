@@ -1,0 +1,56 @@
+{
+  "config": "pi/gemini-3.5-flash",
+  "fingerprint": "d1f8536c420f4b86",
+  "date": "2026-11-18T23:26:20.624Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "bugfix-lost-override",
+  "kind": "bugfix",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 5,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1391
+  },
+  "build": {
+    "ok": true,
+    "ms": 2955
+  },
+  "assertions": [
+    {
+      "name": "home renders theme-dark",
+      "ok": true
+    },
+    {
+      "name": "base layer theme untouched",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 26,
+    "toolCalls": {
+      "bash": 13,
+      "read": 10,
+      "edit": 2
+    },
+    "toolKinds": {
+      "explore": 19,
+      "edit": 2,
+      "verify": 4,
+      "other": 0
+    },
+    "inputTokens": 89055,
+    "outputTokens": 4373,
+    "cacheReadTokens": 131381,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 29810,
+    "costUsd": 0.19264664999999997,
+    "ms": 67230,
+    "apiMs": 57725
+  }
+}

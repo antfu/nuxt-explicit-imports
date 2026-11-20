@@ -1,0 +1,85 @@
+{
+  "config": "pi/gemini-3.5-flash",
+  "fingerprint": "2429e90a59cb15d0",
+  "date": "2026-11-18T23:04:20.209Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "refactor-rename-cart",
+  "kind": "refactor",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 2,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1434
+  },
+  "build": {
+    "ok": true,
+    "ms": 2969
+  },
+  "assertions": [
+    {
+      "name": "old file removed",
+      "ok": true
+    },
+    {
+      "name": "new file exports useShoppingCart",
+      "ok": true
+    },
+    {
+      "name": "no useCart call or import left in app/",
+      "ok": true
+    },
+    {
+      "name": "base layer useCart untouched",
+      "ok": true
+    },
+    {
+      "name": "header badge shows 3",
+      "ok": true
+    },
+    {
+      "name": "/cart renders 2 cart items",
+      "ok": true
+    },
+    {
+      "name": "/cart subtotal is $41.48",
+      "ok": true
+    },
+    {
+      "name": "/checkout is not redirected",
+      "ok": true
+    },
+    {
+      "name": "/checkout renders the summary",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 23,
+    "toolCalls": {
+      "bash": 8,
+      "read": 7,
+      "write": 1,
+      "edit": 6
+    },
+    "toolKinds": {
+      "explore": 11,
+      "edit": 8,
+      "verify": 3,
+      "other": 0
+    },
+    "inputTokens": 121835,
+    "outputTokens": 2591,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 20590,
+    "costUsd": 0.2060715,
+    "ms": 55866,
+    "apiMs": 49552
+  }
+}

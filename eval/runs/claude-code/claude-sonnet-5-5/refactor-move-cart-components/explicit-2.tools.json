@@ -1,0 +1,37 @@
+[
+  {
+    "id": "toolu_014jA12qtYBZBJByEwG9SN7t",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "ls app/components/cart app/components/checkout 2>&1; grep -rniE \"cart\" app --include=*.vue --include=*.ts -l; cat nuxt.config.ts"
+    },
+    "output": "Exit code 1\nls: app/components/checkout: No such file or directory\napp/components/cart:\nBadge.vue\nItem.vue\nSummary.vue\n(eval):1: no matches found: --include=*.vue"
+  },
+  {
+    "id": "toolu_01DXJTgbNAfaB1dKu5J2yNTk",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rniE \"cart\" app server shared layers nuxt.config.ts -l 2>/dev/null; grep -rnE \"components/cart|~/components|\\./(Badge|Item|Summary)\" app server shared layers 2>/dev/null"
+    },
+    "output": "app/middleware/cart-not-empty.ts\napp/composables/useCart.ts\napp/composables/useCartTotal.ts\napp/components/AppHeader.vue\napp/components/cart/Item.vue\napp/components/cart/Badge.vue\napp/pages/cart.vue\napp/components/cart/Summary.vue\napp/pages/products/[slug].vue\napp/pages/checkout.vue\nserver/utils/quote.ts\nserver/api/cart/quote.post.ts\nshared/types/cart.ts\nlayers/base/app/composables/useCart.ts\napp/components/product/Card.vue:5:import ProductPrice from '~/components/product/Price.vue'\napp/components/product/Grid.vue:3:import ProductCard from '~/components/product/Card.vue'\napp/pages/index.vue:2:import ProductGrid from '~/components/product/Grid.vue'\napp/pages/checkout.vue:8:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/cart.vue:3:import CartItem from '~/components/cart/Item.vue'\napp/pages/cart.vue:4:import CartSummary from '~/components/cart/Summary.vue'\napp/components/AppHeader.vue:3:import CartBadge from '~/components/cart/Badge.vue'\napp/layouts/default.vue:2:import AppFooter from '~/components/AppFooter.vue'\napp/layouts/default.vue:3:import AppHeader from '~/components/AppHeader.vue'\napp/pages/products/[slug].vue:8:import ProductPrice from '~/components/product/Price.vue'"
+  },
+  {
+    "id": "toolu_01C63XS9cGWV1azTBbEtGSon",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "git mv app/components/cart app/components/checkout && sed -i '' 's#~/components/cart/#~/components/checkout/#' app/pages/checkout.vue app/pages/cart.vue app/components/AppHeader.vue && grep -n \"import\" app/components/checkout/*.vue; npm run typecheck 2>&1 | tail -5; npm run build 2>&1 | tail -5"
+    },
+    "output": "app/components/checkout/Badge.vue:2:import UiBadge from '#layers/ui/app/components/UiBadge.vue'\napp/components/checkout/Badge.vue:3:import { useCart } from '~/composables/useCart'\napp/components/checkout/Summary.vue:2:import { useCartTotal } from '~/composables/useCartTotal'\napp/components/checkout/Summary.vue:3:import { formatDiscount } from '~/utils/discount'\napp/components/checkout/Summary.vue:4:import { formatMoney } from '~/utils/money'\napp/components/checkout/Item.vue:2:import type { CartLine } from '#shared/types/cart'\napp/components/checkout/Item.vue:3:import type { Product } from '#shared/types/product'\napp/components/checkout/Item.vue:4:import { computed } from 'vue'\napp/components/checkout/Item.vue:5:import UiButton from '#layers/ui/app/components/UiButton.vue'\napp/components/checkout/Item.vue:6:import { useCart } from '~/composables/useCart'\napp/components/checkout/Item.vue:7:import { formatMoney } from '~/utils/money'\n\n> typecheck\n> nuxt typecheck\n\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 72ms · modules 20ms · app 181ms · types 141ms · client 407ms · server 213ms · nitro 1.84s\n◆ ✨ Build complete in 2.87s!"
+  }
+]

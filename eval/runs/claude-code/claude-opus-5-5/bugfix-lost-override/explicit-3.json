@@ -1,0 +1,54 @@
+{
+  "config": "claude-code/claude-opus-5-5",
+  "fingerprint": "d1f8536c420f4b86",
+  "date": "2026-11-19T00:17:51.144Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "bugfix-lost-override",
+  "kind": "bugfix",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 3,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1458
+  },
+  "build": {
+    "ok": true,
+    "ms": 3124
+  },
+  "assertions": [
+    {
+      "name": "home renders theme-dark",
+      "ok": true
+    },
+    {
+      "name": "base layer theme untouched",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 5,
+    "toolCalls": {
+      "Bash": 4
+    },
+    "toolKinds": {
+      "explore": 4,
+      "edit": 1,
+      "verify": 1,
+      "other": 0
+    },
+    "inputTokens": 1263,
+    "outputTokens": 987,
+    "cacheReadTokens": 96627,
+    "cacheWriteTokens": 6520,
+    "toolOutputChars": 4762,
+    "costUsd": 0.0767174,
+    "ms": 23307,
+    "apiMs": 18597
+  }
+}

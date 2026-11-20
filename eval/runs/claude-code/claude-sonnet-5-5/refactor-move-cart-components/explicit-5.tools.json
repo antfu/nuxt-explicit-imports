@@ -1,0 +1,58 @@
+[
+  {
+    "id": "toolu_01FHN3mRsDb72oxjVZLpD3GU",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "ls app/components/cart; grep -rn \"cart\\|Cart\" app --include=*.vue --include=*.ts -il | grep -v \"^app/components/cart/\"; cat nuxt.config.ts"
+    },
+    "output": "Badge.vue\nItem.vue\nSummary.vue\n(eval):1: no matches found: --include=*.vue\nexport default defineNuxtConfig({\n  compatibilityDate: '2026-01-01',\n  devtools: { enabled: false },\n  telemetry: false,\n  // Auto-imports are off: import every composable, util and component explicitly.\n  imports: { autoImport: false },\n  components: { dirs: [] },\n  nitro: { imports: { autoImport: false } },\n})"
+  },
+  {
+    "id": "toolu_01Evi2mCnjyok6HzgC2pbmUw",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rniE \"cart\" . --include=*.vue --include=*.ts --exclude-dir=node_modules --exclude-dir=.nuxt --exclude-dir=.output | grep -v \"^./app/components/cart/.*:.*<\""
+    },
+    "output": "(eval):1: no matches found: --include=*.vue"
+  },
+  {
+    "id": "toolu_017QgYNiPYJsSG9n2h2My5GV",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rniE \"cart\" app server shared layers 2>/dev/null | grep -i import"
+    },
+    "output": "app/middleware/cart-not-empty.ts:2:import { useCart } from '~/composables/useCart'\napp/composables/useCartTotal.ts:5:import { useCart } from '~/composables/useCart'\napp/composables/useCart.ts:1:import type { CartLine } from '#shared/types/cart'\napp/components/cart/Item.vue:2:import type { CartLine } from '#shared/types/cart'\napp/components/cart/Item.vue:6:import { useCart } from '~/composables/useCart'\napp/components/AppHeader.vue:3:import CartBadge from '~/components/cart/Badge.vue'\napp/components/cart/Summary.vue:2:import { useCartTotal } from '~/composables/useCartTotal'\napp/components/cart/Badge.vue:3:import { useCart } from '~/composables/useCart'\napp/pages/checkout.vue:8:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/cart.vue:3:import CartItem from '~/components/cart/Item.vue'\napp/pages/cart.vue:4:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/cart.vue:5:import { useCart } from '~/composables/useCart'\napp/pages/products/[slug].vue:9:import { useCart } from '~/composables/useCart'\nserver/utils/quote.ts:1:import type { CartLine } from '#shared/types/cart'\nserver/api/cart/quote.post.ts:1:import type { CartLine } from '#shared/types/cart'\nlayers/base/app/composables/useCart.ts:1:import type { CartLine } from '#shared/types/cart'"
+  },
+  {
+    "id": "toolu_01WwE8JxQ95wfr34smakBorh",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "ls app/components/checkout 2>&1; grep -rn \"components/cart\\|\\./Item\\|\\./Badge\\|\\./Summary\" app layers server"
+    },
+    "output": "ls: app/components/checkout: No such file or directory\napp/components/AppHeader.vue:3:import CartBadge from '~/components/cart/Badge.vue'\napp/pages/checkout.vue:8:import CartSummary from '~/components/cart/Summary.vue'\napp/pages/cart.vue:3:import CartItem from '~/components/cart/Item.vue'\napp/pages/cart.vue:4:import CartSummary from '~/components/cart/Summary.vue'"
+  },
+  {
+    "id": "toolu_013f51vpPwqRm8z1P676qyTb",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "verify"
+    ],
+    "input": {
+      "command": "git mv app/components/cart app/components/checkout && sed -i '' 's#~/components/cart/#~/components/checkout/#' app/components/AppHeader.vue app/pages/checkout.vue app/pages/cart.vue && npm run typecheck 2>&1 | tail -5 && npm run build 2>&1 | tail -5"
+    },
+    "output": "> typecheck\n> nuxt typecheck\n\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 73ms · modules 23ms · app 202ms · types 150ms · client 437ms · server 231ms · nitro 2.01s\n◆ ✨ Build complete in 3.13s!"
+  }
+]

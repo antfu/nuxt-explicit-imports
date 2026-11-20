@@ -1,0 +1,47 @@
+[
+  {
+    "id": "toolu_01LkxUXdrxvAYXuCmWxa61ND",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "git ls-files | grep -v '^public/'; cat nuxt.config.ts package.json; grep -rn \"import\" app layers 2>/dev/null | grep -v node_modules | head -50"
+    },
+    "output": ".gitignore\napp/app.vue\napp/components/AppFooter.vue\napp/components/AppHeader.vue\napp/components/cart/Badge.vue\napp/components/cart/Item.vue\napp/components/cart/Summary.vue\napp/components/product/Card.vue\napp/components/product/Grid.vue\napp/components/product/Price.vue\napp/composables/useCart.ts\napp/composables/useCartTotal.ts\napp/composables/useDiscount.ts\napp/composables/useProducts.ts\napp/composables/useTheme.ts\napp/layouts/default.vue\napp/middleware/cart-not-empty.ts\napp/pages/cart.vue\napp/pages/checkout.vue\napp/pages/index.vue\napp/pages/products/[slug].vue\napp/utils/discount.ts\napp/utils/money.ts\nlayers/base/app/composables/useCart.ts\nlayers/base/app/composables/useNotify.ts\nlayers/base/app/composables/useTheme.ts\nlayers/base/app/utils/percent.ts\nlayers/base/nuxt.config.ts\nlayers/ui/app/components/ProductCard.vue\nlayers/ui/app/components/UiBadge.vue\nlayers/ui/app/components/UiButton.vue\nlayers/ui/app/components/UiCard.vue\nlayers/ui/app/components/form/Input.vue\nlayers/ui/nuxt.config.ts\nnuxt.config.ts\npackage.json\nserver/api/cart/quote.post.ts\nserver/api/products/[slug].get.ts\nserver/api/products/index.get.ts\nserver/utils/db.ts\nserver/utils/discount.ts\nserver/utils/money.ts\nserver/utils/quote.ts\nshared/types/cart.ts\nshared/types/product.ts\nshared/utils/discount.ts\nshared/utils/math.ts\nshared/utils/slug.ts\ntsconfig.json\nexport default defineNuxtConfig({\n  compatibilityDate: '2026-01-01',\n  devtools: { enabled: false },\n  telemetry: false,\n})\n{\n  \"name\": \"eval-shop\",\n  \"type\": \"module\",\n  \"private\": true,\n  \"scripts\": {\n    \"build\": \"nuxt build\",\n    \"typecheck\": \"nuxt typecheck\"\n  }\n}\napp/composables/useCartTotal.ts:1:import type { Product } from '#shared/types/product'\napp/composables/useCart.ts:1:import type { CartLine } from '#shared/types/cart'\napp/composables/useProducts.ts:1:import type { Product } from '#shared/types/product'\napp/components/product/Card.vue:2:import type { Product } from '#shared/types/product'\napp/components/product/Grid.vue:2:import type { Product } from '#shared/types/product'\napp/components/cart/Item.vue:2:import type { CartLine } from '#shared/types/cart'\napp/components/cart/Item.vue:3:import type { Product } from '#shared/types/product'\napp/pages/products/[slug].vue:2:import type { Product } from '#shared/types/product'\nlayers/ui/app/components/ProductCard.vue:2:import type { Product } from '#shared/types/product'\nlayers/base/app/composables/useCart.ts:1:import type { CartLine } from '#shared/types/cart'"
+  },
+  {
+    "id": "toolu_01L4PxWph4rgHrqQ8q8yNbtE",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "cat layers/base/nuxt.config.ts layers/ui/nuxt.config.ts; cat app/composables/useCart*.ts app/composables/useDiscount.ts app/utils/*.ts app/middleware/*; cat app/components/cart/*; cat tsconfig.json"
+    },
+    "output": "export default defineNuxtConfig({})\nexport default defineNuxtConfig({})\nimport type { CartLine } from '#shared/types/cart'\n\n/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\nexport function useCart() {\n  const lines = useCookie<CartLine[]>('cart', { default: () => [] })\n  const count = computed(() => sumBy(lines.value, line => line.qty))\n  function add(slug: string, qty = 1) {\n    const existing = lines.value.find(line => line.slug === slug)\n    lines.value = existing\n      ? lines.value.map(line => (line.slug === slug ? { ...line, qty: line.qty + qty } : line))\n      : [...lines.value, { slug, qty }]\n  }\n  function remove(slug: string) {\n    lines.value = lines.value.filter(line => line.slug !== slug)\n  }\n  return { lines, count, add, remove }\n}\nimport type { Product } from '#shared/types/product'\n\n/** Cart totals in cents, as shown to the customer. */\nexport function useCartTotal() {\n  const { lines } = useCart()\n  const { percent } = useDiscount()\n  const { data: products } = useNuxtData<Product[]>('products')\n  const subtotal = computed(() => sumBy(lines.value, (line) => {\n    const product = products.value?.find(p => p.slug === line.slug)\n    return (product?.priceCents ?? 0) * line.qty\n  }))\n  const total = computed(() => applyDiscount(subtotal.value, percent.value))\n  return { subtotal, total, percent }\n}\n/** The active discount code, read from the `discount-code` cookie. */\nexport function useDiscount() {\n  const code = useCookie<string | null>('discount-code', { default: () => null })\n  const percent = computed(() => discountPercent(code.value))\n  return { code, percent }\n}\n/**\n * Price after discount, as shown in the UI.\n * The discount is rounded down, so the UI never promises more than the server quote.\n */\nexport function applyDiscount(cents: number, percent: number): number {\n  return cents - Math.floor(cents * percent / 100)\n}\n\n/** `399` -> `-$3.99`. */\nexport function formatDiscount(cents: number): string {\n  return `-${formatMoney(cents)}`\n}\n/** Money format for the UI: `1999` -> `$19.99`. */\nexport function formatMoney(cents: number): string {\n  return `$${(cents / 100).toFixed(2)}`\n}\nexport default defineNuxtRouteMiddleware(() => {\n  const { count } = useCart()\n  if (!count.value)\n    return navigateTo('/cart')\n})\n<script setup lang=\"ts\">\nconst { count } = useCart()\n</script>\n\n<template>\n  <UiBadge class=\"cart-badge\">\n    {{ count }}\n  </UiBadge>\n</template>\n<script setup lang=\"ts\">\nimport type { CartLine } from '#shared/types/cart'\nimport type { Product } from '#shared/types/product'\n\nconst props = defineProps<{ line: CartLine, product?: Product }>()\nconst { remove } = useCart()\nconst lineTotal = computed(() => formatMoney((props.product?.priceCents ?? 0) * props.line.qty))\n</script>\n\n<template>\n  <li class=\"cart-item\">\n    <span class=\"name\">{{ product?.name ?? line.slug }}</span>\n    <span class=\"qty\">x{{ line.qty }}</span>\n    <span class=\"line-total\">{{ lineTotal }}</span>\n    <UiButton @click=\"remove(line.slug)\">\n      Remove\n    </UiButton>\n  </li>\n</template>\n<script setup lang=\"ts\">\nconst { subtotal, total, percent } = useCartTotal()\n</script>\n\n<template>\n  <section id=\"cart-summary\">\n    <p>Subtotal: <span id=\"cart-subtotal\">{{ formatMoney(subtotal) }}</span></p>\n    <p v-if=\"percent\">\n      Discount: {{ formatDiscount(subtotal - total) }}\n    </p>\n    <p>Total: <span id=\"cart-total\">{{ formatMoney(total) }}</span></p>\n  </section>\n</template>\n{\n  \"files\": [],\n  \"references\": [\n    { \"path\": \"./.nuxt/tsconfig.app.json\" },\n    { \"path\": \"./.nuxt/tsconfig.server.json\" },\n    { \"path\": \"./.nuxt/tsconfig.shared.json\" },\n    { \"path\": \"./.nuxt/tsconfig.node.json\" }\n  ]\n}"
+  },
+  {
+    "id": "toolu_018SETz882hiwEycDA7FrPHf",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "verify"
+    ],
+    "input": {
+      "command": "mkdir -p layers/cart/app/{composables,components,utils,middleware} && echo \"export default defineNuxtConfig({})\" > layers/cart/nuxt.config.ts\ngit mv app/composables/useCart.ts app/composables/useCartTotal.ts app/composables/useDiscount.ts layers/cart/app/composables/\ngit mv app/components/cart layers/cart/app/components/cart\ngit mv app/utils/discount.ts layers/cart/app/utils/\ngit mv app/middleware/cart-not-empty.ts layers/cart/app/middleware/\nnpm run typecheck 2>&1 | tail -15; npm run build 2>&1 | tail -8"
+    },
+    "output": "> typecheck\n> nuxt typecheck\n\n  ├─ .output/server/chunks/virtual/precomputed.mjs (19.6 kB) (1.72 kB gzip)\n  ├─ .output/server/chunks/virtual/styles.mjs (1.43 kB) (428 B gzip)\n  ├─ .output/server/index.mjs (440 B) (234 B gzip)\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 146ms · modules 32ms · app 359ms · types 238ms · client 923ms · server 381ms · nitro 5.39s\n◆ ✨ Build complete in 7.47s!"
+  },
+  {
+    "id": "toolu_01L2w4tbtYwSTdbo379Ajs7K",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"useCart\\b\" .nuxt/imports.d.ts .nuxt/types/imports.d.ts 2>/dev/null | head"
+    },
+    "output": ".nuxt/imports.d.ts:45:export { useCart } from '../layers/cart/app/composables/useCart';\n.nuxt/types/imports.d.ts:116:  const useCart: typeof import('../../layers/cart/app/composables/useCart').useCart\n.nuxt/types/imports.d.ts:348:    readonly useCart: UnwrapRef<typeof import('../../layers/cart/app/composables/useCart')['useCart']>"
+  }
+]

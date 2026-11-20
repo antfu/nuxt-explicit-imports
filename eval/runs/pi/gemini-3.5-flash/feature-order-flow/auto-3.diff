@@ -1,0 +1,152 @@
+diff --git a/app/pages/checkout.vue b/app/pages/checkout.vue
+index aa4efb2..09e2418 100644
+--- a/app/pages/checkout.vue
++++ b/app/pages/checkout.vue
+@@ -4,6 +4,26 @@ definePageMeta({ middleware: 'cart-not-empty' })
+ await useProducts()
+ const email = ref('')
+ const { notify } = useNotify()
++const { lines } = useCart()
++const { code } = useDiscount()
++
++async function placeOrder() {
++  try {
++    const order = await $fetch('/api/orders', {
++      method: 'POST',
++      body: {
++        lines: lines.value,
++        code: code.value || undefined,
++      },
++    })
++    lines.value = []
++    code.value = null
++    notify(`Order placed for ${email.value}`)
++    await navigateTo(`/orders/${order.id}`)
++  } catch (err) {
++    console.error(err)
++  }
++}
+ </script>
+ 
+ <template>
+@@ -14,7 +34,7 @@ const { notify } = useNotify()
+     </UiBadge>
+     <FormInput v-model="email" label="Email" />
+     <CartSummary />
+-    <UiButton id="place-order" @click="notify(`Order placed for ${email}`)">
++    <UiButton id="place-order" @click="placeOrder">
+       Place order
+     </UiButton>
+   </div>
+diff --git a/app/pages/orders/[id].vue b/app/pages/orders/[id].vue
+new file mode 100644
+index 0000000..430b662
+--- /dev/null
++++ b/app/pages/orders/[id].vue
+@@ -0,0 +1,44 @@
++<script setup lang="ts">
++interface Order {
++  id: string
++  subtotal: string
++  discount: string
++  total: string
++  lines: { slug: string; qty: number }[]
++  code?: string
++}
++
++const route = useRoute()
++const id = route.params.id as string
++
++const { data: order } = await useFetch<Order>(`/api/orders/${id}`)
++const { data: products } = await useProducts()
++
++function parseServerMoneyToCents(moneyStr: string): number {
++  if (!moneyStr) return 0
++  const val = parseFloat(moneyStr.replace(' USD', ''))
++  return Math.round(val * 100)
++}
++
++function getProductName(slug: string): string {
++  const product = products.value?.find(p => p.slug === slug)
++  return product ? product.name : slug
++}
++</script>
++
++<template>
++  <div>
++    <h1>Order Summary</h1>
++    <div v-if="order">
++      <ul>
++        <li v-for="line in order.lines" :key="line.slug" class="order-line">
++          {{ getProductName(line.slug) }}
++        </li>
++      </ul>
++      <p>Total: <span id="order-total">{{ formatMoney(parseServerMoneyToCents(order.total)) }}</span></p>
++    </div>
++    <div v-else>
++      <p>Order not found</p>
++    </div>
++  </div>
++</template>
+diff --git a/server/api/orders.post.ts b/server/api/orders.post.ts
+new file mode 100644
+index 0000000..a1446a5
+--- /dev/null
++++ b/server/api/orders.post.ts
+@@ -0,0 +1,7 @@
++import type { CartLine } from '#shared/types/cart'
++
++export default defineEventHandler(async (event) => {
++  const body = await readBody<{ lines?: CartLine[], code?: string }>(event)
++  const order = createOrder(body?.lines ?? [], body?.code)
++  return order
++})
+diff --git a/server/api/orders/[id].get.ts b/server/api/orders/[id].get.ts
+new file mode 100644
+index 0000000..66e38b0
+--- /dev/null
++++ b/server/api/orders/[id].get.ts
+@@ -0,0 +1,7 @@
++export default defineEventHandler((event) => {
++  const order = findOrder(getRouterParam(event, 'id') ?? '')
++  if (!order) {
++    throw createError({ statusCode: 404, statusMessage: 'Order not found' })
++  }
++  return order
++})
+diff --git a/server/utils/orders.ts b/server/utils/orders.ts
+new file mode 100644
+index 0000000..5cf837c
+--- /dev/null
++++ b/server/utils/orders.ts
+@@ -0,0 +1,30 @@
++import type { CartLine } from '#shared/types/cart'
++
++export interface Order {
++  id: string
++  subtotal: string
++  discount: string
++  total: string
++  lines: CartLine[]
++  code?: string
++}
++
++const orders: Order[] = []
++let nextOrderId = 1
++
++export function createOrder(lines: CartLine[], code?: string): Order {
++  const quote = computeQuote(lines, code)
++  const id = String(nextOrderId++)
++  const order: Order = {
++    id,
++    ...quote,
++    lines,
++    code,
++  }
++  orders.push(order)
++  return order
++}
++
++export function findOrder(id: string): Order | undefined {
++  return orders.find(o => o.id === id)
++}

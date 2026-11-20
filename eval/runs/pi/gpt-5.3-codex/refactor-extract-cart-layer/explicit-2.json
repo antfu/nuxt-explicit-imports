@@ -1,0 +1,89 @@
+{
+  "config": "pi/gpt-5.3-codex",
+  "fingerprint": "d3f541703e830602",
+  "date": "2026-11-18T22:51:00.059Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "refactor-extract-cart-layer",
+  "kind": "refactor",
+  "fixture": "shop",
+  "arm": "explicit",
+  "trial": 2,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 1393
+  },
+  "build": {
+    "ok": true,
+    "ms": 2944
+  },
+  "assertions": [
+    {
+      "name": "every cart file is in layers/cart/app/",
+      "ok": true
+    },
+    {
+      "name": "no cart file left in app/",
+      "ok": true
+    },
+    {
+      "name": "base layer useCart untouched",
+      "ok": true
+    },
+    {
+      "name": "header badge shows 3",
+      "ok": true
+    },
+    {
+      "name": "/cart renders 2 cart items",
+      "ok": true
+    },
+    {
+      "name": "/cart subtotal is $41.48",
+      "ok": true
+    },
+    {
+      "name": "/checkout is not redirected",
+      "ok": true
+    },
+    {
+      "name": "/checkout renders the summary",
+      "ok": true
+    },
+    {
+      "name": "SAVE10: /cart total is $37.34",
+      "ok": true
+    },
+    {
+      "name": "empty cart: /checkout redirects to /cart",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 20,
+    "toolCalls": {
+      "bash": 10,
+      "read": 17,
+      "edit": 6,
+      "write": 9
+    },
+    "toolKinds": {
+      "explore": 23,
+      "edit": 16,
+      "verify": 3,
+      "other": 0
+    },
+    "inputTokens": 23687,
+    "outputTokens": 6760,
+    "cacheReadTokens": 216448,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 41633,
+    "costUsd": 0.17397065,
+    "ms": 100271,
+    "apiMs": 90875
+  }
+}

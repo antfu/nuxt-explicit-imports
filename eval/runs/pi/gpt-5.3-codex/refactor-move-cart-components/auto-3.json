@@ -1,0 +1,76 @@
+{
+  "config": "pi/gpt-5.3-codex",
+  "fingerprint": "2e801976b0b1474d",
+  "date": "2026-11-18T10:37:09.823Z",
+  "maxTurns": 40,
+  "timeoutMin": 10,
+  "task": "refactor-move-cart-components",
+  "kind": "refactor",
+  "fixture": "shop",
+  "arm": "auto",
+  "trial": 3,
+  "pass": true,
+  "typecheck": {
+    "ok": true,
+    "ms": 3902
+  },
+  "build": {
+    "ok": true,
+    "ms": 6854
+  },
+  "assertions": [
+    {
+      "name": "app/components/cart/ is empty",
+      "ok": true
+    },
+    {
+      "name": "3 components in app/components/checkout/",
+      "ok": true
+    },
+    {
+      "name": "header badge shows 3",
+      "ok": true
+    },
+    {
+      "name": "/cart renders 2 cart items",
+      "ok": true
+    },
+    {
+      "name": "/cart subtotal is $41.48",
+      "ok": true
+    },
+    {
+      "name": "/checkout is not redirected",
+      "ok": true
+    },
+    {
+      "name": "/checkout renders the summary",
+      "ok": true
+    }
+  ],
+  "errorsDuringRun": {},
+  "errorsAtEnd": {},
+  "agent": {
+    "stop": "success",
+    "turns": 13,
+    "toolCalls": {
+      "bash": 9,
+      "read": 8,
+      "edit": 3
+    },
+    "toolKinds": {
+      "explore": 14,
+      "edit": 4,
+      "verify": 2,
+      "other": 0
+    },
+    "inputTokens": 13005,
+    "outputTokens": 1519,
+    "cacheReadTokens": 36480,
+    "cacheWriteTokens": 0,
+    "toolOutputChars": 16413,
+    "costUsd": 0.05040875000000001,
+    "ms": 54302,
+    "apiMs": 42752
+  }
+}

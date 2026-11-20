@@ -1,0 +1,37 @@
+[
+  {
+    "id": "toolu_01LuSyuPCEZg9gdd6AX2fVbW",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "ls app/components/cart app/components/checkout 2>&1; grep -rniE \"cart\" app nuxt.config.ts --include=* -l | grep -v node_modules"
+    },
+    "output": "ls: app/components/checkout: No such file or directory\napp/components/cart:\nBadge.vue\nItem.vue\nSummary.vue\n(eval):1: no matches found: --include=*"
+  },
+  {
+    "id": "toolu_018FeobbF4f9e4kQFsbvy5Ao",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rniE \"cart\" app nuxt.config.ts -l; grep -rnE \"Cart[A-Z]\\w*|cart/\" app nuxt.config.ts | grep -v \"^app/components/cart/.*function\""
+    },
+    "output": "app/middleware/cart-not-empty.ts\napp/composables/useCartTotal.ts\napp/composables/useCart.ts\napp/components/AppHeader.vue\napp/components/cart/Badge.vue\napp/components/cart/Item.vue\napp/components/cart/Summary.vue\napp/pages/checkout.vue\napp/pages/cart.vue\napp/pages/products/[slug].vue\napp/composables/useCartTotal.ts:4:export function useCartTotal() {\napp/composables/useCart.ts:1:import type { CartLine } from '#shared/types/cart'\napp/composables/useCart.ts:5:  const lines = useCookie<CartLine[]>('cart', { default: () => [] })\napp/components/AppHeader.vue:7:      Cart <CartBadge />\napp/components/cart/Summary.vue:2:const { subtotal, total, percent } = useCartTotal()\napp/components/cart/Item.vue:2:import type { CartLine } from '#shared/types/cart'\napp/components/cart/Item.vue:5:const props = defineProps<{ line: CartLine, product?: Product }>()\napp/pages/checkout.vue:16:    <CartSummary />\napp/pages/cart.vue:10:      <CartItem\napp/pages/cart.vue:20:    <CartSummary />"
+  },
+  {
+    "id": "toolu_01Ne49WVWaR2GtFoHkXdYkdR",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "git mv app/components/cart app/components/checkout\nsed -i '' 's/<CartBadge/<CheckoutBadge/' app/components/AppHeader.vue\nsed -i '' 's/<CartSummary/<CheckoutSummary/;s/<CartItem/<CheckoutItem/' app/pages/checkout.vue app/pages/cart.vue\ngrep -rnE \"CartBadge|CartItem|CartSummary|LazyCart\" app; npm run typecheck 2>&1 | tail -5; npm run build 2>&1 | tail -5"
+    },
+    "output": "> typecheck\n> nuxt typecheck\n\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 364ms · modules 50ms · app 987ms · types 749ms · client 1.36s · server 425ms · nitro 3.98s\n◆ ✨ Build complete in 7.92s!"
+  }
+]

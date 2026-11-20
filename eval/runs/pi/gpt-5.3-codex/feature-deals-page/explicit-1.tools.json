@@ -1,0 +1,170 @@
+[
+  {
+    "id": "call_emxPKdRK2Ou6Y2fH0q1wWodv",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "ls -la"
+    },
+    "output": "total 32\ndrwxr-xr-x@ 12 antfu  staff   384 Nov 19 07:37 .\ndrwxr-xr-x@  3 antfu  staff    96 Nov 19 07:37 ..\ndrwxr-xr-x@ 12 antfu  staff   384 Nov 19 07:37 .git\n-rw-r--r--@  1 antfu  staff    27 Nov 19 07:37 .gitignore\ndrwxr-xr-x@  9 antfu  staff   288 Nov 19 07:37 app\ndrwxr-xr-x@  4 antfu  staff   128 Nov 19 07:37 layers\ndrwxr-xr-x@ 44 antfu  staff  1408 Nov 19 07:37 node_modules\n-rw-r--r--@  1 antfu  staff   314 Nov 19 07:37 nuxt.config.ts\n-rw-r--r--@  1 antfu  staff   146 Nov 19 07:37 package.json\ndrwxr-xr-x@  4 antfu  staff   128 Nov 19 07:37 server\ndrwxr-xr-x@  4 antfu  staff   128 Nov 19 07:37 shared\n-rw-r--r--@  1 antfu  staff   227 Nov 19 07:37 tsconfig.json\n"
+  },
+  {
+    "id": "call_dfuJDwz0FngdGunyXLZ7f4IL",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "find app layers shared server -maxdepth 4 -type f | sort"
+    },
+    "output": "app/app.vue\napp/components/AppFooter.vue\napp/components/AppHeader.vue\napp/components/cart/Badge.vue\napp/components/cart/Item.vue\napp/components/cart/Summary.vue\napp/components/product/Card.vue\napp/components/product/Grid.vue\napp/components/product/Price.vue\napp/composables/useCart.ts\napp/composables/useCartTotal.ts\napp/composables/useDiscount.ts\napp/composables/useProducts.ts\napp/composables/useTheme.ts\napp/layouts/default.vue\napp/middleware/cart-not-empty.ts\napp/pages/cart.vue\napp/pages/checkout.vue\napp/pages/index.vue\napp/pages/products/[slug].vue\napp/utils/discount.ts\napp/utils/money.ts\nlayers/base/app/composables/useCart.ts\nlayers/base/app/composables/useNotify.ts\nlayers/base/app/composables/useTheme.ts\nlayers/base/app/utils/percent.ts\nlayers/base/nuxt.config.ts\nlayers/ui/app/components/ProductCard.vue\nlayers/ui/app/components/UiBadge.vue\nlayers/ui/app/components/UiButton.vue\nlayers/ui/app/components/UiCard.vue\nlayers/ui/nuxt.config.ts\nserver/api/cart/quote.post.ts\nserver/api/products/[slug].get.ts\nserver/api/products/index.get.ts\nserver/utils/db.ts\nserver/utils/discount.ts\nserver/utils/money.ts\nserver/utils/quote.ts\nshared/types/cart.ts\nshared/types/product.ts\nshared/utils/discount.ts\nshared/utils/math.ts\nshared/utils/slug.ts\n"
+  },
+  {
+    "id": "call_FIrpMRePv4GUlqcmBWzNJF6d",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/pages/index.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport ProductGrid from '~/components/product/Grid.vue'\nimport { useProducts } from '~/composables/useProducts'\n\nconst { data: products } = await useProducts()\n</script>\n\n<template>\n  <div>\n    <h1>Shop</h1>\n    <ProductGrid :products=\"products\" />\n  </div>\n</template>\n"
+  },
+  {
+    "id": "call_ZAUOTRQkPx1apEho0bkL90Om",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/components/product/Card.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport type { Product } from '#shared/types/product'\nimport { NuxtLink } from '#components'\nimport UiCard from '#layers/ui/app/components/UiCard.vue'\nimport ProductPrice from '~/components/product/Price.vue'\n\ndefineProps<{ product: Product }>()\n</script>\n\n<template>\n  <UiCard>\n    <article class=\"product-card\">\n      <NuxtLink :to=\"`/products/${product.slug}`\">\n        <h2>{{ product.name }}</h2>\n      </NuxtLink>\n      <ProductPrice :cents=\"product.priceCents\" />\n      <slot />\n    </article>\n  </UiCard>\n</template>\n"
+  },
+  {
+    "id": "call_WcSHzh4oeBDf99mCufzgsoSF",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "layers/ui/app/components/ProductCard.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport type { Product } from '#shared/types/product'\n\ndefineProps<{ product: Product }>()\n</script>\n\n<template>\n  <article class=\"ui-product-card\">\n    {{ product.name }}\n  </article>\n</template>\n"
+  },
+  {
+    "id": "call_VCwhxsJDt7XPg4dhGgSMzs3y",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "layers/base/app/utils/percent.ts"
+    },
+    "output": "/** `10` -> `10%`. */\nexport function formatPercent(percent: number): string {\n  return `${percent}%`\n}\n\n/** `percent` of `cents`, rounded to the nearest cent. */\nexport function percentOf(cents: number, percent: number): number {\n  return Math.round(cents * percent / 100)\n}\n"
+  },
+  {
+    "id": "call_Sij6mgTfvCNyMGTO7UGtjDel",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/composables/useDiscount.ts"
+    },
+    "output": "import { computed } from 'vue'\nimport { useCookie } from '#imports'\nimport { discountPercent } from '#shared/utils/discount'\n\n/** The active discount code, read from the `discount-code` cookie. */\nexport function useDiscount() {\n  const code = useCookie<string | null>('discount-code', { default: () => null })\n  const percent = computed(() => discountPercent(code.value))\n  return { code, percent }\n}\n"
+  },
+  {
+    "id": "call_4OgX9OCW9EoFfyUOdwVpzW8L",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/composables/useProducts.ts"
+    },
+    "output": "import type { Product } from '#shared/types/product'\nimport { useFetch } from '#imports'\n\n/** All products. Cached under the `products` key, so `useNuxtData('products')` reads them too. */\nexport function useProducts() {\n  return useFetch<Product[]>('/api/products', { key: 'products', default: () => [] })\n}\n"
+  },
+  {
+    "id": "call_Do3Izu9w8TIJpEqOH5E7jK4z",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/components/product/Grid.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport type { Product } from '#shared/types/product'\nimport ProductCard from '~/components/product/Card.vue'\n\ndefineProps<{ products: Product[] }>()\n</script>\n\n<template>\n  <section class=\"product-grid\">\n    <ProductCard v-for=\"product in products\" :key=\"product.slug\" :product=\"product\" />\n  </section>\n</template>\n"
+  },
+  {
+    "id": "call_6veQYmRIBE30sJWpNQAymyHk",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "layers/ui/app/components/UiBadge.vue"
+    },
+    "output": "<template>\n  <span class=\"ui-badge\">\n    <slot />\n  </span>\n</template>\n"
+  },
+  {
+    "id": "call_u0QPm7oQloPIwQN6B2SGAaLy",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/pages/checkout.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport { ref } from 'vue'\nimport { definePageMeta } from '#imports'\nimport { useNotify } from '#layers/base/app/composables/useNotify'\nimport UiBadge from '#layers/ui/app/components/UiBadge.vue'\nimport UiButton from '#layers/ui/app/components/UiButton.vue'\nimport FormInput from '#layers/ui/app/components/form/Input.vue'\nimport CartSummary from '~/components/cart/Summary.vue'\nimport { useProducts } from '~/composables/useProducts'\n\ndefinePageMeta({ middleware: 'cart-not-empty' })\n\nawait useProducts()\nconst email = ref('')\nconst { notify } = useNotify()\n</script>\n\n<template>\n  <div>\n    <h1>Checkout</h1>\n    <UiBadge class=\"secure\">\n      Secure checkout\n    </UiBadge>\n    <FormInput v-model=\"email\" label=\"Email\" />\n    <CartSummary />\n    <UiButton id=\"place-order\" @click=\"notify(`Order placed for ${email}`)\">\n      Place order\n    </UiButton>\n  </div>\n</template>\n"
+  },
+  {
+    "id": "call_B2y07aRcALwlvlVa2nEK87NT",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "rg \"formatPercent|percentOf\" -n app layers shared server"
+    },
+    "output": "layers/base/app/utils/percent.ts:2:export function formatPercent(percent: number): string {\nlayers/base/app/utils/percent.ts:7:export function percentOf(cents: number, percent: number): number {\n"
+  },
+  {
+    "id": "call_2XZ9ZNnRgaNjlED8uT2HMGVH",
+    "name": "write",
+    "kinds": [
+      "edit"
+    ],
+    "input": {
+      "path": "app/pages/deals.vue",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport UiBadge from '#layers/ui/app/components/UiBadge.vue'\nimport { formatPercent } from '#layers/base/app/utils/percent'\nimport ProductCard from '~/components/product/Card.vue'\nimport { useDiscount } from '~/composables/useDiscount'\nimport { useProducts } from '~/composables/useProducts'\n\nconst { data: products } = await useProducts()\nconst { percent } = useDiscount()\n\nconst deals = computed(() => products.value.filter(product => product.priceCents < 500))\nconst hasDiscount = computed(() => percent.value > 0)\nconst discountLabel = computed(() => formatPercent(percent.value))\n</script>\n\n<template>\n  <div>\n    <h1>Deals</h1>\n    <section class=\"product-grid\">\n      <ProductCard v-for=\"product in deals\" :key=\"product.slug\" :product=\"product\">\n        <UiBadge>Deal</UiBadge>\n        <p v-if=\"hasDiscount\" id=\"deal-discount\">\n          {{ discountLabel }}\n        </p>\n      </ProductCard>\n    </section>\n  </div>\n</template>\n"
+    },
+    "output": "Successfully wrote to app/pages/deals.vue"
+  },
+  {
+    "id": "call_aAOaJLbSVDv8kYv6QxkCK2YD",
+    "name": "bash",
+    "kinds": [
+      "verify"
+    ],
+    "input": {
+      "command": "npm run typecheck",
+      "timeout": 120000
+    },
+    "output": "\n> typecheck\n> nuxt typecheck\n\n"
+  },
+  {
+    "id": "call_s7IGskHFO3XoJy8WNXVPhb7e",
+    "name": "bash",
+    "kinds": [
+      "verify"
+    ],
+    "input": {
+      "command": "npm run build",
+      "timeout": 120000
+    },
+    "output": "\n> build\n> nuxt build\n\nBuilding Nuxt for production...\n● Loading Nuxt config\n● Nuxt 4.6.4 (with Nitro 2.13.6, Vite 8.3.8 and Vue 3.5.45)\n● Setting up modules\n● Preparing app\n● Nitro preset: node-server\n● Generating types\n● Bundling client\n[info] Building client...\n[info] vite v8.3.8 building client environment for production...\ntransforming...\n✓ 230 modules transformed.\nrendering chunks...\ncomputing gzip size...\n[info] node_modules/.cache/nuxt/.nuxt/dist/client/manifest.json                  8.99 kB │ gzip:  1.14 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/error-500.GMdtm3ss.css   1.95 kB │ gzip:  0.72 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/error-404.BaYo1M7_.css   2.70 kB │ gzip:  0.92 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/D_RemcQ-.js              0.03 kB │ gzip:  0.05 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/BDNMzG2s.js              0.08 kB │ gzip:  0.09 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/CMtOwTH7.js              0.12 kB │ gzip:  0.13 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/CRME2Sae.js              0.15 kB │ gzip:  0.15 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/C9vZ5Bco.js              0.21 kB │ gzip:  0.19 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/Cc1nLx1R.js              0.23 kB │ gzip:  0.19 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/Blg9UwNT.js              0.26 kB │ gzip:  0.22 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/CCx6g8ET.js              0.39 kB │ gzip:  0.26 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/CUjyu_tb.js              0.42 kB │ gzip:  0.30 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/DC_vZmaw.js              0.50 kB │ gzip:  0.33 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/B11JBIxV.js              0.59 kB │ gzip:  0.37 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/D8W_tSVe.js              0.60 kB │ gzip:  0.38 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/Cc9cUtRT.js              0.85 kB │ gzip:  0.52 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/UJnv8oTe.js              0.92 kB │ gzip:  0.53 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/B9U3i5X0.js              0.94 kB │ gzip:  0.56 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/UQkWaV5a.js              1.07 kB │ gzip:  0.58 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/DedUz6GB.js              1.17 kB │ gzip:  0.62 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/B3r5Trku.js              1.27 kB │ gzip:  0.70 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/5OsXuLvH.js              2.69 kB │ gzip:  1.18 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/BfEP7ShM.js              4.06 kB │ gzip:  1.73 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/DzyKE1Wi.js             10.15 kB │ gzip:  4.32 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/BRpXDDPo.js             10.84 kB │ gzip:  4.24 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/4NAEnebq.js             12.47 kB │ gzip:  4.70 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/DCGKHwsF.js             20.99 kB │ gzip:  8.74 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/D1x_LQ6a.js             68.78 kB │ gzip: 25.49 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/BeOvoWK3.js             96.15 kB │ gzip: 36.81 kB\n\n[info] ✓ built in 261ms\n[success] Client built in 269ms\n● Bundling server\n[info] Building server...\n[info] vite v8.3.8 building ssr environment for production...\ntransforming...\n✓ 234 modules transformed.\nrendering chunks...\n[info] node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-404-styles.BW8YHPKo.mjs              0.08 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-500-styles.BuOubJgP.mjs              0.08 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/styles.mjs                                       0.75 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/ready-Bmg79B4X.js                          0.04 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/_plugin-vue_export-helper-DjkACiAr.js      0.24 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/useProducts-70YdAPnI.js                    0.38 kB │ map:     0.56 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/cart-not-empty-CxNxLaSC.js                 0.41 kB │ map:     0.52 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/ssr-CvJxSkL6.js                            0.69 kB │ map:     4.16 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/useDiscount-DK1I2QJ3.js                    0.69 kB │ map:     0.73 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/render-list-1Cc8t3eZ.js                    0.96 kB │ map:     1.57 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/UiBadge-CgRZ8OsW.js                        1.06 kB │ map:     0.37 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/useCart-CJoCwiiJ.js                        1.08 kB │ map:     1.52 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/UiButton-BoL0Sop3.js                       1.09 kB │ map:     0.28 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/useNotify-D2h9LQfD.js                      1.52 kB │ map:     3.38 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/Price-CK5AvfEM.js                          2.22 kB │ map:     1.00 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-500-styles-1.mjs-filtEduZ.js         2.52 kB │ map:     0.09 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/pages-WbIfGRyX.js                          2.70 kB │ map:     1.33 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/Card-DIEHToby.js                           2.73 kB │ map:     1.51 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/Summary-BeHnyFc8.js                        3.03 kB │ map:     3.26 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/deals-CEMXZHCW.js                          3.24 kB │ map:     2.53 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-404-styles-1.mjs-SOGn6SGR.js         3.28 kB │ map:     0.09 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/_slug_-D6hbIpaf.js                         3.91 kB │ map:     2.76 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/checkout-CIwsFzzl.js                       3.94 kB │ map:     2.33 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-500-CMIpzBNL.js                      4.19 kB │ map:     5.04 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/cart-CvsUPzf2.js                           4.31 kB │ map:     3.06 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-404-Mn1DCgW7.js                      6.02 kB │ map:     7.23 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/default-Bpx_EdHa.js                        6.10 kB │ map:     3.45 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/multipart-parser-CJ7YW57S.js               6.33 kB │ map:    10.66 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/nuxt-link-mZRKhOY8.js                     14.10 kB │ map:    30.60 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/cookie-H7ixZk0A.js                        17.93 kB │ map:    46.88 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/fetch-CrwPzh9Z.js                         27.02 kB │ map:    66.58 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-C_weEHvv.js                         30.32 kB │ map:   150.32 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/utils-i3G1uIw5.js                         31.57 kB │ map:    98.46 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/server.mjs                                     285.51 kB │ map:   546.78 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/head-9BZD7jey.js                       1,157.51 kB │ map: 2,087.69 kB\n\n[info] ✓ built in 208ms\n[success] Server built in 213ms\n● Building Nitro server\n[success] [nitro] Generated public .output/public\n[info] [nitro] Building Nuxt Nitro server (preset: `node-server`, compatibility date: `2026-01-01`)\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/head-9BZD7jey.js (28691:30): A comment\n\n\"/* @__NO_SIDE_EFFECTS__ */\"\n\nin \"node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/head-9BZD7jey.js\" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.\n[success] [nitro] Nuxt Nitro server built\n  ├─ .output/server/chunks/_/db.mjs (542 B) (338 B gzip)\n  ├─ .output/server/chunks/_/discount.mjs (349 B) (264 B gzip)\n  ├─ .output/server/chunks/_/error-template.mjs (4.36 kB) (1.7 kB gzip)\n  ├─ .output/server/chunks/_/math.mjs (241 B) (183 B gzip)\n  ├─ .output/server/chunks/_/money.mjs (141 B) (141 B gzip)\n  ├─ .output/server/chunks/build/_plugin-vue_export-helper-DjkACiAr.mjs (313 B) (220 B gzip)\n  ├─ .output/server/chunks/build/_slug_-D6hbIpaf.mjs (4.51 kB) (1.38 kB gzip)\n  ├─ .output/server/chunks/build/Card-DIEHToby.mjs (2.71 kB) (906 B gzip)\n  ├─ .output/server/chunks/build/cart-CvsUPzf2.mjs (5.02 kB) (1.56 kB gzip)\n  ├─ .output/server/chunks/build/cart-not-empty-CxNxLaSC.mjs (1.03 kB) (456 B gzip)\n  ├─ .output/server/chunks/build/checkout-CIwsFzzl.mjs (4.71 kB) (1.44 kB gzip)\n  ├─ .output/server/chunks/build/cookie-H7ixZk0A.mjs (17.9 kB) (5.51 kB gzip)\n  ├─ .output/server/chunks/build/deals-CEMXZHCW.mjs (4 kB) (1.45 kB gzip)\n  ├─ .output/server/chunks/build/default-Bpx_EdHa.mjs (6.73 kB) (1.52 kB gzip)\n  ├─ .output/server/chunks/build/error-404-Mn1DCgW7.mjs (6.52 kB) (2.47 kB gzip)\n  ├─ .output/server/chunks/build/error-404-styles.BW8YHPKo.mjs (3.34 kB) (1.25 kB gzip)\n  ├─ .output/server/chunks/build/error-500-CMIpzBNL.mjs (4.69 kB) (1.81 kB gzip)\n  ├─ .output/server/chunks/build/error-500-styles.BuOubJgP.mjs (2.59 kB) (1.05 kB gzip)\n  ├─ .output/server/chunks/build/fetch-CrwPzh9Z.mjs (26.5 kB) (7.57 kB gzip)\n  ├─ .output/server/chunks/build/multipart-parser-CJ7YW57S.mjs (6.88 kB) (2.52 kB gzip)\n  ├─ .output/server/chunks/build/nuxt-link-mZRKhOY8.mjs (14 kB) (3.87 kB gzip)\n  ├─ .output/server/chunks/build/pages-WbIfGRyX.mjs (3.38 kB) (1.1 kB gzip)\n  ├─ .output/server/chunks/build/Price-CK5AvfEM.mjs (2.2 kB) (808 B gzip)\n  ├─ .output/server/chunks/build/render-list-1Cc8t3eZ.mjs (898 B) (539 B gzip)\n  ├─ .output/server/chunks/build/ssr-CvJxSkL6.mjs (664 B) (415 B gzip)\n  ├─ .output/server/chunks/build/Summary-BeHnyFc8.mjs (2.86 kB) (1.1 kB gzip)\n  ├─ .output/server/chunks/build/UiBadge-CgRZ8OsW.mjs (1.04 kB) (526 B gzip)\n  ├─ .output/server/chunks/build/UiButton-BoL0Sop3.mjs (1.07 kB) (536 B gzip)\n  ├─ .output/server/chunks/build/useCart-CJoCwiiJ.mjs (931 B) (495 B gzip)\n  ├─ .output/server/chunks/build/useDiscount-DK1I2QJ3.mjs (545 B) (332 B gzip)\n  ├─ .output/server/chunks/build/useNotify-D2h9LQfD.mjs (1.5 kB) (748 B gzip)\n  ├─ .output/server/chunks/build/useProducts-70YdAPnI.mjs (390 B) (288 B gzip)\n  ├─ .output/server/chunks/nitro/nitro.mjs (191 kB) (48.6 kB gzip)\n  ├─ .output/server/chunks/routes/api/cart/quote.post.mjs (1.37 kB) (557 B gzip)\n  ├─ .output/server/chunks/routes/api/index.get.mjs (516 B) (259 B gzip)\n  ├─ .output/server/chunks/routes/api/products/_slug_.get.mjs (858 B) (413 B gzip)\n  ├─ .output/server/chunks/routes/renderer.mjs (24.6 kB) (8.24 kB gzip)\n  ├─ .output/server/chunks/virtual/entry.mjs (1.5 MB) (356 kB gzip)\n  ├─ .output/server/chunks/virtual/precomputed.mjs (22.3 kB) (2.01 kB gzip)\n  ├─ .output/server/chunks/virtual/styles.mjs (1.44 kB) (427 B gzip)\n  ├─ .output/server/index.mjs (440 B) (234 B gzip)\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.58 MB (882 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 68ms · modules 19ms · app 186ms · types 137ms · client 401ms · server 213ms · nitro 1.82s\n◆ ✨ Build complete in 2.85s!\n"
+  }
+]

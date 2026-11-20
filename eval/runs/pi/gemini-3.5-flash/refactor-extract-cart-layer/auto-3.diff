@@ -1,0 +1,91 @@
+diff --git a/layers/cart/app/composables/useCart.ts b/layers/cart/app/composables/useCart.ts
+new file mode 100644
+index 0000000..52a6b59
+--- /dev/null
++++ b/layers/cart/app/composables/useCart.ts
+@@ -0,0 +1,17 @@
++import type { CartLine } from '#shared/types/cart'
++
++/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */
++export function useCart() {
++  const lines = useCookie<CartLine[]>('cart', { default: () => [] })
++  const count = computed(() => sumBy(lines.value, line => line.qty))
++  function add(slug: string, qty = 1) {
++    const existing = lines.value.find(line => line.slug === slug)
++    lines.value = existing
++      ? lines.value.map(line => (line.slug === slug ? { ...line, qty: line.qty + qty } : line))
++      : [...lines.value, { slug, qty }]
++  }
++  function remove(slug: string) {
++    lines.value = lines.value.filter(line => line.slug !== slug)
++  }
++  return { lines, count, add, remove }
++}
+diff --git a/layers/cart/app/composables/useCartTotal.ts b/layers/cart/app/composables/useCartTotal.ts
+new file mode 100644
+index 0000000..c4bf680
+--- /dev/null
++++ b/layers/cart/app/composables/useCartTotal.ts
+@@ -0,0 +1,14 @@
++import type { Product } from '#shared/types/product'
++
++/** Cart totals in cents, as shown to the customer. */
++export function useCartTotal() {
++  const { lines } = useCart()
++  const { percent } = useDiscount()
++  const { data: products } = useNuxtData<Product[]>('products')
++  const subtotal = computed(() => sumBy(lines.value, (line) => {
++    const product = products.value?.find(p => p.slug === line.slug)
++    return (product?.priceCents ?? 0) * line.qty
++  }))
++  const total = computed(() => applyDiscount(subtotal.value, percent.value))
++  return { subtotal, total, percent }
++}
+diff --git a/layers/cart/app/composables/useDiscount.ts b/layers/cart/app/composables/useDiscount.ts
+new file mode 100644
+index 0000000..b77f127
+--- /dev/null
++++ b/layers/cart/app/composables/useDiscount.ts
+@@ -0,0 +1,6 @@
++/** The active discount code, read from the `discount-code` cookie. */
++export function useDiscount() {
++  const code = useCookie<string | null>('discount-code', { default: () => null })
++  const percent = computed(() => discountPercent(code.value))
++  return { code, percent }
++}
+diff --git a/layers/cart/app/middleware/cart-not-empty.ts b/layers/cart/app/middleware/cart-not-empty.ts
+new file mode 100644
+index 0000000..0ce1e11
+--- /dev/null
++++ b/layers/cart/app/middleware/cart-not-empty.ts
+@@ -0,0 +1,5 @@
++export default defineNuxtRouteMiddleware(() => {
++  const { count } = useCart()
++  if (!count.value)
++    return navigateTo('/cart')
++})
+diff --git a/layers/cart/app/utils/discount.ts b/layers/cart/app/utils/discount.ts
+new file mode 100644
+index 0000000..6c402bf
+--- /dev/null
++++ b/layers/cart/app/utils/discount.ts
+@@ -0,0 +1,12 @@
++/**
++ * Price after discount, as shown in the UI.
++ * The discount is rounded down, so the UI never promises more than the server quote.
++ */
++export function applyDiscount(cents: number, percent: number): number {
++  return cents - Math.floor(cents * percent / 100)
++}
++
++/** `399` -> `-$3.99`. */
++export function formatDiscount(cents: number): string {
++  return `-${formatMoney(cents)}`
++}
+diff --git a/layers/cart/nuxt.config.ts b/layers/cart/nuxt.config.ts
+new file mode 100644
+index 0000000..268da7f
+--- /dev/null
++++ b/layers/cart/nuxt.config.ts
+@@ -0,0 +1 @@
++export default defineNuxtConfig({})

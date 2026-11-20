@@ -1,0 +1,38 @@
+[
+  {
+    "id": "toolu_01FZcWqjLT2XBwv1n1MdYGHC",
+    "name": "Bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "grep -rn \"useCart\" --exclude-dir=node_modules --exclude-dir=.nuxt --exclude-dir=.output --exclude-dir=.git . ; ls; ls app app/composables"
+    },
+    "output": "app/middleware/cart-not-empty.ts:2:import { useCart } from '~/composables/useCart'\napp/middleware/cart-not-empty.ts:5:  const { count } = useCart()\napp/composables/useCart.ts:6:/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\napp/composables/useCart.ts:7:export function useCart() {\napp/composables/useCartTotal.ts:5:import { useCart } from '~/composables/useCart'\napp/composables/useCartTotal.ts:10:export function useCartTotal() {\napp/composables/useCartTotal.ts:11:  const { lines } = useCart()\napp/components/cart/Item.vue:6:import { useCart } from '~/composables/useCart'\napp/components/cart/Item.vue:10:const { remove } = useCart()\napp/components/cart/Badge.vue:3:import { useCart } from '~/composables/useCart'\napp/components/cart/Badge.vue:5:const { count } = useCart()\napp/pages/cart.vue:5:import { useCart } from '~/composables/useCart'\napp/pages/cart.vue:9:const { lines } = useCart()\napp/components/cart/Summary.vue:2:import { useCartTotal } from '~/composables/useCartTotal'\napp/components/cart/Summary.vue:6:const { subtotal, total, percent } = useCartTotal()\napp/pages/products/[slug].vue:9:import { useCart } from '~/composables/useCart'\napp/pages/products/[slug].vue:13:const { add } = useCart()\nlayers/base/app/composables/useCart.ts:7: * Apps that persist the cart override it with their own `useCart`.\nlayers/base/app/composables/useCart.ts:9:export function useCart() {\napp\nlayers\nnode_modules\nnuxt.config.ts\npackage.json\nserver\nshared\ntsconfig.json\napp:\napp.vue\ncomponents\ncomposables\nlayouts\nmiddleware\npages\nutils\n\napp/composables:\nuseCart.ts\nuseCartTotal.ts\nuseDiscount.ts\nuseProducts.ts\nuseTheme.ts"
+  },
+  {
+    "id": "toolu_013gbpxeXWG3ZNWZA4uZez7d",
+    "name": "Bash",
+    "kinds": [
+      "edit",
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "git mv app/composables/useCart.ts app/composables/useShoppingCart.ts\ngrep -rlE \"useCart\\b\" app | xargs sed -i '' -E 's#~/composables/useCart\\x27#~/composables/useShoppingCart\\x27#; s/\\buseCart\\b/useShoppingCart/g'\nsed -i '' 's/Overrides the base layer.s legacy `useShoppingCart`/Replaces the base layer'\"'\"'s legacy `useCart`/' app/composables/useShoppingCart.ts\ngrep -rn \"useCart\\b\\|useShoppingCart\" app | head -30\nnpm run typecheck 2>&1 | tail -5; npm run build 2>&1 | tail -5"
+    },
+    "output": "app/middleware/cart-not-empty.ts:2:import { useCart } from '~/composables/useShoppingCart'\napp/middleware/cart-not-empty.ts:5:  const { count } = useCart()\napp/composables/useCartTotal.ts:5:import { useCart } from '~/composables/useShoppingCart'\napp/composables/useCartTotal.ts:11:  const { lines } = useCart()\napp/composables/useShoppingCart.ts:6:/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\napp/composables/useShoppingCart.ts:7:export function useCart() {\napp/components/cart/Badge.vue:3:import { useCart } from '~/composables/useShoppingCart'\napp/components/cart/Badge.vue:5:const { count } = useCart()\napp/components/cart/Item.vue:6:import { useCart } from '~/composables/useShoppingCart'\napp/components/cart/Item.vue:10:const { remove } = useCart()\napp/pages/cart.vue:5:import { useCart } from '~/composables/useShoppingCart'\napp/pages/cart.vue:9:const { lines } = useCart()\napp/pages/products/[slug].vue:9:import { useCart } from '~/composables/useShoppingCart'\napp/pages/products/[slug].vue:13:const { add } = useCart()\n\n> typecheck\n> nuxt typecheck\n\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 70ms · modules 20ms · app 189ms · types 142ms · client 419ms · server 217ms · nitro 1.82s\n◆ ✨ Build complete in 2.88s!"
+  },
+  {
+    "id": "toolu_01X8pGuLNqwHPZXSYqvKm8K9",
+    "name": "Bash",
+    "kinds": [
+      "explore",
+      "verify"
+    ],
+    "input": {
+      "command": "grep -rlE \"useCart\\b\" app | xargs perl -pi -e 's/\\buseCart\\b(?!`)/useShoppingCart/g'\ngrep -rn \"useCart\\b\" app; grep -rn useShoppingCart app | wc -l\nnpm run typecheck 2>&1 | tail -5; npm run build 2>&1 | tail -3"
+    },
+    "output": "app/composables/useShoppingCart.ts:6:/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\n      13\n\n> typecheck\n> nuxt typecheck\n\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 75ms · modules 22ms · app 211ms · types 155ms · client 441ms · server 229ms · nitro 1.92s\n◆ ✨ Build complete in 3.05s!"
+  }
+]

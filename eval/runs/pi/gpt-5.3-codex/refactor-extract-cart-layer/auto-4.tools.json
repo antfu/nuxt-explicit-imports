@@ -1,0 +1,425 @@
+[
+  {
+    "id": "call_rlFxtHHJPFmJTmM3eUYgovDt",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "pwd && ls -la && find . -maxdepth 4 -type f | sed 's#^./##'"
+    },
+    "output": "/private/var/folders/kt/mqvjtysd71db5c0ghgcr3gr80000gn/T/nuxt-explicit-imports-eval/2026-11-18T09-50-22-437Z/pi-gpt-5-3-codex/refactor-extract-cart-layer-auto-4\ntotal 32\ndrwxr-xr-x@ 12 antfu  staff   384 Nov 18 19:45 .\ndrwxr-xr-x@  6 antfu  staff   192 Nov 18 19:45 ..\ndrwxr-xr-x@ 12 antfu  staff   384 Nov 18 19:45 .git\n-rw-r--r--@  1 antfu  staff    27 Nov 18 19:45 .gitignore\ndrwxr-xr-x@  9 antfu  staff   288 Nov 18 19:45 app\ndrwxr-xr-x@  4 antfu  staff   128 Nov 18 19:45 layers\ndrwxr-xr-x@ 44 antfu  staff  1408 Nov 18 19:45 node_modules\n-rw-r--r--@  1 antfu  staff   124 Nov 18 19:45 nuxt.config.ts\n-rw-r--r--@  1 antfu  staff   146 Nov 18 19:45 package.json\ndrwxr-xr-x@  4 antfu  staff   128 Nov 18 19:45 server\ndrwxr-xr-x@  4 antfu  staff   128 Nov 18 19:45 shared\n-rw-r--r--@  1 antfu  staff   227 Nov 18 19:45 tsconfig.json\napp/app.vue\napp/middleware/cart-not-empty.ts\napp/composables/useProducts.ts\napp/composables/useCartTotal.ts\napp/composables/useTheme.ts\napp/composables/useCart.ts\napp/composables/useDiscount.ts\napp/utils/discount.ts\napp/utils/money.ts\napp/components/product/Card.vue\napp/components/product/Grid.vue\napp/components/product/Price.vue\napp/components/AppHeader.vue\napp/components/AppFooter.vue\napp/components/cart/Item.vue\napp/components/cart/Badge.vue\napp/components/cart/Summary.vue\napp/layouts/default.vue\napp/pages/index.vue\napp/pages/cart.vue\napp/pages/products/[slug].vue\napp/pages/checkout.vue\nlayers/ui/nuxt.config.ts\nlayers/base/nuxt.config.ts\nserver/utils/discount.ts\nserver/utils/money.ts\nserver/utils/quote.ts\nserver/utils/db.ts\nserver/api/products/index.get.ts\nserver/api/products/[slug].get.ts\nserver/api/cart/quote.post.ts\nshared/types/product.ts\nshared/types/cart.ts\nshared/utils/slug.ts\nshared/utils/math.ts\nshared/utils/discount.ts\n.gitignore\npackage.json\nnuxt.config.ts\ntsconfig.json\n.git/config\n.git/objects/92/1944096dd481878044cd8664afa14a233f7bcc\n.git/objects/0c/e1e111ace6904f2a98182457e4269c18d94f4a\n.git/objects/04/e58a5965259b1a79d2c176f10afbac0461d38a\n.git/objects/04/b0f4ac43e2dedf64ae908d20507fc5e13bce02\n.git/objects/56/b1a3a43271d15b6b3c6f7b3dff51b5a25769ca\n.git/objects/67/4889c9b2c7e886cbd936e374fb2f8bdb712fd1\n.git/objects/0b/74683936d4840a6df2362d256eee04a54eb5bc\n.git/objects/93/12b6420c7820aad9098e5c69be267e0d66083b\n.git/objects/05/133b4405bd3711f04d06dc5c6f07f91ae1b2ee\n.git/objects/9c/af20d997391d42bb6374c965b25495f26b19e0\n.git/objects/ad/c867098ab6e0c39272b0d29a2ca6a23d6c77b8\n.git/objects/bb/2ffad0bb7cb567d76877ff22f484744a161e2e\n.git/objects/b3/65e094ad3a9699d5d60070461a576bd7e74332\n.git/objects/d8/6f467e4111882068f3918ee404d05e16ede856\n.git/objects/c0/4828be734c4007000bbc1ca1496c2a1aea5a5c\n.git/objects/fd/5ec0c661af52fefd7c030233fceb93784038bf\n.git/objects/e3/981b9782286cbdb3f529344bef73836791018c\n.git/objects/ca/e87c003c5f21c4ae0569ac53d90fcaf587950e\n.git/objects/c6/b82e485070b94397cd5c0021c68f8dc7c32bfd\n.git/objects/11/faf7267cd84b0ef8d0e3095e1cdef7d448cb8e\n.git/objects/7d/24fdd542ccaed4e1787808760fead68141280e\n.git/objects/29/fd56a6911cbb462c16e54ec65f95afb1fb41b9\n.git/objects/45/0995fd91abd20aa6390a27959033e833902f8c\n.git/objects/80/98b7a472d3d00849a2e64c4a7821202f730fad\n.git/objects/28/ffed74f1b49dcb396ca25008e4d949d1b6efb0\n.git/objects/8a/31a62b2c6bb518683e988dc1281c170b2c73d1\n.git/objects/8a/c8af5283b92da476ee841b26d3cc7bad1cb586\n.git/objects/26/958fef509bae23491b72a4a057c101b2c3bd9f\n.git/objects/26/8da7f8c11061cf4bbafede8f765e6fcf65863c\n.git/objects/72/f5ee1536d693a99119df000a0641d51abe15a5\n.git/objects/72/9e27080e8c62aa9a58992e8c9bcaf106aef659\n.git/objects/72/8b1bca5b1db1443dcdd74ce145854c26aa6c1e\n.git/objects/72/78e2f35e145b67715e063fd36e7948ec74b1f0\n.git/objects/43/404b24aaae8a9a03aaff280eb4da2a0853392b\n.git/objects/6b/7ed83a58a7c0b7b4de8990c9310606390be1c8\n.git/objects/07/42029760d3f9589557757cd56f744c79a6ab4c\n.git/objects/98/e427f8fce2c32eec71b035be9c11c149356a11\n.git/objects/6c/402bf7c8f07c07a1061ad63dfb4c9cfdaf9372\n.git/objects/52/a6b596285b59ebf72597bef86921374e243e36\n.git/objects/55/65c508568359874ffde39d5d8ce1a44ad2b04c\n.git/objects/a0/0f14422fdf65c0ac53d7c8ec303d9720b7dd24\n.git/objects/dc/33578af47e3455085af6718470d1f868d6caa3\n.git/objects/dc/b4f99e350c7e55e9b112f41d7d9e92bc367f8b\n.git/objects/a9/36ee9b37f6d951b417cfb21037b88b8dd316ba\n.git/objects/aa/9d74d45c73a4719944619837c5484d94d8dfa9\n.git/objects/aa/4efb2d987dad626bc125d3fdab7812caec9c71\n.git/objects/af/e356c7fd223fd71269c1cc0dd75a40d8f07e24\n.git/objects/b7/7f1277f9371d45a970267fe2785d1789e64eff\n.git/objects/de/e01ab303af09848ae3c71ba7900fc57ea08a19\n.git/objects/a6/7d111fbd88314a994a72f0bea57a5515d02b2d\n.git/objects/b9/dd94c52af5a12209a0889b31e329b49685c6e9\n.git/objects/ef/be558068994939fc9cdab94779df1f6eecd6e9\n.git/objects/c4/bf6808e53bc2f90cf953383f408df33b9ecfb1\n.git/objects/c4/7319ccaab694a81f5655bd9f853f2817360cce\n.git/objects/cc/2310da21191e045e626f33c4e2702a4fd66b84\n.git/objects/e8/7ff42e0ebf11460e3d13f11a39063085ae8dfb\n.git/objects/c5/2b979a6dac0176c3cdf7d88168de9ff47c6e1d\n.git/objects/f8/eacfa737ec7031a2d24bf19d58268df90984a0\n.git/objects/2d/88b843b9d2e1d057a3a63d89e019b0bae53a35\n.git/objects/2d/a60e1e931422384c4d1030691967becc46ab34\n.git/objects/2d/4d479134f6909d07d7f423f87d10fe48326091\n.git/objects/2d/7ecfbf23866dec48d035faefdc3db7756b46c7\n.git/objects/41/fe070ead18c2521b8419a11f41765af04b486e\n.git/objects/83/9f91c664a8d818c5c57047c4fdfd04391fce56\n.git/objects/1e/3615a6262dc793309a17e8cf5137e55985e0cd\n.git/objects/84/623817f7de259346c0d653f75d76708e06ed2d\n.git/objects/4a/2da4acb93a0124e3dfc762449987a1b55e576d\n.git/objects/23/6e10c13f716b583518e7bec2f99d67181540c9\n.git/objects/23/3b9c1e9b18d7b548353a55f00ddf8fe02c0d37\n.git/objects/8d/719d6e117389b9d146bbb2ddd746cead0d5a07\n.git/objects/85/36d220d194da6ab0bdfc2161028465d02b7a05\n.git/objects/1d/493e98018dc0f1a87e3b634c9ca835205b98c3\n.git/objects/8b/73b7f836c991e8123d13e915efd83d1700bec1\n.git/objects/8b/16e6e4cc0ff2802cb50ac21dc23df404e313ea\n.git/objects/7f/d2d180b02db89e9b1311452c8d2ea42ea1e09c\n.git/objects/7f/94c759a31fdfc351ea6d3438e1d53f0921497e\n.git/objects/14/136f1a06c321fb3b61d3bb8ddc576801a74610\n.git/HEAD\n.git/info/exclude\n.git/logs/HEAD\n.git/description\n.git/hooks/commit-msg.sample\n.git/hooks/pre-rebase.sample\n.git/hooks/sendemail-validate.sample\n.git/hooks/pre-commit.sample\n.git/hooks/applypatch-msg.sample\n.git/hooks/fsmonitor-watchman.sample\n.git/hooks/pre-receive.sample\n.git/hooks/prepare-commit-msg.sample\n.git/hooks/post-update.sample\n.git/hooks/pre-merge-commit.sample\n.git/hooks/pre-applypatch.sample\n.git/hooks/pre-push.sample\n.git/hooks/update.sample\n.git/hooks/push-to-checkout.sample\n.git/refs/heads/main\n.git/index\n.git/COMMIT_EDITMSG\n"
+  },
+  {
+    "id": "call_RBimJgiifNlCzbnyZi80XXdz",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "nuxt.config.ts"
+    },
+    "output": "export default defineNuxtConfig({\n  compatibilityDate: '2026-01-01',\n  devtools: { enabled: false },\n  telemetry: false,\n})\n"
+  },
+  {
+    "id": "call_LxhSPuh7DSsO92405AZOO8Id",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "layers/base/nuxt.config.ts"
+    },
+    "output": "export default defineNuxtConfig({})\n"
+  },
+  {
+    "id": "call_l3ThiysgM1WxDPhQHIl9anHB",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "layers/ui/nuxt.config.ts"
+    },
+    "output": "export default defineNuxtConfig({})\n"
+  },
+  {
+    "id": "call_ALhLdcBVm1JJXMl16MfsPxwp",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/composables/useCart.ts"
+    },
+    "output": "import type { CartLine } from '#shared/types/cart'\n\n/** The cart, persisted in the `cart` cookie. Overrides the base layer's legacy `useCart`. */\nexport function useCart() {\n  const lines = useCookie<CartLine[]>('cart', { default: () => [] })\n  const count = computed(() => sumBy(lines.value, line => line.qty))\n  function add(slug: string, qty = 1) {\n    const existing = lines.value.find(line => line.slug === slug)\n    lines.value = existing\n      ? lines.value.map(line => (line.slug === slug ? { ...line, qty: line.qty + qty } : line))\n      : [...lines.value, { slug, qty }]\n  }\n  function remove(slug: string) {\n    lines.value = lines.value.filter(line => line.slug !== slug)\n  }\n  return { lines, count, add, remove }\n}\n"
+  },
+  {
+    "id": "call_VZPSdHjL7Znouq9Ikto12HkF",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/composables/useCartTotal.ts"
+    },
+    "output": "import type { Product } from '#shared/types/product'\n\n/** Cart totals in cents, as shown to the customer. */\nexport function useCartTotal() {\n  const { lines } = useCart()\n  const { percent } = useDiscount()\n  const { data: products } = useNuxtData<Product[]>('products')\n  const subtotal = computed(() => sumBy(lines.value, (line) => {\n    const product = products.value?.find(p => p.slug === line.slug)\n    return (product?.priceCents ?? 0) * line.qty\n  }))\n  const total = computed(() => applyDiscount(subtotal.value, percent.value))\n  return { subtotal, total, percent }\n}\n"
+  },
+  {
+    "id": "call_zzEqYp43YOrjJQGvHD1211HF",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/composables/useDiscount.ts"
+    },
+    "output": "/** The active discount code, read from the `discount-code` cookie. */\nexport function useDiscount() {\n  const code = useCookie<string | null>('discount-code', { default: () => null })\n  const percent = computed(() => discountPercent(code.value))\n  return { code, percent }\n}\n"
+  },
+  {
+    "id": "call_yMidbDIguRY0nZT4DKXc9DpX",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/middleware/cart-not-empty.ts"
+    },
+    "output": "export default defineNuxtRouteMiddleware(() => {\n  const { count } = useCart()\n  if (!count.value)\n    return navigateTo('/cart')\n})\n"
+  },
+  {
+    "id": "call_E7Eb9taUGkog3Zp7hHut2TUj",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/utils/discount.ts"
+    },
+    "output": "/**\n * Price after discount, as shown in the UI.\n * The discount is rounded down, so the UI never promises more than the server quote.\n */\nexport function applyDiscount(cents: number, percent: number): number {\n  return cents - Math.floor(cents * percent / 100)\n}\n\n/** `399` -> `-$3.99`. */\nexport function formatDiscount(cents: number): string {\n  return `-${formatMoney(cents)}`\n}\n"
+  },
+  {
+    "id": "call_NPTdEW4rXD3iP6ZWWm3LoB2G",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "find layers -maxdepth 4 -type f | sort"
+    },
+    "output": "layers/base/app/composables/useCart.ts\nlayers/base/app/composables/useNotify.ts\nlayers/base/app/composables/useTheme.ts\nlayers/base/app/utils/percent.ts\nlayers/base/nuxt.config.ts\nlayers/ui/app/components/ProductCard.vue\nlayers/ui/app/components/UiBadge.vue\nlayers/ui/app/components/UiButton.vue\nlayers/ui/app/components/UiCard.vue\nlayers/ui/nuxt.config.ts\n"
+  },
+  {
+    "id": "call_jxTKcA2W5OBqFX2Vr5ju8OSV",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "layers/base/app/composables/useCart.ts"
+    },
+    "output": "import type { CartLine } from '#shared/types/cart'\n\n/**\n * Legacy in-memory cart, kept for older apps built on this layer.\n * Apps that persist the cart override it with their own `useCart`.\n */\nexport function useCart() {\n  const lines = useState<CartLine[]>('legacy-cart', () => [])\n  const count = computed(() => lines.value.length)\n  function add(slug: string, qty = 1) {\n    lines.value = [...lines.value, { slug, qty }]\n  }\n  function remove(slug: string) {\n    lines.value = lines.value.filter(line => line.slug !== slug)\n  }\n  return { lines, count, add, remove }\n}\n"
+  },
+  {
+    "id": "call_3f9ff25866cb4630b1c4d552c46c870d",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "package.json"
+    },
+    "output": "{\n  \"name\": \"eval-shop\",\n  \"type\": \"module\",\n  \"private\": true,\n  \"scripts\": {\n    \"build\": \"nuxt build\",\n    \"typecheck\": \"nuxt typecheck\"\n  }\n}\n"
+  },
+  {
+    "id": "call_4b5b86f36a304865b185013ccdf69fae",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {},
+    "output": "Validation failed for tool \"read\":\n  - path: missing\n\nReceived arguments:\n{}"
+  },
+  {
+    "id": "call_e72db773507441ed8ca09be724118ae8",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {},
+    "output": "Validation failed for tool \"read\":\n  - path: missing\n\nReceived arguments:\n{}"
+  },
+  {
+    "id": "call_018fd89f741046dea31fd5f7f00e60be",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {},
+    "output": "Validation failed for tool \"read\":\n  - path: missing\n\nReceived arguments:\n{}"
+  },
+  {
+    "id": "call_72213a269c1f498ca4f17eb87bc9ed3f",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {},
+    "output": "Validation failed for tool \"read\":\n  - path: missing\n\nReceived arguments:\n{}"
+  },
+  {
+    "id": "call_eae055731bfc41e184216f3982f24f6d",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {},
+    "output": "Validation failed for tool \"read\":\n  - path: missing\n\nReceived arguments:\n{}"
+  },
+  {
+    "id": "call_30a73e3d0cd143598d0976322a27cff9",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {},
+    "output": "Validation failed for tool \"read\":\n  - path: missing\n\nReceived arguments:\n{}"
+  },
+  {
+    "id": "call_6f5cb777c2e34cccaec3b79db1bc1c0e",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {},
+    "output": "Validation failed for tool \"read\":\n  - path: missing\n\nReceived arguments:\n{}"
+  },
+  {
+    "id": "call_2f30da279af94ddab4a130ce6a0fcc33",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {},
+    "output": "Validation failed for tool \"read\":\n  - path: missing\n\nReceived arguments:\n{}"
+  },
+  {
+    "id": "call_GZ1ViSskqBkmfrpxyXhA9czx",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/pages/cart.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nconst { data: products } = await useProducts()\nconst { lines } = useCart()\n</script>\n\n<template>\n  <div>\n    <h1>Cart</h1>\n    <ul v-if=\"lines.length\">\n      <CartItem\n        v-for=\"line in lines\"\n        :key=\"line.slug\"\n        :line=\"line\"\n        :product=\"products.find(p => p.slug === line.slug)\"\n      />\n    </ul>\n    <p v-else id=\"cart-empty\">\n      Your cart is empty.\n    </p>\n    <CartSummary />\n    <NuxtLink to=\"/checkout\">\n      Checkout\n    </NuxtLink>\n  </div>\n</template>\n"
+  },
+  {
+    "id": "call_cqOve0B8pwOe69t8hXcPgyFZ",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/pages/checkout.vue"
+    },
+    "output": "<script setup lang=\"ts\">\ndefinePageMeta({ middleware: 'cart-not-empty' })\n\nawait useProducts()\nconst email = ref('')\nconst { notify } = useNotify()\n</script>\n\n<template>\n  <div>\n    <h1>Checkout</h1>\n    <UiBadge class=\"secure\">\n      Secure checkout\n    </UiBadge>\n    <FormInput v-model=\"email\" label=\"Email\" />\n    <CartSummary />\n    <UiButton id=\"place-order\" @click=\"notify(`Order placed for ${email}`)\">\n      Place order\n    </UiButton>\n  </div>\n</template>\n"
+  },
+  {
+    "id": "call_En9F2QES3IxXYw4VtTnpMAJy",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/pages/index.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nconst { data: products } = await useProducts()\n</script>\n\n<template>\n  <div>\n    <h1>Shop</h1>\n    <ProductGrid :products=\"products\" />\n  </div>\n</template>\n"
+  },
+  {
+    "id": "call_32uU6EKDfwaQdIMZYovsxLpQ",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/pages/products/[slug].vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport type { Product } from '#shared/types/product'\n\nconst route = useRoute()\nconst { data: product } = await useFetch<Product & { price: string }>(`/api/products/${route.params.slug}`)\nconst { add } = useCart()\nconst { notify } = useNotify()\n\nfunction addToCart() {\n  if (!product.value)\n    return\n  add(product.value.slug)\n  notify(`${product.value.name} added to the cart`)\n}\n</script>\n\n<template>\n  <UiCard v-if=\"product\">\n    <h1>{{ product.name }}</h1>\n    <ProductPrice id=\"price\" :cents=\"product.priceCents\" />\n    <UiBadge class=\"stock\">\n      In stock\n    </UiBadge>\n    <UiButton id=\"add-to-cart\" @click=\"addToCart\">\n      Add to cart\n    </UiButton>\n  </UiCard>\n</template>\n"
+  },
+  {
+    "id": "call_PuMsDBE5sMSpl1KqRN2vWvbZ",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/components/cart/Item.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport type { CartLine } from '#shared/types/cart'\nimport type { Product } from '#shared/types/product'\n\nconst props = defineProps<{ line: CartLine, product?: Product }>()\nconst { remove } = useCart()\nconst lineTotal = computed(() => formatMoney((props.product?.priceCents ?? 0) * props.line.qty))\n</script>\n\n<template>\n  <li class=\"cart-item\">\n    <span class=\"name\">{{ product?.name ?? line.slug }}</span>\n    <span class=\"qty\">x{{ line.qty }}</span>\n    <span class=\"line-total\">{{ lineTotal }}</span>\n    <UiButton @click=\"remove(line.slug)\">\n      Remove\n    </UiButton>\n  </li>\n</template>\n"
+  },
+  {
+    "id": "call_IDPJe4sE0MTtidjmnovwU6NW",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/components/cart/Badge.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nconst { count } = useCart()\n</script>\n\n<template>\n  <UiBadge class=\"cart-badge\">\n    {{ count }}\n  </UiBadge>\n</template>\n"
+  },
+  {
+    "id": "call_va0UbsowvTfGLODPBDeuHnXn",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/components/cart/Summary.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nconst { subtotal, total, percent } = useCartTotal()\n</script>\n\n<template>\n  <section id=\"cart-summary\">\n    <p>Subtotal: <span id=\"cart-subtotal\">{{ formatMoney(subtotal) }}</span></p>\n    <p v-if=\"percent\">\n      Discount: {{ formatDiscount(subtotal - total) }}\n    </p>\n    <p>Total: <span id=\"cart-total\">{{ formatMoney(total) }}</span></p>\n  </section>\n</template>\n"
+  },
+  {
+    "id": "call_I5poGLVaflLJ54OI3RVc4m6X",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/layouts/default.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nconst theme = useTheme()\n</script>\n\n<template>\n  <div :class=\"`theme-${theme}`\">\n    <AppHeader />\n    <main>\n      <slot />\n    </main>\n    <AppFooter />\n  </div>\n</template>\n"
+  },
+  {
+    "id": "call_wiCPAJSfutUEAkKwAD0vYaYe",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/components/AppHeader.vue"
+    },
+    "output": "<template>\n  <header class=\"app-header\">\n    <NuxtLink to=\"/\">\n      Shop\n    </NuxtLink>\n    <NuxtLink to=\"/cart\">\n      Cart <CartBadge />\n    </NuxtLink>\n  </header>\n</template>\n"
+  },
+  {
+    "id": "call_bXUotwh5tBFDiPoTTkY4ua4x",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/composables/useTheme.ts"
+    },
+    "output": "/** The shop is dark. Overrides the base layer's `useTheme`. */\nexport function useTheme() {\n  return useState('theme', () => 'dark')\n}\n"
+  },
+  {
+    "id": "call_sVgt5HErOLTteZ8KGvIlgmdT",
+    "name": "read",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "path": "app/components/product/Grid.vue"
+    },
+    "output": "<script setup lang=\"ts\">\nimport type { Product } from '#shared/types/product'\n\ndefineProps<{ products: Product[] }>()\n</script>\n\n<template>\n  <section class=\"product-grid\">\n    <ProductCard v-for=\"product in products\" :key=\"product.slug\" :product=\"product\" />\n  </section>\n</template>\n"
+  },
+  {
+    "id": "call_0LxALQuaaGUsXTzz2scqgDsX",
+    "name": "bash",
+    "kinds": [
+      "verify"
+    ],
+    "input": {
+      "command": "npm run typecheck",
+      "timeout": 120
+    },
+    "output": "\n> typecheck\n> nuxt typecheck\n\n"
+  },
+  {
+    "id": "call_8eXl9Ag4G4Tn39qcsYB8GBs9",
+    "name": "bash",
+    "kinds": [
+      "edit"
+    ],
+    "input": {
+      "command": "mkdir -p layers/cart/app/{composables,components/cart,utils,middleware} && mv app/composables/useCart.ts layers/cart/app/composables/useCart.ts && mv app/composables/useCartTotal.ts layers/cart/app/composables/useCartTotal.ts && mv app/composables/useDiscount.ts layers/cart/app/composables/useDiscount.ts && mv app/components/cart/Item.vue layers/cart/app/components/cart/Item.vue && mv app/components/cart/Badge.vue layers/cart/app/components/cart/Badge.vue && mv app/components/cart/Summary.vue layers/cart/app/components/cart/Summary.vue && mv app/utils/discount.ts layers/cart/app/utils/discount.ts && mv app/middleware/cart-not-empty.ts layers/cart/app/middleware/cart-not-empty.ts"
+    },
+    "output": "(no output)"
+  },
+  {
+    "id": "call_esOx5taZrbVc20wkAZPeQkRv",
+    "name": "write",
+    "kinds": [
+      "edit"
+    ],
+    "input": {
+      "path": "layers/cart/nuxt.config.ts",
+      "content": "export default defineNuxtConfig({})\n"
+    },
+    "output": "Successfully wrote to layers/cart/nuxt.config.ts"
+  },
+  {
+    "id": "call_jI4pr7xOMAGTxZNKQyBxjxYn",
+    "name": "edit",
+    "kinds": [
+      "edit"
+    ],
+    "input": {
+      "path": "nuxt.config.ts",
+      "edits": [
+        {
+          "oldText": "export default defineNuxtConfig({\n  compatibilityDate: '2026-01-01',\n  devtools: { enabled: false },\n  telemetry: false,\n})\n",
+          "newText": "export default defineNuxtConfig({\n  extends: ['./layers/cart', './layers/ui', './layers/base'],\n  compatibilityDate: '2026-01-01',\n  devtools: { enabled: false },\n  telemetry: false,\n})\n"
+        }
+      ]
+    },
+    "output": "Successfully replaced 1 block(s) in nuxt.config.ts."
+  },
+  {
+    "id": "call_IDyfer0HvQ9oPMD2FYFrZGAj",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "find app -maxdepth 4 -type f | sort && echo '---' && find layers/cart -maxdepth 5 -type f | sort"
+    },
+    "output": "app/app.vue\napp/components/AppFooter.vue\napp/components/AppHeader.vue\napp/components/product/Card.vue\napp/components/product/Grid.vue\napp/components/product/Price.vue\napp/composables/useProducts.ts\napp/composables/useTheme.ts\napp/layouts/default.vue\napp/pages/cart.vue\napp/pages/checkout.vue\napp/pages/index.vue\napp/pages/products/[slug].vue\napp/utils/money.ts\n---\nlayers/cart/app/components/cart/Badge.vue\nlayers/cart/app/components/cart/Item.vue\nlayers/cart/app/components/cart/Summary.vue\nlayers/cart/app/composables/useCart.ts\nlayers/cart/app/composables/useCartTotal.ts\nlayers/cart/app/composables/useDiscount.ts\nlayers/cart/app/middleware/cart-not-empty.ts\nlayers/cart/app/utils/discount.ts\nlayers/cart/nuxt.config.ts\n"
+  },
+  {
+    "id": "call_6mc6ATQxwalQp08oK7M5vneP",
+    "name": "bash",
+    "kinds": [
+      "verify"
+    ],
+    "input": {
+      "command": "npm run typecheck",
+      "timeout": 120
+    },
+    "output": "\n> typecheck\n> nuxt typecheck\n\n"
+  },
+  {
+    "id": "call_2mfGLgleKSIzaOC2v8zyCxkk",
+    "name": "bash",
+    "kinds": [
+      "verify"
+    ],
+    "input": {
+      "command": "npm run build",
+      "timeout": 120
+    },
+    "output": "\n> build\n> nuxt build\n\nBuilding Nuxt for production...\n● Loading Nuxt config\n● Nuxt 4.6.4 (with Nitro 2.13.6, Vite 8.3.8 and Vue 3.5.45)\n● Setting up modules\n● Preparing app\n● Nitro preset: node-server\n● Generating types\n● Bundling client\n[info] Building client...\n[info] vite v8.3.8 building client environment for production...\ntransforming...\n✓ 225 modules transformed.\nrendering chunks...\ncomputing gzip size...\n[info] node_modules/.cache/nuxt/.nuxt/dist/client/manifest.json                  8.63 kB │ gzip:  1.01 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/error-500.GMdtm3ss.css   1.95 kB │ gzip:  0.72 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/error-404.BaYo1M7_.css   2.70 kB │ gzip:  0.92 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/D_RemcQ-.js              0.03 kB │ gzip:  0.05 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/D0hfeO08.js              0.12 kB │ gzip:  0.13 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/D6TM1q59.js              0.15 kB │ gzip:  0.14 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/C4RmMr_w.js              0.26 kB │ gzip:  0.21 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/Dg6JWsig.js              0.49 kB │ gzip:  0.33 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/RAh96tQb.js              0.79 kB │ gzip:  0.48 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/DzAb13R3.js              0.94 kB │ gzip:  0.56 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/KfqeKs_U.js              1.10 kB │ gzip:  0.57 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/BH9s2aGc.js              1.19 kB │ gzip:  0.62 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/CIaB8oCl.js              1.20 kB │ gzip:  0.66 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/Bd1lihYD.js              1.21 kB │ gzip:  0.66 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/Cx6bdTVW.js              1.33 kB │ gzip:  0.73 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/D-phUV5d.js              2.68 kB │ gzip:  1.18 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/DiAXjSRt.js              4.03 kB │ gzip:  1.72 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/DzyKE1Wi.js             10.15 kB │ gzip:  4.32 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/CtlKeJFV.js             11.16 kB │ gzip:  4.38 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/Damq4JWu.js             12.47 kB │ gzip:  4.70 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/DCGKHwsF.js             20.99 kB │ gzip:  8.74 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/B9hafumk.js             68.59 kB │ gzip: 25.42 kB\nnode_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/BeOvoWK3.js             96.15 kB │ gzip: 36.81 kB\n\n[info] ✓ built in 298ms\n[success] Client built in 312ms\n● Bundling server\n[info] Building server...\n[info] vite v8.3.8 building ssr environment for production...\ntransforming...\n✓ 229 modules transformed.\nrendering chunks...\n[info] node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-404-styles.BW8YHPKo.mjs           0.08 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-500-styles.BuOubJgP.mjs           0.08 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/styles.mjs                                    0.75 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/ready-Bmg79B4X.js                       0.04 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/useProducts-DUPUcNHX.js                 0.38 kB │ map:     0.52 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/cart-not-empty-4tymAR4j.js              0.43 kB │ map:     0.41 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/ssr-hJm0dKBA.js                         0.69 kB │ map:     4.16 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/render-list-tU3yRFia.js                 0.96 kB │ map:     1.57 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/UiButton-BJtDHHew.js                    1.07 kB │ map:     0.28 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/Price-5odBtrHF.js                       2.26 kB │ map:     0.96 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/useNotify-DP4-LQmj.js                   2.43 kB │ map:     3.63 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-500-styles-1.mjs-filtEduZ.js      2.52 kB │ map:     0.09 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-404-styles-1.mjs-SOGn6SGR.js      3.28 kB │ map:     0.09 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/Summary-C26vjWZD.js                     3.77 kB │ map:     3.44 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/_slug_-unibpmt0.js                      4.09 kB │ map:     2.31 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-500-CfxqgxRa.js                   4.13 kB │ map:     5.04 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/checkout-Bm34Oqy3.js                    4.23 kB │ map:     1.97 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/cart-DoiMAmuY.js                        4.60 kB │ map:     2.63 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/pages-KxW2dFI2.js                       5.53 kB │ map:     2.38 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-404-WzI8jJBw.js                   5.96 kB │ map:     7.23 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/default-xmTA2-s6.js                     6.13 kB │ map:     2.88 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/multipart-parser-CIlp84iN.js            6.33 kB │ map:    10.66 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/nuxt-link-mZRKhOY8.js                  14.10 kB │ map:    30.60 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/useCart-DyrEg5xM.js                    18.87 kB │ map:    48.21 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/fetch-Bc0nMFY1.js                      27.02 kB │ map:    66.58 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-C_weEHvv.js                      30.32 kB │ map:   150.32 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/utils-i3G1uIw5.js                      31.57 kB │ map:    98.46 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/server.mjs                                  285.46 kB │ map:   546.37 kB\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/head-9BZD7jey.js                    1,157.51 kB │ map: 2,087.69 kB\n\n[info] ✓ built in 206ms\n[success] Server built in 212ms\n● Building Nitro server\n[success] [nitro] Generated public .output/public\n[info] [nitro] Building Nuxt Nitro server (preset: `node-server`, compatibility date: `2026-01-01`)\nnode_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/head-9BZD7jey.js (28691:30): A comment\n\n\"/* @__NO_SIDE_EFFECTS__ */\"\n\nin \"node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/head-9BZD7jey.js\" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.\n[success] [nitro] Nuxt Nitro server built\n  ├─ .output/server/chunks/_/db.mjs (542 B) (338 B gzip)\n  ├─ .output/server/chunks/_/discount.mjs (349 B) (264 B gzip)\n  ├─ .output/server/chunks/_/error-template.mjs (4.36 kB) (1.7 kB gzip)\n  ├─ .output/server/chunks/_/math.mjs (241 B) (183 B gzip)\n  ├─ .output/server/chunks/_/money.mjs (141 B) (141 B gzip)\n  ├─ .output/server/chunks/build/_slug_-unibpmt0.mjs (4.61 kB) (1.37 kB gzip)\n  ├─ .output/server/chunks/build/cart-DoiMAmuY.mjs (5.19 kB) (1.58 kB gzip)\n  ├─ .output/server/chunks/build/cart-not-empty-4tymAR4j.mjs (1.01 kB) (445 B gzip)\n  ├─ .output/server/chunks/build/checkout-Bm34Oqy3.mjs (4.88 kB) (1.46 kB gzip)\n  ├─ .output/server/chunks/build/default-xmTA2-s6.mjs (6.69 kB) (1.61 kB gzip)\n  ├─ .output/server/chunks/build/error-404-styles.BW8YHPKo.mjs (3.34 kB) (1.25 kB gzip)\n  ├─ .output/server/chunks/build/error-404-WzI8jJBw.mjs (6.46 kB) (2.45 kB gzip)\n  ├─ .output/server/chunks/build/error-500-CfxqgxRa.mjs (4.63 kB) (1.79 kB gzip)\n  ├─ .output/server/chunks/build/error-500-styles.BuOubJgP.mjs (2.59 kB) (1.05 kB gzip)\n  ├─ .output/server/chunks/build/fetch-Bc0nMFY1.mjs (26.5 kB) (7.57 kB gzip)\n  ├─ .output/server/chunks/build/multipart-parser-CIlp84iN.mjs (6.88 kB) (2.52 kB gzip)\n  ├─ .output/server/chunks/build/nuxt-link-mZRKhOY8.mjs (14 kB) (3.87 kB gzip)\n  ├─ .output/server/chunks/build/pages-KxW2dFI2.mjs (6.09 kB) (1.55 kB gzip)\n  ├─ .output/server/chunks/build/Price-5odBtrHF.mjs (2.24 kB) (827 B gzip)\n  ├─ .output/server/chunks/build/render-list-tU3yRFia.mjs (898 B) (538 B gzip)\n  ├─ .output/server/chunks/build/ssr-hJm0dKBA.mjs (664 B) (417 B gzip)\n  ├─ .output/server/chunks/build/Summary-C26vjWZD.mjs (3.42 kB) (1.25 kB gzip)\n  ├─ .output/server/chunks/build/UiButton-BJtDHHew.mjs (1.05 kB) (539 B gzip)\n  ├─ .output/server/chunks/build/useCart-DyrEg5xM.mjs (18.7 kB) (5.79 kB gzip)\n  ├─ .output/server/chunks/build/useNotify-DP4-LQmj.mjs (2.4 kB) (1.1 kB gzip)\n  ├─ .output/server/chunks/build/useProducts-DUPUcNHX.mjs (390 B) (288 B gzip)\n  ├─ .output/server/chunks/nitro/nitro.mjs (190 kB) (48.3 kB gzip)\n  ├─ .output/server/chunks/routes/api/cart/quote.post.mjs (1.37 kB) (556 B gzip)\n  ├─ .output/server/chunks/routes/api/index.get.mjs (516 B) (259 B gzip)\n  ├─ .output/server/chunks/routes/api/products/_slug_.get.mjs (858 B) (413 B gzip)\n  ├─ .output/server/chunks/routes/renderer.mjs (24.6 kB) (8.24 kB gzip)\n  ├─ .output/server/chunks/virtual/entry.mjs (1.5 MB) (356 kB gzip)\n  ├─ .output/server/chunks/virtual/precomputed.mjs (19.8 kB) (1.72 kB gzip)\n  ├─ .output/server/chunks/virtual/styles.mjs (1.44 kB) (427 B gzip)\n  ├─ .output/server/index.mjs (440 B) (234 B gzip)\n  └─ .output/server/package.json (680 B) (307 B gzip)\nΣ Total size: 3.57 MB (879 kB gzip)\n[success] [nitro] You can preview this build using `node .output/server/index.mjs`\nconfig 80ms · modules 22ms · app 212ms · types 254ms · client 643ms · server 212ms · nitro 1.86s\n◆ ✨ Build complete in 3.28s!\n"
+  },
+  {
+    "id": "call_qsoQbBtLomFXGUofQfe9F9RO",
+    "name": "bash",
+    "kinds": [
+      "explore"
+    ],
+    "input": {
+      "command": "git status --short"
+    },
+    "output": " D app/components/cart/Badge.vue\n D app/components/cart/Item.vue\n D app/components/cart/Summary.vue\n D app/composables/useCart.ts\n D app/composables/useCartTotal.ts\n D app/composables/useDiscount.ts\n D app/middleware/cart-not-empty.ts\n D app/utils/discount.ts\n M nuxt.config.ts\n?? layers/cart/\n"
+  }
+]
